@@ -10,21 +10,15 @@ import java.util.List;
 
 public class Workout {
     private String name;
-    private List<Exercise> mainExercises;
-    private List<Exercise> accessoryExercises;
+    private List<Exercise> exercises;
 
     public Workout(String name) {
         this.name = name;
-        mainExercises = new ArrayList<>(4);
-        accessoryExercises = new ArrayList<>(4);
+        exercises = new ArrayList<>(4);
     }
 
-    public List<Exercise> getMainExercises() {
-        return mainExercises;
-    }
-
-    public List<Exercise> getAccessoryExercises() {
-        return accessoryExercises;
+    public List<Exercise> getExercises() {
+        return exercises;
     }
 
     public String getName() {
@@ -35,48 +29,23 @@ public class Workout {
         this.name = name;
     }
 
-    public boolean addMainExercise(Exercise exercise) {
+    public boolean addExercise(Exercise exercise) {
         // don't add exercise if there's an exercise with the same name
-        for (Exercise e: mainExercises) {
+        for (Exercise e: exercises) {
             if (e.getName().equals(exercise.getName())) {
                 return false;
             }
         }
-        mainExercises.add(exercise);
+        exercises.add(exercise);
         return true;
     }
 
-    public boolean addAccessoryExercise(Exercise exercise) {
-        // don't add exercise if there's an exercise with the same name
-        for (Exercise e: accessoryExercises) {
-            if (e.getName().equals(exercise.getName())) {
-                return false;
-            }
-        }
-        accessoryExercises.add(exercise);
-        return true;
+    public void removeExercise(Exercise exercise) {
+        exercises.remove(exercise);
     }
 
-    public void removeMainExercise(Exercise exercise) {
-        mainExercises.remove(exercise);
-    }
-
-    public void removeMainExercise(String exercise) {
-        Iterator<Exercise> it = mainExercises.iterator();
-        while (it.hasNext()) {
-            Exercise e = it.next();
-            if (e.getName().equals(exercise)) {
-                it.remove();
-            }
-        }
-    }
-
-    public void removeAccessoryExercise(Exercise exercise) {
-        accessoryExercises.remove(exercise);
-    }
-
-    public void removeAccessoryExercise(String exercise) {
-        Iterator<Exercise> it = accessoryExercises.iterator();
+    public void removeExercise(String exercise) {
+        Iterator<Exercise> it = exercises.iterator();
         while (it.hasNext()) {
             Exercise e = it.next();
             if (e.getName().equals(exercise)) {
