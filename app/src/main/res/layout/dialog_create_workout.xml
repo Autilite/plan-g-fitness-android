@@ -40,14 +40,15 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent" />
         </TableRow>
+
+        <include layout="@layout/workout_table_row" />
     </TableLayout>
 
     <Button
         android:id="@+id/button_add_exercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/add"
-        android:tint="@color/colorWhite"
+        android:clickable="true"
+        android:text="@string/add_row"
         />
 </LinearLayout>
