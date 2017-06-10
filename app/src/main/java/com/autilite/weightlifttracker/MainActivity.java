@@ -1,5 +1,6 @@
 package com.autilite.weightlifttracker;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -13,7 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, CreateWorkoutFragment.CreateWorkoutListener
+{
 
     private CharSequence mTitle;
 
@@ -106,5 +108,15 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, new WorkoutFragment())
                 .commit();
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // TODO
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.getDialog().cancel();
     }
 }

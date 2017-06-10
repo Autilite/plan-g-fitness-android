@@ -1,10 +1,8 @@
 package com.autilite.weightlifttracker;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,27 +31,10 @@ public class WorkoutFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.create_workout_title)
-                        .setView(R.layout.dialog_create_workout)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // TODO
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        })
-                ;
-                AlertDialog d = builder.create();
-                d.show();
+                CreateWorkoutFragment frag = new CreateWorkoutFragment();
+                frag.show(getActivity().getFragmentManager(), "CreateWorkoutFragment");
             }
         });
         return view;
     }
-
 }
