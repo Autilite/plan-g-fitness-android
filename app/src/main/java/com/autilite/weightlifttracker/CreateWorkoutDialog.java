@@ -11,13 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.Toast;
 
 /**
  * Created by Kelvin on Jun 9, 2017.
  */
 
-public class CreateWorkoutFragment extends DialogFragment {
+public class CreateWorkoutDialog extends DialogFragment {
 
     public interface CreateWorkoutListener {
         void onDialogPositiveClick(DialogFragment dialog);
@@ -51,13 +50,13 @@ public class CreateWorkoutFragment extends DialogFragment {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mListener.onDialogPositiveClick(CreateWorkoutFragment.this);
+                        mListener.onDialogPositiveClick(CreateWorkoutDialog.this);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mListener.onDialogNegativeClick(CreateWorkoutFragment.this);
+                        mListener.onDialogNegativeClick(CreateWorkoutDialog.this);
                     }
                 });
 

@@ -31,8 +31,8 @@ public class WorkoutFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateWorkoutFragment frag = new CreateWorkoutFragment();
-                frag.show(getActivity().getFragmentManager(), "CreateWorkoutFragment");
+                CreateWorkoutDialog frag = new CreateWorkoutDialog();
+                frag.show(getActivity().getFragmentManager(), "CreateWorkoutDialog");
             }
         });
         return view;

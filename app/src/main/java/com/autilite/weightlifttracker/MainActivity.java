@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, CreateWorkoutFragment.CreateWorkoutListener
+        implements NavigationView.OnNavigationItemSelectedListener, CreateWorkoutDialog.CreateWorkoutListener
 {
 
     private CharSequence mTitle;
