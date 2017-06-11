@@ -24,7 +24,7 @@
         android:layout_height="wrap_content" />
     <EditText
         android:id="@+id/workout_create_weight"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:layout_weight="0.25"
         android:layout_width="0dp"
         android:layout_height="wrap_content" />

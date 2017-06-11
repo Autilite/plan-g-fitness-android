@@ -1,8 +1,11 @@
 package com.autilite.weightlifttracker.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.autilite.weightlifttracker.program.Workout;
 
 /**
  * Created by Kelvin on Jun 10, 2017.
@@ -98,5 +101,21 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    public boolean insertWorkout(String workoutName, String exerciseName, int sets, int reps, float weight) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(WorkoutContract.WorkoutEntry.COLUMN_NAME_NAME, workoutName);
+        cv.put(WorkoutContract.WorkoutEntry.COLUMN_NAME_EXERCISE, exerciseName);
+        cv.put(WorkoutContract.WorkoutEntry.COLUMN_NAME_SET, sets);
+        cv.put(WorkoutContract.WorkoutEntry.COLUMN_NAME_REP, reps);
+        if (weight > 0) {
+            cv.put(WorkoutContract.WorkoutEntry.COLUMN_NAME_NAME, workoutName);
+        }
+
+        long rowId = db.insert(WorkoutContract.WorkoutEntry.TABLE_NAME, null, cv);
+        return rowId != -1;
     }
 }

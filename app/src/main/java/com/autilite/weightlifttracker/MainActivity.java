@@ -12,6 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.Toast;
 
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
@@ -117,7 +122,30 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        // TODO
+        TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.workout_create_table);
+        EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.workout_create_name);
+        String workoutName = nameEditText.getText().toString();
+
+        // Ignore first row since that is the headings
+        for (int i = 1; i < table.getChildCount(); i++) {
+            View c = table.getChildAt(i);
+            if (c instanceof TableRow) {
+                TableRow row = (TableRow) c;
+                EditText exercise = (EditText) row.findViewById(R.id.workout_create_exercise_name);
+                EditText sets = (EditText) row.findViewById(R.id.workout_create_sets);
+                EditText reps = (EditText) row.findViewById(R.id.workout_create_reps);
+                EditText weight = (EditText) row.findViewById(R.id.workout_create_weight);
+
+                String wExercise = exercise.getText().toString();
+                int wSets = Integer.parseInt(sets.getText().toString());
+                int wReps = Integer.parseInt(reps.getText().toString());
+                float wWeight = Float.parseFloat(weight.getText().toString());
+
+                if (!workoutDb.insertWorkout(workoutName, wExercise, wSets, wReps, wWeight)) {
+                    Toast.makeText(this, "Exercise " +wExercise + " could not be inserted", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     @Override
