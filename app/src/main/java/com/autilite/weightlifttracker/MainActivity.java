@@ -13,11 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, CreateWorkoutFragment.CreateWorkoutListener
 {
 
     private CharSequence mTitle;
+    private WorkoutProgramDbHelper workoutDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_workout);
+
+        workoutDb = new WorkoutProgramDbHelper(this);
     }
 
     @Override
@@ -118,5 +123,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         dialog.getDialog().cancel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        workoutDb.close();
+        super.onDestroy();
     }
 }
