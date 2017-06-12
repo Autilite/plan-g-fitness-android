@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -131,7 +132,8 @@ public class MainActivity extends AppCompatActivity
             View c = table.getChildAt(i);
             if (c instanceof TableRow) {
                 TableRow row = (TableRow) c;
-                EditText exercise = (EditText) row.findViewById(R.id.workout_create_exercise_name);
+                Button exercise = (Button) row.findViewById(R.id.workout_create_exercise_chooser);
+                Toast.makeText(this, exercise.getTag().toString(), Toast.LENGTH_LONG).show();
                 EditText sets = (EditText) row.findViewById(R.id.workout_create_sets);
                 EditText reps = (EditText) row.findViewById(R.id.workout_create_reps);
                 EditText weight = (EditText) row.findViewById(R.id.workout_create_weight);

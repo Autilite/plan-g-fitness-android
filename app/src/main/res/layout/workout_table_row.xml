@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <EditText
-        android:id="@+id/workout_create_exercise_name"
-        android:inputType="text"
+    <Button
+        android:id="@+id/workout_create_exercise_chooser"
+        android:hint="@string/choose_exercise"
+        android:background="?android:selectableItemBackground"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content" />

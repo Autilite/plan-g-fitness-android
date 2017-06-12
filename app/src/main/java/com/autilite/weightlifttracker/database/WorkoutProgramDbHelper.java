@@ -1,6 +1,8 @@
 package com.autilite.weightlifttracker.database;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -132,6 +134,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_EXERCISE_INFO);
+        insertDefaultExercises(sqLiteDatabase);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_EXERCISE_STATS);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_WORKOUT);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_WORKOUT_LIST);
@@ -143,6 +146,22 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 
+    }
+
+    private void insertDefaultExercises(SQLiteDatabase db){
+        ContentValues cv = new ContentValues();
+        cv.put(ExerciseInfoEntry.COLUMN_NAME, "Squats");
+        db.insert(ExerciseInfoEntry.TABLE_NAME, null, cv);
+        cv.put(ExerciseInfoEntry.COLUMN_NAME, "Deadlift");
+        db.insert(ExerciseInfoEntry.TABLE_NAME, null, cv);
+        cv.put(ExerciseInfoEntry.COLUMN_NAME, "Overhead Press");
+        db.insert(ExerciseInfoEntry.TABLE_NAME, null, cv);
+    }
+
+    public Cursor getAllExerciseInfo() {
+        SQLiteDatabase db = getReadableDatabase();
+        String sqlGetAllExerciseInfo = "select * from " + ExerciseInfoEntry.TABLE_NAME;
+        return db.rawQuery(sqlGetAllExerciseInfo, null);
     }
 
     public boolean insertWorkout(String workoutName, String exerciseName, int sets, int reps, float weight) {

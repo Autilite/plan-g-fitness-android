@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -11,6 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+
+import com.autilite.weightlifttracker.database.ExerciseInfoContract;
+import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
 /**
  * Created by Kelvin on Jun 9, 2017.
@@ -72,6 +76,31 @@ public class CreateWorkoutDialog extends DialogFragment {
                 table.addView(row);
             }
         });
+
+        final WorkoutProgramDbHelper db = new WorkoutProgramDbHelper(getActivity());
+        final Button exerciseChooser = (Button) view.findViewById(R.id.workout_create_exercise_chooser);
+        exerciseChooser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final Cursor cursor = db.getAllExerciseInfo();
+                builder.setTitle(R.string.choose_exercise)
+                        .setCursor(cursor, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Set button text to the chosen exercise
+                                // and store the exerciseId in the button tag
+                                cursor.moveToPosition(i);
+                                long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
+                                String name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
+                                exerciseChooser.setText(name);
+                                exerciseChooser.setTag(exerciseId);
+                            }
+                        }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME);
+                builder.show();
+            }
+        });
+
         return d;
     }
 
