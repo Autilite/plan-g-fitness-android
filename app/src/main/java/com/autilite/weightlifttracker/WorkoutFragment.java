@@ -1,17 +1,13 @@
 package com.autilite.weightlifttracker;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -21,9 +17,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkoutFragment extends Fragment {
-    public static final String EXTRA_WORKOUT = "com.autilite.EXTRA_WORKOUT";
-
+public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.CreateWorkoutListener {
     private List<Workout> workouts;
 
     private RecyclerView mRecyclerView;
@@ -49,9 +43,22 @@ public class WorkoutFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 CreateWorkoutDialog frag = new CreateWorkoutDialog();
-                frag.show(getActivity().getFragmentManager(), "CreateWorkoutDialog");
+                frag.setTargetFragment(WorkoutFragment.this, 0);
+                frag.show(getActivity().getSupportFragmentManager(), "CreateWorkoutDialog");
             }
         });
         return view;
     }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+       // TODO
+       dialog.getDialog().cancel();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.getDialog().cancel();
+    }
+
 }

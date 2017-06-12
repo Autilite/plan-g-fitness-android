@@ -1,6 +1,5 @@
 package com.autilite.weightlifttracker;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -12,17 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.Toast;
 
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, CreateWorkoutDialog.CreateWorkoutListener
+        implements NavigationView.OnNavigationItemSelectedListener
 {
 
     private CharSequence mTitle;
@@ -119,40 +112,6 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, new WorkoutFragment())
                 .commit();
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.workout_create_table);
-        EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.workout_create_name);
-        String workoutName = nameEditText.getText().toString();
-
-        // Ignore first row since that is the headings
-        for (int i = 1; i < table.getChildCount(); i++) {
-            View c = table.getChildAt(i);
-            if (c instanceof TableRow) {
-                TableRow row = (TableRow) c;
-                Button exercise = (Button) row.findViewById(R.id.workout_create_exercise_chooser);
-                Toast.makeText(this, exercise.getTag().toString(), Toast.LENGTH_LONG).show();
-                EditText sets = (EditText) row.findViewById(R.id.workout_create_sets);
-                EditText reps = (EditText) row.findViewById(R.id.workout_create_reps);
-                EditText weight = (EditText) row.findViewById(R.id.workout_create_weight);
-
-                String wExercise = exercise.getText().toString();
-                int wSets = Integer.parseInt(sets.getText().toString());
-                int wReps = Integer.parseInt(reps.getText().toString());
-                float wWeight = Float.parseFloat(weight.getText().toString());
-
-                if (!workoutDb.insertWorkout(workoutName, wExercise, wSets, wReps, wWeight)) {
-                    Toast.makeText(this, "Exercise " +wExercise + " could not be inserted", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        dialog.getDialog().cancel();
     }
 
     @Override

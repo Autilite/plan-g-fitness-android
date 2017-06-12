@@ -1,8 +1,7 @@
 package com.autilite.weightlifttracker;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -31,15 +30,12 @@ public class CreateWorkoutDialog extends DialogFragment {
     CreateWorkoutListener mListener;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        // Verify that the host context implements the callback interface
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         try {
-            // Instantiate the CreateWorkoutListener so we can send events to the host
-            mListener = (CreateWorkoutListener) context;
+            mListener = (CreateWorkoutListener) getTargetFragment();
         } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(context.toString()
+            throw new ClassCastException(getTargetFragment().toString()
                     + " must implement CreateWorkoutListener");
         }
     }
