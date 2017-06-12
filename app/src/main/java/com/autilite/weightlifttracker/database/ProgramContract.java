@@ -1,5 +1,7 @@
 package com.autilite.weightlifttracker.database;
 
+import android.provider.BaseColumns;
+
 /**
  * Created by Kelvin on Jun 10, 2017.
  */
@@ -8,10 +10,8 @@ public final class ProgramContract {
     private ProgramContract() {
     }
 
-    public static class ProgramEntry {
-        public static final String TABLE_NAME = "Program";
-        public static final String COLUMN_NAME_NAME = "Name";
-        public static final String COLUMN_NAME_WORKOUT = "WorkoutName";
-        public static final String COLUMN_NAME_DAY = "Day";
+    public static class ProgramEntry implements BaseColumns {
+        public static final String TABLE_NAME = "Programs";
+        public static final String COLUMN_NAME = "Name";
     }
 }
