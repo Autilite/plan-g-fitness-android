@@ -38,6 +38,7 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private WorkoutProgramDbHelper workoutDb;
+    private List<Workout> workouts;
 
     public WorkoutFragment() {
     }
@@ -63,7 +64,7 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
             }
         });
         workoutDb = new WorkoutProgramDbHelper(getActivity());
-        List<Workout> workouts = getAllWorkouts();
+        workouts = getAllWorkouts();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.workout_recycler_view);
 
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -93,6 +94,7 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
         } else {
             Toast.makeText(getActivity(), "New workout \"" + workoutName + "\" created", Toast.LENGTH_LONG).show();
         }
+        Workout workout = new Workout(workoutName);
 
         // Ignore first row since that is the headings
         for (int i = 1; i < table.getChildCount(); i++) {
@@ -128,8 +130,12 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
                     Toast.makeText(getActivity(), "Could not add " + exBtn.getText().toString() +
                             " to " + workoutName, Toast.LENGTH_LONG).show();
                 }
+                Exercise e = new Exercise(exBtn.getText().toString(), wSets, wReps, wWeight);
+                workout.addExercise(e);
             }
         }
+        workouts.add(workout);
+        mAdapter.notifyDataSetChanged();
 
     }
 
