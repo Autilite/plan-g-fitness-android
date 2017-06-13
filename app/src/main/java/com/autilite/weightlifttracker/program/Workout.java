@@ -30,12 +30,8 @@ public class Workout {
     }
 
     public boolean addExercise(Exercise exercise) {
-        // don't add exercise if there's an exercise with the same name
-        for (Exercise e: exercises) {
-            if (e.getName().equals(exercise.getName())) {
-                return false;
-            }
-        }
+        if (exercise == null)
+            return false;
         exercises.add(exercise);
         return true;
     }
