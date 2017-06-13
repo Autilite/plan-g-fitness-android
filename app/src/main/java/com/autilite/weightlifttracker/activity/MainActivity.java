@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.fragment.ProgramFragment;
 import com.autilite.weightlifttracker.fragment.WorkoutFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity
             onWorkoutSelected();
         } else if (id == R.id.nav_programs) {
             mTitle = getString(R.string.nav_programs);
+            onProgramSelected();
         } else if (id == R.id.nav_setting) {
             // open settings fragment
         } else if (id == R.id.nav_share) {
@@ -101,6 +103,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void onProgramSelected() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, new ProgramFragment())
+                .commit();
     }
 
     private void setTitle() {
