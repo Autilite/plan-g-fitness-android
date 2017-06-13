@@ -8,17 +8,27 @@ public class Exercise {
     private String name;
     private int sets;
     private int reps;
-    private int weight;
-    private double weightIncrement;
-    private long restTime;
+    private float weight;
+    private float weightIncrement;
+    private int restTime;           // In seconds
 
-    public Exercise(String name, int sets, int reps, int weight, double increment, long breakTime) {
+    public Exercise(String name, int sets, int reps, float weight) {
+        // TODO configurable default values
+        this(name, sets, reps, weight, 5);
+    }
+
+    public Exercise(String name, int sets, int reps, float weight, float weightIncrement) {
+        // TODO configurable default values
+        this(name, sets, reps, weight, 5, 90);
+    }
+
+    public Exercise(String name, int sets, int reps, float weight, float increment, int restTime) {
         this.name = name;
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
         this.weightIncrement = increment;
-        this.restTime = breakTime;
+        this.restTime = restTime;
     }
 
     public String getName() {
@@ -45,7 +55,7 @@ public class Exercise {
         this.reps = reps;
     }
 
-    public int getWeight() {
+    public float getWeight() {
         return weight;
     }
 
@@ -57,7 +67,7 @@ public class Exercise {
         return weightIncrement;
     }
 
-    public void setWeightIncrement(double weightIncrement) {
+    public void setWeightIncrement(float weightIncrement) {
         this.weightIncrement = weightIncrement;
     }
 
@@ -65,7 +75,7 @@ public class Exercise {
         return restTime;
     }
 
-    public void setRestTime(long restTime) {
+    public void setRestTime(int restTime) {
         this.restTime = restTime;
     }
 }

@@ -1,23 +1,32 @@
 package com.autilite.weightlifttracker;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.autilite.weightlifttracker.database.WorkoutContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,11 +34,10 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.CreateWorkoutListener {
-    private List<Workout> workouts;
-
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private WorkoutProgramDbHelper workoutDb;
 
     public WorkoutFragment() {
     }
@@ -54,14 +62,15 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
                 frag.show(getActivity().getSupportFragmentManager(), "CreateWorkoutDialog");
             }
         });
-//        mRecyclerView = (RecyclerView) view.findViewById(R.id.workout_recycler_view);
-//
-//        mLayoutManager = new LinearLayoutManager(getContext());
-//        mRecyclerView.setLayoutManager(mLayoutManager);
+        workoutDb = new WorkoutProgramDbHelper(getActivity());
+        List<Workout> workouts = getAllWorkouts();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.workout_recycler_view);
 
-        // TODO
-//        mAdapter = new WorkoutAdapter(getActivity(), workouts);
-//        mRecyclerView.setAdapter(mAdapter);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new WorkoutAdapter(getActivity(), workouts);
+        mRecyclerView.setAdapter(mAdapter);
         return view;
     }
 
@@ -72,7 +81,6 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
         String workoutName = nameEditText.getText().toString();
 
         // Create workout
-        WorkoutProgramDbHelper workoutDb = new WorkoutProgramDbHelper(getActivity());
         if (workoutName.equals("")) {
             // TODO prevent UI from closing if empty workout name
             Toast.makeText(getActivity(), "Workout could not be created", Toast.LENGTH_LONG).show();
@@ -130,4 +138,79 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
         dialog.getDialog().cancel();
     }
 
+    public List<Workout> getAllWorkouts() {
+        Cursor workoutCursor = workoutDb.getAllWorkouts();
+        List<Workout> workouts = new ArrayList<>();
+        while (workoutCursor.moveToNext()) {
+            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
+            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
+            Workout w = new Workout(workoutName);
+
+            Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
+            while (eStat.moveToNext()) {
+                long exerciseId = eStat.getLong(0);
+                String exerciseName = eStat.getString(1);
+                int set = eStat.getInt(2);
+                int rep = eStat.getInt(3);
+                float weight = eStat.getFloat(4);
+                Exercise e = new Exercise(exerciseName, set, rep, weight);
+                w.addExercise(e);
+            }
+            workouts.add(w);
+            eStat.close();
+
+        }
+        workoutCursor.close();
+        return workouts;
+    }
+
+    private class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutViewHolder> {
+
+        private Context mContext;
+        private List<Workout> workouts;
+
+        public class WorkoutViewHolder extends RecyclerView.ViewHolder {
+            private TextView workoutName;
+            private ListView exercises;
+
+            public WorkoutViewHolder(View itemView) {
+                super(itemView);
+                workoutName = (TextView) itemView.findViewById(R.id.workout_name);
+                exercises = (ListView) itemView.findViewById(R.id.workout_exercises);
+            }
+        }
+
+        public WorkoutAdapter(Context context, List<Workout> workouts) {
+            mContext = context;
+            this.workouts = workouts;
+        }
+
+        @Override
+        public WorkoutViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_card, parent, false);
+            return new WorkoutViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(WorkoutViewHolder holder, int position) {
+            Workout workout = workouts.get(position);
+
+            // Add workout name
+            holder.workoutName.setText(workout.getName());
+
+            // just show the exercise name for now
+            List<String> exercises = new ArrayList<>();
+            for (Exercise e : workout.getExercises()) {
+                exercises.add(e.getName());
+            }
+            ArrayAdapter<String> eAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, exercises);
+            holder.exercises.setAdapter(eAdapter);
+        }
+
+        @Override
+        public int getItemCount() {
+            return workouts.size();
+        }
+
+    }
 }
