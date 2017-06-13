@@ -171,12 +171,12 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
 
         public class WorkoutViewHolder extends RecyclerView.ViewHolder {
             private TextView workoutName;
-            private ListView exercises;
+            private ExtendableListView exercises;
 
             public WorkoutViewHolder(View itemView) {
                 super(itemView);
                 workoutName = (TextView) itemView.findViewById(R.id.workout_name);
-                exercises = (ListView) itemView.findViewById(R.id.workout_exercises);
+                exercises = (ExtendableListView) itemView.findViewById(R.id.workout_exercises);
             }
         }
 
@@ -187,7 +187,7 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
 
         @Override
         public WorkoutViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_card, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.workout_card, parent, false);
             return new WorkoutViewHolder(view);
         }
 
