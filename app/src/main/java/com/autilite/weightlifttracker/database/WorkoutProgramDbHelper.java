@@ -6,10 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.autilite.weightlifttracker.program.Workout;
-
-import java.util.List;
-
 import static com.autilite.weightlifttracker.database.ExerciseInfoContract.ExerciseInfoEntry;
 import static com.autilite.weightlifttracker.database.ExerciseStatContract.ExerciseStatEntry;
 import static com.autilite.weightlifttracker.database.WorkoutContract.WorkoutEntry;
@@ -204,16 +200,43 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         return db.insert(WorkoutListEntry.TABLE_NAME, null, cv) != -1;
     }
 
-    public List<Workout> getWorkouts(){
-//        SQLiteDatabase db = getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELELCT * FROM " + ExerciseStatContract.ExerciseStatEntry.TABLE_NAME, null);
-//        while (cursor.moveToNext()){
-//            Workout workout = new Workout(name);
-//            String name = cursor.getString(
-//                    cursor.getColumnIndexOrThrow(ExerciseStatContract.ExerciseStatEntry.COLUMN_WORKOUT_NAME));
-//
-//            cursor.moveToNext();
-//        }
-        return null;
+    /**
+     * Returns a cursor for all rows in the Workouts table
+     * @return Cursor
+     */
+    public Cursor getAllWorkouts() {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "select * from " + WorkoutEntry.TABLE_NAME;
+        return db.rawQuery(sql, null);
+    }
+
+    /**
+     * Selects the table with ExerciseStat.ID, ExerciseInfo.Name, Set, Rep, Weight for the
+     * workout
+     * @param workoutId The workout id to query the exercises
+     * @return
+     */
+    public Cursor getAllExerciseStatForWorkout(long workoutId) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT " + ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry._ID + ", " +
+                ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry.COLUMN_NAME + ", " +
+                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_SET + ", " +
+                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_REP + ", " +
+                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_WEIGHT + ", " +
+                WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + " " +
+                "FROM " + WorkoutEntry.TABLE_NAME + " " +
+                "INNER JOIN  " + WorkoutListEntry.TABLE_NAME + " ON " +
+                WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID +
+                " = " + WorkoutListEntry.TABLE_NAME + "." + WorkoutListEntry.COLUMN_WORKOUT_ID + " " +
+                "INNER JOIN " + ExerciseStatEntry.TABLE_NAME + " ON " +
+                WorkoutListEntry.TABLE_NAME+ "." + WorkoutListEntry.COLUMN_EXERCISE_ID +
+                " = " + ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry._ID + " " +
+                "INNER JOIN " + ExerciseInfoEntry.TABLE_NAME + " ON " +
+                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_EXERCISE_ID +
+                " = " + ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry._ID + " " +
+                "WHERE " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + "=" + workoutId +
+                ";";
+        return db.rawQuery(sql, null);
+
     }
 }
