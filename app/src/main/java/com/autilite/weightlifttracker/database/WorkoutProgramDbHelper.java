@@ -164,25 +164,44 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         return db.rawQuery(sqlGetAllExerciseInfo, null);
     }
 
-    public boolean insertWorkout(String workoutName, String exerciseName, int sets, int reps, float weight) {
+    public long createWorkout(String workoutName) {
         SQLiteDatabase db = getWritableDatabase();
 
-        // Check if workout exists
-        // If it doesn't already exist, then make it
-        // Insert the exercise
+        ContentValues cv = new ContentValues();
+        cv.put(WorkoutEntry.COLUMN_NAME, workoutName);
+        return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
+    }
 
-//        ContentValues cv = new ContentValues();
-//        cv.put(ExerciseStatContract.ExerciseStatEntry.COLUMN_WORKOUT_NAME, workoutName);
-//        cv.put(COLUMN_EXERCISE_ID, exerciseName);
-//        cv.put(ExerciseStatContract.ExerciseStatEntry.COLUMN_SET, sets);
-//        cv.put(ExerciseStatContract.ExerciseStatEntry.COLUMN_REP, reps);
-//        if (weight > 0) {
-//            cv.put(ExerciseStatContract.ExerciseStatEntry.COLUMN_WEIGHT, weight);
-//        }
-//
-//        long rowId = db.insert(ExerciseStatContract.ExerciseStatEntry.TABLE_NAME, null, cv);
-//        return rowId != -1;
-        return false;
+    public long createExerciseStat(long exerciseId,  int sets, int reps, float weight, float autoInc) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
+        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
+        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
+        return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
+    }
+
+    public long createExerciseStat(long exerciseId, int sets, int reps, float weight) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
+        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
+        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
+        return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
+    }
+
+    public boolean addExerciseToWorkout(long workoutId, long exerciseStatId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(WorkoutListEntry.COLUMN_WORKOUT_ID, workoutId);
+        cv.put(WorkoutListEntry.COLUMN_EXERCISE_ID, exerciseStatId);
+        return db.insert(WorkoutListEntry.TABLE_NAME, null, cv) != -1;
     }
 
     public List<Workout> getWorkouts(){
