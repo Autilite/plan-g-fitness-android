@@ -54,7 +54,6 @@
                     android:layout_height="match_parent" />
             </TableRow>
 
-            <include layout="@layout/workout_table_row" />
         </TableLayout>
 
         <Button

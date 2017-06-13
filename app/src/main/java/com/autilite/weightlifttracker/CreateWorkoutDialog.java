@@ -21,6 +21,8 @@ import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
 public class CreateWorkoutDialog extends DialogFragment {
 
+    private WorkoutProgramDbHelper db;
+
     public interface CreateWorkoutListener {
         void onDialogPositiveClick(DialogFragment dialog);
         void onDialogNegativeClick(DialogFragment dialog);
@@ -34,6 +36,7 @@ public class CreateWorkoutDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         try {
             mListener = (CreateWorkoutListener) getTargetFragment();
+            db = new WorkoutProgramDbHelper(getActivity());
         } catch (ClassCastException e) {
             throw new ClassCastException(getTargetFragment().toString()
                     + " must implement CreateWorkoutListener");
@@ -67,14 +70,21 @@ public class CreateWorkoutDialog extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater inflater = LayoutInflater.from(getActivity());
-                TableRow row = (TableRow) inflater.inflate(R.layout.workout_table_row, table,false);
-                table.addView(row);
+                addTableRow(table);
             }
         });
 
-        final WorkoutProgramDbHelper db = new WorkoutProgramDbHelper(getActivity());
-        final Button exerciseChooser = (Button) view.findViewById(R.id.workout_create_exercise_chooser);
+        addTableRow(table);
+
+
+        return d;
+    }
+
+    private void addTableRow(TableLayout table) {
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        TableRow row = (TableRow) inflater.inflate(R.layout.workout_table_row, table,false);
+
+        final Button exerciseChooser = (Button) row.findViewById(R.id.workout_create_exercise_chooser);
         exerciseChooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,7 +108,7 @@ public class CreateWorkoutDialog extends DialogFragment {
             }
         });
 
-        return d;
+        table.addView(row);
     }
 
 }
