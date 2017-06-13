@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker;
+package com.autilite.weightlifttracker.fragment;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -19,8 +19,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.autilite.weightlifttracker.widget.ExtendableListView;
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.fragment.dialog.AbstractCreateDialog;
+import com.autilite.weightlifttracker.fragment.dialog.CreateWorkoutDialog;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -143,13 +147,17 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
     }
 
     public List<Workout> getAllWorkouts() {
+        // Get cursor with all workout Ids
         Cursor workoutCursor = workoutDb.getAllWorkouts();
         List<Workout> workouts = new ArrayList<>();
+
+        // Go through each of the workoutId
         while (workoutCursor.moveToNext()) {
             long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
             String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
             Workout w = new Workout(workoutName);
 
+            // Get list of exercise for workoutId
             Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
             while (eStat.moveToNext()) {
                 long exerciseId = eStat.getLong(0);

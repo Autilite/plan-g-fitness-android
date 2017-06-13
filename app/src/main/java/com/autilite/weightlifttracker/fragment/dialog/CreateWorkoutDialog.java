@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker;
+package com.autilite.weightlifttracker.fragment.dialog;
 
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.ExerciseInfoContract;
 
 /**

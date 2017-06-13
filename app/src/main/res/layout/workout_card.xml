@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.autilite.weightlifttracker.ExtendableListView
+            <com.autilite.weightlifttracker.widget.ExtendableListView
                 android:id="@+id/workout_exercises"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

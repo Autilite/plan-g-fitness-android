@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker;
+package com.autilite.weightlifttracker.fragment.dialog;
 
 
 import android.app.Dialog;
@@ -14,6 +14,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
 /**

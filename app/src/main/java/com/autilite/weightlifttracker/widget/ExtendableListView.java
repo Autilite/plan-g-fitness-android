@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker;
+package com.autilite.weightlifttracker.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

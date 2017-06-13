@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker;
+package com.autilite.weightlifttracker.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -12,7 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.fragment.WorkoutFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
