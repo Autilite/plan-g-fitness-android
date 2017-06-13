@@ -1,10 +1,7 @@
 package com.autilite.weightlifttracker;
 
-import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,74 +10,31 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.autilite.weightlifttracker.database.ExerciseInfoContract;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 
 /**
  * Created by Kelvin on Jun 9, 2017.
  */
 
-public class CreateWorkoutDialog extends DialogFragment {
-
-    private WorkoutProgramDbHelper db;
-
-    public interface CreateWorkoutListener {
-        void onDialogPositiveClick(DialogFragment dialog);
-        void onDialogNegativeClick(DialogFragment dialog);
-
-    }
-    // Use this instance of the interface to deliver action events
-    CreateWorkoutListener mListener;
+public class CreateWorkoutDialog extends AbstractCreateDialog {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            mListener = (CreateWorkoutListener) getTargetFragment();
-            db = new WorkoutProgramDbHelper(getActivity());
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getTargetFragment().toString()
-                    + " must implement CreateWorkoutListener");
-        }
+    protected TableRow getTableHeading() {
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        return (TableRow) inflater.inflate(R.layout.workout_table_row_heading, null);
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = View.inflate(getActivity(), R.layout.dialog_create_workout, null);
-
-        builder.setTitle(R.string.create_workout_title)
-                .setView(view)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mListener.onDialogPositiveClick(CreateWorkoutDialog.this);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mListener.onDialogNegativeClick(CreateWorkoutDialog.this);
-                    }
-                });
-
-        Dialog d = builder.create();
-
-        final TableLayout table = (TableLayout) view.findViewById(R.id.workout_create_table);
-        Button button = (Button) view.findViewById(R.id.button_add_exercise);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addTableRow(table);
-            }
-        });
-
-        addTableRow(table);
-
-
-        return d;
+    protected int getCreateEntryName() {
+        return R.string.workout_name;
     }
 
-    private void addTableRow(TableLayout table) {
+    @Override
+    protected int getTitle() {
+        return R.string.create_workout_title;
+    }
+
+    @Override
+    protected void addTableRow(TableLayout table) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         TableRow row = (TableRow) inflater.inflate(R.layout.workout_table_row, table,false);
 

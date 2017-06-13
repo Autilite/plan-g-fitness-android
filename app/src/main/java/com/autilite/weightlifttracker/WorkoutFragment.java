@@ -8,14 +8,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -33,7 +31,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.CreateWorkoutListener {
+public class WorkoutFragment extends Fragment implements AbstractCreateDialog.CreateDialogListener {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -77,8 +75,8 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.workout_create_table);
-        EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.workout_create_name);
+        TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.entry_create_table);
+        EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.heading_create_name_editview);
         String workoutName = nameEditText.getText().toString();
 
         // Create workout
