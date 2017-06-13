@@ -91,6 +91,7 @@ public class CreateWorkoutDialog extends DialogFragment {
                                 String name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
                                 exerciseChooser.setText(name);
                                 exerciseChooser.setTag(exerciseId);
+                                cursor.close();
                             }
                         }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME);
                 builder.show();
