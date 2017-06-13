@@ -102,21 +102,21 @@ public class WorkoutFragment extends Fragment implements CreateWorkoutDialog.Cre
                 TableRow row = (TableRow) c;
                 Button exBtn = ((Button) row.findViewById(R.id.workout_create_exercise_chooser));
                 Object exercise = exBtn.getTag();
-                Editable sets = ((EditText) row.findViewById(R.id.workout_create_sets)).getText();
-                Editable reps = ((EditText) row.findViewById(R.id.workout_create_reps)).getText();
-                Editable weight = ((EditText) row.findViewById(R.id.workout_create_weight)).getText();
+                String sets = ((EditText) row.findViewById(R.id.workout_create_sets)).getText().toString();
+                String reps = ((EditText) row.findViewById(R.id.workout_create_reps)).getText().toString();
+                String weight = ((EditText) row.findViewById(R.id.workout_create_weight)).getText().toString();
 
                 if (exercise == null)
                     continue;
                 long exerciseId = Long.valueOf(String.valueOf(exercise));
 
-                if (sets == null || reps == null || weight == null) {
+                if (sets.equals("") || reps.equals("") || weight.equals("")) {
                     // TODO set default values
                     continue;
                 }
-                int wSets = Integer.parseInt(sets.toString());
-                int wReps = Integer.parseInt(reps.toString());
-                float wWeight = Float.parseFloat(weight.toString());
+                int wSets = Integer.parseInt(sets);
+                int wReps = Integer.parseInt(reps);
+                float wWeight = Float.parseFloat(weight);
 
                 // Create ExerciseStat
                 long exerciseStatId = workoutDb.createExerciseStat(exerciseId, wSets, wReps, wWeight);
