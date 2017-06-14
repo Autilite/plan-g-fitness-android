@@ -24,6 +24,7 @@
     <string name="workout_name">Workout Name</string>
 
     <string name="create_program_title">Create a program</string>
+    <string name="choose_program">Choose a program</string>
     <string name="program_name">Program Name</string>
     <string name="programs">Programs</string>
     <string name="choose_workout">Choose workout</string>

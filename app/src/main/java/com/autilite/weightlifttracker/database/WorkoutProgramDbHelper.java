@@ -285,6 +285,28 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         return db.rawQuery(sql, null);
     }
 
+    /**
+     * Returns the name associated with progId or null if it doesn't exist
+     *
+     * @param progId The id used to query the database
+     * @return The program name or null
+     */
+    public String getProgramName(long progId) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT " + ProgramEntry.COLUMN_NAME + " FROM " + ProgramEntry.TABLE_NAME +
+                " WHERE " + ProgramEntry._ID + "=" + progId;
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return null;
+        } else {
+            cursor.moveToNext();
+            String name = cursor.getString(0);
+            cursor.close();
+            return name;
+        }
+    }
+
     public boolean checkIfWorkoutExist(long workoutId) {
         SQLiteDatabase db = getReadableDatabase();
         boolean exist;

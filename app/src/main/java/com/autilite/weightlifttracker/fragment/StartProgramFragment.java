@@ -17,10 +17,11 @@ import com.autilite.weightlifttracker.R;
  * create an instance of this fragment.
  */
 public class StartProgramFragment extends Fragment {
-    public static final long NO_PROGRAM_SELECTED = -1;
-    private static final String SELECTED_PROGRAM = "SELECTED_PROGRAM";
+    private static final String ARG_PROGRAM_ID = "ARG_PROGRAM_ID";
+    private static final String ARG_PROGRAM_NAME = "ARG_PROGRAM_NAME";
 
-    private long selectedProgram;
+    private long programId;
+    private String programName;
 
 
     public StartProgramFragment() {
@@ -31,14 +32,15 @@ public class StartProgramFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param selectedProgram The program to display
+     * @param programId The id of the program
+     * @param programName The program name
      * @return A new instance of fragment StartProgramFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static StartProgramFragment newInstance(long selectedProgram) {
+    public static StartProgramFragment newInstance(long programId, String programName) {
         StartProgramFragment fragment = new StartProgramFragment();
         Bundle args = new Bundle();
-        args.putLong(SELECTED_PROGRAM, selectedProgram);
+        args.putLong(ARG_PROGRAM_ID, programId);
+        args.putString(ARG_PROGRAM_NAME, programName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,7 +49,8 @@ public class StartProgramFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            selectedProgram = getArguments().getLong(SELECTED_PROGRAM);
+            programId = getArguments().getLong(ARG_PROGRAM_ID);
+            programName = getArguments().getString(ARG_PROGRAM_NAME);
         }
     }
 
@@ -57,10 +60,11 @@ public class StartProgramFragment extends Fragment {
         // Inflate the layout for this fragment
         FrameLayout view = (FrameLayout) inflater.inflate(R.layout.fragment_start_program, container, false);
 
-        // Display selected program
+        // Inflate view with program data
         TextView textView = new TextView(view.getContext());
-        textView.setText(String.valueOf(selectedProgram));
+        textView.setText(String.valueOf(programId) + " " + programName);
         view.addView(textView);
+
         return view;
     }
 

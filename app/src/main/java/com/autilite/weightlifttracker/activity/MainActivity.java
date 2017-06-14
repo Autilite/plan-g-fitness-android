@@ -1,20 +1,25 @@
 package com.autilite.weightlifttracker.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.database.ProgramContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.ProgramFragment;
 import com.autilite.weightlifttracker.fragment.StartProgramFragment;
@@ -112,15 +117,54 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onStartSessionSelected() {
-        SharedPreferences sharedPrefs = getPreferences(Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefs = getPreferences(Context.MODE_PRIVATE);
+        long no_program_selected = -1;
 
-        long progId = sharedPrefs.getLong(getString(R.string.last_used_program), StartProgramFragment.NO_PROGRAM_SELECTED);
-        StartProgramFragment f = StartProgramFragment.newInstance(progId);
+        // Get the last used program
+        long progId = sharedPrefs.getLong(getString(R.string.last_used_program), no_program_selected);
+        String progName = workoutDb.getProgramName(progId);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, f)
-                .commit();
+        // If there is no last selection or if the program can't be found in the database (deleted),
+        // then prompt the user to select a new program
+        if (progId == no_program_selected || progName == null) {
+            final Cursor programs = workoutDb.getAllPrograms();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.choose_program)
+                    .setCursor(programs, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Get selected program
+                            programs.moveToPosition(i);
+                            long progId = programs.getLong(
+                                    programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
+                            String progName = programs.getString(
+                                    programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
+                            programs.close();
+
+                            // Save selection in SharedPrefs
+                            SharedPreferences.Editor editor = sharedPrefs.edit();
+                            editor.putLong(getString(R.string.last_used_program), progId);
+                            editor.apply();
+
+                            // Start the fragment
+                            StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.content_frame, f)
+                                    .commit();
+                        }
+
+                    }, ProgramContract.ProgramEntry.COLUMN_NAME);
+            builder.create().show();
+        } else {
+            // Otherwise, switch to the fragment
+            StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.content_frame, f)
+                    .commit();
+        }
     }
 
     private void onProgramSelected() {
