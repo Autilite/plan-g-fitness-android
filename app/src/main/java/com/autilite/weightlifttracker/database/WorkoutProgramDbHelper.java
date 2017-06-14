@@ -160,6 +160,14 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         return db.rawQuery(sqlGetAllExerciseInfo, null);
     }
 
+    public long createProgram(String programName) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(ProgramEntry.COLUMN_NAME, programName);
+        return db.insert(ProgramEntry.TABLE_NAME, null, cv);
+    }
+
     public long createWorkout(String workoutName) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -200,6 +208,16 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         return db.insert(WorkoutListEntry.TABLE_NAME, null, cv) != -1;
     }
 
+    public boolean addWorkoutToProgram(long programId, long workoutId, int day) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(ProgramWorkoutEntry.COLUMN_PROGRAM_ID, programId);
+        cv.put(ProgramWorkoutEntry.COLUMN_WORKOUT_ID, workoutId);
+        cv.put(ProgramWorkoutEntry.COLUMN_NAME_DAY, day);
+        return db.insert(ProgramWorkoutEntry.TABLE_NAME, null, cv) != -1;
+    }
+
     /**
      * Returns a cursor for all rows in the Workouts table
      * @return Cursor
@@ -207,6 +225,16 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     public Cursor getAllWorkouts() {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "select * from " + WorkoutEntry.TABLE_NAME;
+        return db.rawQuery(sql, null);
+    }
+
+    /**
+     * Returns a cursor for all rows in the Programs table
+     * @return Cursor
+     */
+    public Cursor getAllPrograms() {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "select * from " + ProgramEntry.TABLE_NAME;
         return db.rawQuery(sql, null);
     }
 
@@ -238,5 +266,18 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                 ";";
         return db.rawQuery(sql, null);
 
+    }
+
+    public boolean checkIfWorkoutExist(long workoutId) {
+        SQLiteDatabase db = getReadableDatabase();
+        boolean exist;
+        String sql = "SELECT * FROM " + WorkoutEntry.TABLE_NAME +
+                " WHERE " + WorkoutEntry._ID  + " = " + workoutId;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        // workoutId exist if it can find a result in the Workout table
+        exist = cursor.getCount() > 0;
+        cursor.close();
+        return exist;
     }
 }
