@@ -1,5 +1,7 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.ProgramFragment;
+import com.autilite.weightlifttracker.fragment.StartProgramFragment;
 import com.autilite.weightlifttracker.fragment.WorkoutFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -87,6 +90,9 @@ public class MainActivity extends AppCompatActivity
         // ->set title
         if (id == R.id.nav_profile) {
             mTitle = getString(R.string.nav_profile);
+        } else if (id == R.id.nav_start_session) {
+            mTitle =  getString(R.string.start_session);
+            onStartSessionSelected();
         } else if (id == R.id.nav_workout) {
             mTitle = getString(R.string.nav_workout);
             onWorkoutSelected();
@@ -103,6 +109,18 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void onStartSessionSelected() {
+        SharedPreferences sharedPrefs = getPreferences(Context.MODE_PRIVATE);
+
+        long progId = sharedPrefs.getLong(getString(R.string.last_used_program), StartProgramFragment.NO_PROGRAM_SELECTED);
+        StartProgramFragment f = StartProgramFragment.newInstance(progId);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, f)
+                .commit();
     }
 
     private void onProgramSelected() {

@@ -3,6 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_start_session"
+            android:title="@string/start_session" />
+        <item
             android:id="@+id/nav_profile"
             android:title="@string/nav_profile" />
         <item
