@@ -127,51 +127,53 @@ public class MainActivity extends AppCompatActivity
         // If there is no last selection or if the program can't be found in the database (deleted),
         // then prompt the user to select a new program
         if (progId == no_program_selected || progName == null) {
-            final Cursor programs = workoutDb.getAllPrograms();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.choose_program)
-                    .setCursor(programs, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Get selected program
-                            programs.moveToPosition(i);
-                            long progId = programs.getLong(
-                                    programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
-                            String progName = programs.getString(
-                                    programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
-                            programs.close();
-
-                            // Save selection in SharedPrefs
-                            SharedPreferences.Editor editor = sharedPrefs.edit();
-                            editor.putLong(getString(R.string.last_used_program), progId);
-                            editor.apply();
-
-                            // Start the fragment
-                            StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
-                            FragmentManager fragmentManager = getSupportFragmentManager();
-                            fragmentManager.beginTransaction()
-                                    .replace(R.id.content_frame, f)
-                                    .commit();
-                        }
-
-                    }, ProgramContract.ProgramEntry.COLUMN_NAME);
-            builder.create().show();
+            selectAndSwitchProgram();
         } else {
             // Otherwise, switch to the fragment
             StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, f)
-                    .commit();
+            replaceContentFragment(f);
         }
     }
 
-    private void onProgramSelected() {
+    private void selectAndSwitchProgram(){
+        final Cursor programs = workoutDb.getAllPrograms();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.choose_program)
+                .setCursor(programs, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Get selected program
+                        programs.moveToPosition(i);
+                        long progId = programs.getLong(
+                                programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
+                        String progName = programs.getString(
+                                programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
+                        programs.close();
+
+                        // Save selection in SharedPrefs
+                        SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
+                        editor.putLong(getString(R.string.last_used_program), progId);
+                        editor.apply();
+
+                        // Start the fragment
+                        StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
+                        replaceContentFragment(f);
+                    }
+
+                }, ProgramContract.ProgramEntry.COLUMN_NAME);
+        builder.create().show();
+    }
+
+    private void replaceContentFragment(Fragment frag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, new ProgramFragment())
+                .replace(R.id.content_frame, frag)
                 .commit();
+    }
+
+    private void onProgramSelected() {
+        replaceContentFragment(new ProgramFragment());
     }
 
     private void setTitle() {
@@ -181,10 +183,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onWorkoutSelected() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, new WorkoutFragment())
-                .commit();
+        replaceContentFragment(new WorkoutFragment());
     }
 
     @Override
