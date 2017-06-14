@@ -265,7 +265,24 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                 "WHERE " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + "=" + workoutId +
                 ";";
         return db.rawQuery(sql, null);
+    }
 
+    /**
+     * Returns the {@link ProgramWorkoutEntry} table joined with {@link WorkoutEntry} for progId
+     *
+     * @param progId The id to select
+     * @return
+     */
+    public Cursor getProgramWorkoutTableJoinedWithName(long progId) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT * FROM " + ProgramWorkoutEntry.TABLE_NAME + " " +
+                "INNER JOIN " + WorkoutEntry.TABLE_NAME + " ON " +
+                ProgramWorkoutEntry.TABLE_NAME + "." + ProgramWorkoutEntry.COLUMN_WORKOUT_ID +
+                " = " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + " " +
+                "WHERE " + ProgramWorkoutEntry.TABLE_NAME + "." + ProgramWorkoutEntry.COLUMN_PROGRAM_ID +
+                " = " + progId +
+                ";";
+        return db.rawQuery(sql, null);
     }
 
     public boolean checkIfWorkoutExist(long workoutId) {
