@@ -54,7 +54,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_workout, container, false);
+        View view = inflater.inflate(R.layout.fragment_recycle_view, container, false);
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +67,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
         });
         workoutDb = new WorkoutProgramDbHelper(getActivity());
         workouts = getAllWorkouts();
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.workout_recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
