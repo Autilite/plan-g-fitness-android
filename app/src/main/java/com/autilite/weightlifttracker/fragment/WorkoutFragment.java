@@ -96,7 +96,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
         } else {
             Toast.makeText(getActivity(), "New workout \"" + workoutName + "\" created", Toast.LENGTH_LONG).show();
         }
-        Workout workout = new Workout(workoutName);
+        Workout workout = new Workout(workoutId, workoutName);
 
         // Ignore first row since that is the headings
         for (int i = 1; i < table.getChildCount(); i++) {
@@ -155,7 +155,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
         while (workoutCursor.moveToNext()) {
             long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
             String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
-            Workout w = new Workout(workoutName);
+            Workout w = new Workout(workoutId, workoutName);
 
             // Get list of exercise for workoutId
             Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);

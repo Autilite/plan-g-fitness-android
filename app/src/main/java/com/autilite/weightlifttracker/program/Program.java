@@ -9,14 +9,20 @@ import java.util.List;
  */
 
 public class Program {
+    private final long id;
     private String name;
     private String description;
     private List<Workout> workouts;
 
-    public Program(String name, String description) {
+    public Program(long id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
         workouts = new LinkedList<>();
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {

@@ -99,7 +99,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;
         }
-        Program program = new Program(programName, "");
+        Program program = new Program(programId, programName, "");
 
         // 2) Retrieve the values from the table
         // Ignore first row because that's the header
@@ -128,7 +128,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             Toast.makeText(getActivity(), "Workout " + workoutName + " added to " + programName,
                     Toast.LENGTH_LONG).show();
 
-            Workout workout = new Workout(workoutName);
+            Workout workout = new Workout(workoutId, workoutName);
             program.addWorkout(workout);
         }
 
@@ -152,7 +152,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             // Get program info
             long progId = programs.getLong(programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
             String progName = programs.getString(programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
-            Program p = new Program(progName, "");
+            Program p = new Program(progId, progName, "");
 
             // Grab workouts associated with the program
             Cursor programWorkouts = workoutDb.getProgramWorkoutTableJoinedWithName(progId);
@@ -162,7 +162,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
                                ProgramWorkoutContract.ProgramWorkoutEntry.COLUMN_WORKOUT_ID));
                 String workoutName = programWorkouts.getString(programWorkouts.getColumnIndex(
                                 WorkoutContract.WorkoutEntry.COLUMN_NAME));
-                Workout w = new Workout(workoutName);
+                Workout w = new Workout(workoutId, workoutName);
                 p.addWorkout(w);
             }
             listOfPrograms.add(p);
