@@ -1,8 +1,12 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +14,14 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
+import com.autilite.weightlifttracker.database.WorkoutContract;
+import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.program.Workout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +34,11 @@ public class StartProgramFragment extends Fragment {
 
     private long programId;
     private String programName;
+    private WorkoutProgramDbHelper workoutDb;
+    private List<Workout> workouts;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private WorkoutAdapter mAdapter;
 
 
     public StartProgramFragment() {
@@ -58,14 +75,50 @@ public class StartProgramFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        FrameLayout view = (FrameLayout) inflater.inflate(R.layout.fragment_start_program, container, false);
+        FrameLayout view = (FrameLayout) inflater.inflate(R.layout.fragment_recycle_view, container, false);
 
-        // Inflate view with program data
-        TextView textView = new TextView(view.getContext());
-        textView.setText(String.valueOf(programId) + " " + programName);
-        view.addView(textView);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
 
+        workoutDb = new WorkoutProgramDbHelper(getActivity());
+        workouts = getProgramWorkouts();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new WorkoutAdapter(getActivity(), workouts);
+        mRecyclerView.setAdapter(mAdapter);
         return view;
     }
 
+    public List<Workout> getProgramWorkouts() {
+        // Get cursor with all workout Ids
+        Cursor workoutCursor = workoutDb.getProgramWorkoutTableJoinedWithName(programId);
+        List<Workout> workouts = new ArrayList<>();
+
+        // Go through each of the workoutId
+        while (workoutCursor.moveToNext()) {
+            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
+            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
+            Workout w = new Workout(workoutId, workoutName);
+
+            // Get list of exercise for workoutId
+            Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
+            while (eStat.moveToNext()) {
+                long exerciseId = eStat.getLong(0);
+                String exerciseName = eStat.getString(1);
+                int set = eStat.getInt(2);
+                int rep = eStat.getInt(3);
+                float weight = eStat.getFloat(4);
+                Exercise e = new Exercise(exerciseName, set, rep, weight);
+                w.addExercise(e);
+            }
+            workouts.add(w);
+            eStat.close();
+
+        }
+        workoutCursor.close();
+        return workouts;
+    }
 }
