@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.ProgramContract;
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity
 
     private CharSequence mTitle;
     private WorkoutProgramDbHelper workoutDb;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        spinner = (Spinner) toolbar.findViewById(R.id.spinner_program);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,6 +94,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            spinner.setVisibility(View.GONE);
+        }
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -97,6 +109,10 @@ public class MainActivity extends AppCompatActivity
             mTitle = getString(R.string.nav_profile);
         } else if (id == R.id.nav_start_session) {
             mTitle =  getString(R.string.start_session);
+            if (getSupportActionBar() != null){
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                spinner.setVisibility(View.VISIBLE);
+            }
             onStartSessionSelected();
         } else if (id == R.id.nav_workout) {
             mTitle = getString(R.string.nav_workout);
@@ -117,24 +133,76 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onStartSessionSelected() {
+        // Set Spinner
+        String[] from = new String[]{ProgramContract.ProgramEntry.COLUMN_NAME};
+        int[] to = new int[]{android.R.id.text1};
+        Cursor programs = workoutDb.getAllPrograms();
+
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this, android.R.layout.simple_spinner_dropdown_item, programs, from, to, 0);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Cursor item = (Cursor) adapterView.getAdapter().getItem(i);
+                long id = item.getLong(
+                        item.getColumnIndex(ProgramContract.ProgramEntry._ID));
+                String name = item.getString(
+                        item.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
+
+                // Save selection in SharedPrefs
+                SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
+                editor.putLong(getString(R.string.last_used_program), id);
+                editor.apply();
+
+                // Start the fragment
+                StartProgramFragment f = StartProgramFragment.newInstance(id, name);
+                replaceContentFragment(f);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
         final SharedPreferences sharedPrefs = getPreferences(Context.MODE_PRIVATE);
         long no_program_selected = -1;
 
         // Get the last used program
-        long progId = sharedPrefs.getLong(getString(R.string.last_used_program), no_program_selected);
-        String progName = workoutDb.getProgramName(progId);
+        long savedProgramId = sharedPrefs.getLong(getString(R.string.last_used_program), no_program_selected);
 
-        // If there is no last selection or if the program can't be found in the database (deleted),
-        // then prompt the user to select a new program
-        if (progId == no_program_selected || progName == null) {
-            selectAndSwitchProgram();
+        // Get the position of the last used program in the cursor
+        int position = getCursorPosition(savedProgramId, programs);
+        if (position == -1) {
+            // Last used program not found in cursor. Default to first option.
+            spinner.setSelection(0);
+            // TODO handle case where there are no programs
         } else {
-            // Otherwise, switch to the fragment
-            StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
-            replaceContentFragment(f);
+            spinner.setSelection(position);
         }
     }
 
+    /**
+     * Returns id's position in cursor or -1 if id is not in the cursor
+     * @param id
+     * @param cursor
+     * @return
+     */
+    private int getCursorPosition(long id, Cursor cursor) {
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            long locationId = cursor.getLong(cursor.getColumnIndex(ProgramContract.ProgramEntry._ID));
+            if (locationId == id){
+                return i;
+            }
+            cursor.moveToNext();
+        }
+        return -1;
+    }
+
+    /**
+     * Show an alert dialog to select and switch to the selected program
+     */
     private void selectAndSwitchProgram(){
         final Cursor programs = workoutDb.getAllPrograms();
 
