@@ -1,6 +1,7 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,9 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
 import com.autilite.weightlifttracker.database.WorkoutContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
@@ -78,7 +79,14 @@ public class StartProgramFragment extends Fragment {
         FrameLayout view = (FrameLayout) inflater.inflate(R.layout.fragment_recycle_view, container, false);
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), WorkoutSessionActivity.class);
+                intent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
+                startActivity(intent);
+            }
+        });
 
         workoutDb = new WorkoutProgramDbHelper(getActivity());
         workouts = getProgramWorkouts();
