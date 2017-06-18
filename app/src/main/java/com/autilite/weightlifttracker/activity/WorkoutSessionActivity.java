@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutContract;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by Kelvin on Jun 16, 2017.
  */
 
-public class WorkoutSessionActivity extends AppCompatActivity {
+public class WorkoutSessionActivity extends AppCompatActivity implements WorkoutSessionFragment.OnFragmentInteractionListener {
 
     public static String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
 
@@ -96,6 +97,12 @@ public class WorkoutSessionActivity extends AppCompatActivity {
         }
         workoutCursor.close();
         return workouts;
+    }
+
+    @Override
+    public void onExerciseSelected(Exercise e) {
+        // TODO alert bottom sheet
+        Toast.makeText(this, "Clicked on exercise " + e.getName(), Toast.LENGTH_SHORT).show();
     }
 
     private class WorkoutPagerAdapter extends FragmentPagerAdapter {

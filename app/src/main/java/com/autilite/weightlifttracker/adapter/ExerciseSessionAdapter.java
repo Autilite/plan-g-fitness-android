@@ -20,8 +20,9 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
 
     private Context mContext;
     private final List<Exercise> exercises;
+    private OnItemClickListener mListener;
 
-    public class ExerciseSessionViewHolder extends RecyclerView.ViewHolder {
+    public class ExerciseSessionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView name;
         private TextView sets;
         private TextView btnOptions;
@@ -31,6 +32,14 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
             name = (TextView) itemView.findViewById(R.id.exercise_name);
             sets = (TextView) itemView.findViewById(R.id.complete_sets);
             btnOptions = (TextView) itemView.findViewById(R.id.exercise_options);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (mListener !=  null) {
+                mListener.onItemClick(view, exercises.get(getAdapterPosition()));
+            }
         }
     }
 
@@ -60,9 +69,17 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
         });
     }
 
+    public void setOnItemClickListener(OnItemClickListener mListener) {
+        this.mListener = mListener;
+    }
+
     @Override
     public int getItemCount() {
         return exercises.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, Exercise exercise);
     }
 
 }

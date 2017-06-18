@@ -1,6 +1,7 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,8 @@ public class WorkoutSessionFragment extends Fragment {
     private static final String ARG_ID = "ID";
     private static final String ARG_NAME = "NAME";
 
+    private OnFragmentInteractionListener mListener;
+
     private long id;
     private String name;
     private List<Exercise> exercises;
@@ -39,6 +42,17 @@ public class WorkoutSessionFragment extends Fragment {
 
     public WorkoutSessionFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     /**
@@ -92,6 +106,13 @@ public class WorkoutSessionFragment extends Fragment {
         mAdapter = new ExerciseSessionAdapter(getActivity(), exercises);
         mRecyclerView.setAdapter(mAdapter);
 
+        mAdapter.setOnItemClickListener(new ExerciseSessionAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, Exercise exercise) {
+                mListener.onExerciseSelected(exercise);
+            }
+        });
+
         return view;
     }
 
@@ -113,4 +134,13 @@ public class WorkoutSessionFragment extends Fragment {
         return list;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onExerciseSelected(Exercise e);
+    }
 }
