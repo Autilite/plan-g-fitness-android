@@ -1,15 +1,22 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.adapter.ExerciseSessionAdapter;
+import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.program.Exercise;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +29,12 @@ public class WorkoutSessionFragment extends Fragment {
 
     private long id;
     private String name;
+    private List<Exercise> exercises;
+
+    private WorkoutProgramDbHelper workoutDb;
+    private RecyclerView mRecyclerView;
+    private ExerciseSessionAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
 
 
     public WorkoutSessionFragment() {
@@ -36,7 +49,6 @@ public class WorkoutSessionFragment extends Fragment {
      * @param name Parameter 2.
      * @return A new instance of fragment WorkoutSessionFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static WorkoutSessionFragment newInstance(long id, String name) {
         WorkoutSessionFragment fragment = new WorkoutSessionFragment();
         Bundle args = new Bundle();
@@ -59,8 +71,46 @@ public class WorkoutSessionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        // TODO
-        return inflater.inflate(R.layout.fragment_workout_session, container, false);
+        View view = inflater.inflate(R.layout.fragment_recycle_view, container, false);
+
+        // Disable fab
+        View fab = view.findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
+        // Get the exercises for this workout
+        workoutDb = new WorkoutProgramDbHelper(getActivity());
+        exercises = getAllExerciseInfo(id);
+        for (Exercise e :
+                exercises) {
+            System.out.println(e.getName());
+        }
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new ExerciseSessionAdapter(getActivity(), exercises);
+        mRecyclerView.setAdapter(mAdapter);
+
+        return view;
+    }
+
+    private List<Exercise> getAllExerciseInfo (long workoutId) {
+        List<Exercise> list = new LinkedList<>();
+
+        // Get list of exercise for workoutId
+        Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
+        while (eStat.moveToNext()) {
+            long exerciseId = eStat.getLong(0);
+            String exerciseName = eStat.getString(1);
+            int set = eStat.getInt(2);
+            int rep = eStat.getInt(3);
+            float weight = eStat.getFloat(4);
+            Exercise e = new Exercise(exerciseName, set, rep, weight);
+            list.add(e);
+        }
+        eStat.close();
+        return list;
     }
 
 }
