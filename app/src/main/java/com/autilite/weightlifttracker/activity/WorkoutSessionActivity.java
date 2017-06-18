@@ -3,6 +3,7 @@ package com.autilite.weightlifttracker.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutContract;
@@ -32,6 +34,7 @@ public class WorkoutSessionActivity extends AppCompatActivity {
     private long programId;
     private WorkoutProgramDbHelper workoutDb;
     private List<Workout> workouts;
+    private BottomSheetBehavior<View> bottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,10 @@ public class WorkoutSessionActivity extends AppCompatActivity {
 
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(pager);
+
+        // Setup bottom sheets
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet_layout));
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     // TODO refactor
