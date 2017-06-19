@@ -2,7 +2,6 @@ package com.autilite.weightlifttracker.fragment;
 
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import com.autilite.weightlifttracker.adapter.ExerciseSessionAdapter;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.program.Exercise;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -93,7 +91,7 @@ public class WorkoutSessionFragment extends Fragment {
 
         // Get the exercises for this workout
         workoutDb = new WorkoutProgramDbHelper(getActivity());
-        exercises = getAllExerciseInfo(id);
+        exercises = workoutDb.getAllExerciseInfoList(id);
         for (Exercise e :
                 exercises) {
             System.out.println(e.getName());
@@ -114,24 +112,6 @@ public class WorkoutSessionFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private List<Exercise> getAllExerciseInfo (long workoutId) {
-        List<Exercise> list = new LinkedList<>();
-
-        // Get list of exercise for workoutId
-        Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
-        while (eStat.moveToNext()) {
-            long exerciseId = eStat.getLong(0);
-            String exerciseName = eStat.getString(1);
-            int set = eStat.getInt(2);
-            int rep = eStat.getInt(3);
-            float weight = eStat.getFloat(4);
-            Exercise e = new Exercise(exerciseName, set, rep, weight);
-            list.add(e);
-        }
-        eStat.close();
-        return list;
     }
 
     @Override

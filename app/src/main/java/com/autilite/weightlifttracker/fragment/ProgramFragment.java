@@ -1,6 +1,5 @@
 package com.autilite.weightlifttracker.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -19,16 +18,12 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.adapter.ProgramAdapter;
-import com.autilite.weightlifttracker.database.ProgramContract;
-import com.autilite.weightlifttracker.database.ProgramWorkoutContract;
-import com.autilite.weightlifttracker.database.WorkoutContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.dialog.AbstractCreateDialog;
 import com.autilite.weightlifttracker.fragment.dialog.CreateProgramDialog;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -67,7 +62,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             }
         });
         workoutDb = new WorkoutProgramDbHelper(getActivity());
-        programs = getAllPrograms();
+        programs = workoutDb.getAllProgramsList();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
@@ -138,34 +133,4 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
         dialog.getDialog().cancel();
     }
 
-    public List<Program> getAllPrograms() {
-        List<Program> listOfPrograms = new ArrayList<>();
-        // Get Cursor of all program IDs
-        Cursor programs = workoutDb.getAllPrograms();
-
-        // For each programID, grab all its workouts
-        while(programs.moveToNext()) {
-            // Get program info
-            long progId = programs.getLong(programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
-            String progName = programs.getString(programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
-            Program p = new Program(progId, progName, "");
-
-            // Grab workouts associated with the program
-            Cursor programWorkouts = workoutDb.getProgramWorkoutTableJoinedWithName(progId);
-            while(programWorkouts.moveToNext()) {
-                // TODO add robust way of getting column index
-                long workoutId = programWorkouts.getLong(programWorkouts.getColumnIndex(
-                               ProgramWorkoutContract.ProgramWorkoutEntry.COLUMN_WORKOUT_ID));
-                String workoutName = programWorkouts.getString(programWorkouts.getColumnIndex(
-                                WorkoutContract.WorkoutEntry.COLUMN_NAME));
-                Workout w = new Workout(workoutId, workoutName);
-                p.addWorkout(w);
-            }
-            listOfPrograms.add(p);
-            programWorkouts.close();
-        }
-        programs.close();
-
-        return listOfPrograms;
-    }
 }

@@ -13,16 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.database.WorkoutContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,7 +56,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         String programName = workoutDb.getProgramName(programId);
         setTitle(programName);
 
-        workouts = getProgramWorkouts();
+        workouts = workoutDb.getProgramWorkouts(programId);
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         WorkoutPagerAdapter adapter = new WorkoutPagerAdapter(getSupportFragmentManager(), workouts);
@@ -74,37 +71,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         mExerciseTextView = (TextView) findViewById(R.id.bottom_sheet_heading);
         mSetTextView = (TextView) findViewById(R.id.bottom_sheet_set);
-    }
-
-    // TODO refactor
-    public List<Workout> getProgramWorkouts() {
-        // Get cursor with all workout Ids
-        Cursor workoutCursor = workoutDb.getProgramWorkoutTableJoinedWithName(programId);
-        List<Workout> workouts = new ArrayList<>();
-
-        // Go through each of the workoutId
-        while (workoutCursor.moveToNext()) {
-            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
-            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
-            Workout w = new Workout(workoutId, workoutName);
-
-            // Get list of exercise for workoutId
-            Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
-            while (eStat.moveToNext()) {
-                long exerciseId = eStat.getLong(0);
-                String exerciseName = eStat.getString(1);
-                int set = eStat.getInt(2);
-                int rep = eStat.getInt(3);
-                float weight = eStat.getFloat(4);
-                Exercise e = new Exercise(exerciseName, set, rep, weight);
-                w.addExercise(e);
-            }
-            workouts.add(w);
-            eStat.close();
-
-        }
-        workoutCursor.close();
-        return workouts;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.autilite.weightlifttracker.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -18,14 +17,12 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
-import com.autilite.weightlifttracker.database.WorkoutContract;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.dialog.AbstractCreateDialog;
 import com.autilite.weightlifttracker.fragment.dialog.CreateWorkoutDialog;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -63,7 +60,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
             }
         });
         workoutDb = new WorkoutProgramDbHelper(getActivity());
-        workouts = getAllWorkouts();
+        workouts = workoutDb.getAllWorkoutsList();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -141,36 +138,6 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         dialog.getDialog().cancel();
-    }
-
-    public List<Workout> getAllWorkouts() {
-        // Get cursor with all workout Ids
-        Cursor workoutCursor = workoutDb.getAllWorkouts();
-        List<Workout> workouts = new ArrayList<>();
-
-        // Go through each of the workoutId
-        while (workoutCursor.moveToNext()) {
-            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
-            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
-            Workout w = new Workout(workoutId, workoutName);
-
-            // Get list of exercise for workoutId
-            Cursor eStat = workoutDb.getAllExerciseStatForWorkout(workoutId);
-            while (eStat.moveToNext()) {
-                long exerciseId = eStat.getLong(0);
-                String exerciseName = eStat.getString(1);
-                int set = eStat.getInt(2);
-                int rep = eStat.getInt(3);
-                float weight = eStat.getFloat(4);
-                Exercise e = new Exercise(exerciseName, set, rep, weight);
-                w.addExercise(e);
-            }
-            workouts.add(w);
-            eStat.close();
-
-        }
-        workoutCursor.close();
-        return workouts;
     }
 
 }

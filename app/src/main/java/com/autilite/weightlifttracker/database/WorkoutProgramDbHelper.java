@@ -6,6 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.program.Program;
+import com.autilite.weightlifttracker.program.Workout;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import static com.autilite.weightlifttracker.database.ExerciseInfoContract.ExerciseInfoEntry;
 import static com.autilite.weightlifttracker.database.ExerciseStatContract.ExerciseStatEntry;
 import static com.autilite.weightlifttracker.database.WorkoutContract.WorkoutEntry;
@@ -319,4 +327,114 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         cursor.close();
         return exist;
     }
+
+    public List<Program> getAllProgramsList() {
+        List<Program> listOfPrograms = new ArrayList<>();
+        // Get Cursor of all program IDs
+        Cursor programs = getAllPrograms();
+
+        // For each programID, grab all its workouts
+        while(programs.moveToNext()) {
+            // Get program info
+            long progId = programs.getLong(programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
+            String progName = programs.getString(programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
+            Program p = new Program(progId, progName, "");
+
+            // Grab workouts associated with the program
+            Cursor programWorkouts = getProgramWorkoutTableJoinedWithName(progId);
+            while(programWorkouts.moveToNext()) {
+                // TODO add robust way of getting column index
+                long workoutId = programWorkouts.getLong(programWorkouts.getColumnIndex(
+                        ProgramWorkoutContract.ProgramWorkoutEntry.COLUMN_WORKOUT_ID));
+                String workoutName = programWorkouts.getString(programWorkouts.getColumnIndex(
+                        WorkoutContract.WorkoutEntry.COLUMN_NAME));
+                Workout w = new Workout(workoutId, workoutName);
+                p.addWorkout(w);
+            }
+            listOfPrograms.add(p);
+            programWorkouts.close();
+        }
+        programs.close();
+
+        return listOfPrograms;
+    }
+
+    public List<Workout> getProgramWorkouts(long programId) {
+        // Get cursor with all workout Ids
+        Cursor workoutCursor = getProgramWorkoutTableJoinedWithName(programId);
+        List<Workout> workouts = new ArrayList<>();
+
+        // Go through each of the workoutId
+        while (workoutCursor.moveToNext()) {
+            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
+            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
+            Workout w = new Workout(workoutId, workoutName);
+
+            // Get list of exercise for workoutId
+            Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+            while (eStat.moveToNext()) {
+                long exerciseId = eStat.getLong(0);
+                String exerciseName = eStat.getString(1);
+                int set = eStat.getInt(2);
+                int rep = eStat.getInt(3);
+                float weight = eStat.getFloat(4);
+                Exercise e = new Exercise(exerciseName, set, rep, weight);
+                w.addExercise(e);
+            }
+            workouts.add(w);
+            eStat.close();
+
+        }
+        workoutCursor.close();
+        return workouts;
+    }
+
+    public List<Workout> getAllWorkoutsList() {
+        // Get cursor with all workout Ids
+        Cursor workoutCursor = getAllWorkouts();
+        List<Workout> workouts = new ArrayList<>();
+
+        // Go through each of the workoutId
+        while (workoutCursor.moveToNext()) {
+            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
+            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
+            Workout w = new Workout(workoutId, workoutName);
+
+            // Get list of exercise for workoutId
+            Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+            while (eStat.moveToNext()) {
+                long exerciseId = eStat.getLong(0);
+                String exerciseName = eStat.getString(1);
+                int set = eStat.getInt(2);
+                int rep = eStat.getInt(3);
+                float weight = eStat.getFloat(4);
+                Exercise e = new Exercise(exerciseName, set, rep, weight);
+                w.addExercise(e);
+            }
+            workouts.add(w);
+            eStat.close();
+
+        }
+        workoutCursor.close();
+        return workouts;
+    }
+
+    public List<Exercise> getAllExerciseInfoList (long workoutId) {
+        List<Exercise> list = new LinkedList<>();
+
+        // Get list of exercise for workoutId
+        Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+        while (eStat.moveToNext()) {
+            long exerciseId = eStat.getLong(0);
+            String exerciseName = eStat.getString(1);
+            int set = eStat.getInt(2);
+            int rep = eStat.getInt(3);
+            float weight = eStat.getFloat(4);
+            Exercise e = new Exercise(exerciseName, set, rep, weight);
+            list.add(e);
+        }
+        eStat.close();
+        return list;
+    }
+
 }
