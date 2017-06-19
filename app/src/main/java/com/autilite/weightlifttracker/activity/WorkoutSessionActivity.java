@@ -1,7 +1,6 @@
 package com.autilite.weightlifttracker.activity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
@@ -33,6 +32,9 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private long programId;
     private WorkoutProgramDbHelper workoutDb;
     private List<Workout> workouts;
+
+    private ViewPager mPager;
+    private WorkoutPagerAdapter mAdapter;
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
     private Exercise mSelectedExercise;
@@ -48,24 +50,33 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         setContentView(R.layout.activity_workout_session);
 
+        workoutDb = new WorkoutProgramDbHelper(this);
+        workouts = workoutDb.getProgramWorkouts(programId);
+
+        setupToolbar();
+        setupPager();
+        setupBottomSheets();
+    }
+
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        workoutDb = new WorkoutProgramDbHelper(this);
         String programName = workoutDb.getProgramName(programId);
         setTitle(programName);
+    }
 
-        workouts = workoutDb.getProgramWorkouts(programId);
-
-        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
-        WorkoutPagerAdapter adapter = new WorkoutPagerAdapter(getSupportFragmentManager(), workouts);
-        pager.setAdapter(adapter);
+    private void setupPager() {
+        mPager = (ViewPager) findViewById(R.id.view_pager);
+        mAdapter = new WorkoutPagerAdapter(getSupportFragmentManager(), workouts);
+        mPager.setAdapter(mAdapter);
 
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(pager);
+        tabs.setupWithViewPager(mPager);
+    }
 
-        // Setup bottom sheets
+    private void setupBottomSheets() {
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet_layout));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
@@ -78,6 +89,12 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     public void onExerciseSelected(Exercise e) {
         mSelectedExercise = e;
         mExerciseTextView.setText(mSelectedExercise.getName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        workoutDb.close();
+        super.onDestroy();
     }
 
     private class WorkoutPagerAdapter extends FragmentPagerAdapter {
@@ -103,11 +120,5 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         public int getCount() {
             return workouts.size();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        workoutDb.close();
-        super.onDestroy();
     }
 }
