@@ -70,6 +70,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
         mExerciseTextView = (TextView) findViewById(R.id.bottom_sheet_heading);
+        mExerciseTextView.setText(R.string.choose_exercise);
         mSetTextView = (TextView) findViewById(R.id.bottom_sheet_set);
     }
 

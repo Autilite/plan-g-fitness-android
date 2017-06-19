@@ -13,7 +13,7 @@
     <string name="nav_send_feedback">Send feedback</string>
 
     <string name="create_workout_title">Create a workout</string>
-    <string name="choose_exercise">Choose exercise</string>
+    <string name="choose_exercise">Select an exercise</string>
     <string name="exercises">Exercises</string>
     <string name="add_row">Add new row</string>
     <string name="sets">Sets</string>
@@ -24,10 +24,10 @@
     <string name="workout_name">Workout Name</string>
 
     <string name="create_program_title">Create a program</string>
-    <string name="choose_program">Choose a program</string>
+    <string name="choose_program">Select a program</string>
     <string name="program_name">Program Name</string>
     <string name="programs">Programs</string>
-    <string name="choose_workout">Choose workout</string>
+    <string name="choose_workout">Select a workout</string>
     <string name="day">Day</string>
     <string name="start_session">Start Workout</string>
 
