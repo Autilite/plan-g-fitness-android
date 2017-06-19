@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
@@ -36,6 +37,10 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private WorkoutProgramDbHelper workoutDb;
     private List<Workout> workouts;
     private BottomSheetBehavior<View> bottomSheetBehavior;
+
+    private Exercise mSelectedExercise;
+    private TextView mExerciseTextView;
+    private TextView mSetTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,9 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         // Setup bottom sheets
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet_layout));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        mExerciseTextView = (TextView) findViewById(R.id.bottom_sheet_heading);
+        mSetTextView = (TextView) findViewById(R.id.bottom_sheet_set);
     }
 
     // TODO refactor
@@ -101,8 +109,8 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
     @Override
     public void onExerciseSelected(Exercise e) {
-        // TODO alert bottom sheet
-        Toast.makeText(this, "Clicked on exercise " + e.getName(), Toast.LENGTH_SHORT).show();
+        mSelectedExercise = e;
+        mExerciseTextView.setText(mSelectedExercise.getName());
     }
 
     private class WorkoutPagerAdapter extends FragmentPagerAdapter {
