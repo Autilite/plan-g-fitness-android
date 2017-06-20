@@ -8,6 +8,8 @@ import java.util.Map;
  */
 
 public class Session {
+    public static final int EXERCISE_COMPLETE = -1;
+
     private long date;
     private Map<Exercise, ExerciseSession> sessionMap;
 

@@ -12,27 +12,34 @@
 
     <TextView
         android:id="@+id/bottom_sheet_heading"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceLarge"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        />
+        android:layout_toStartOf="@+id/bottom_sheet_set"
+        android:layout_toLeftOf="@+id/bottom_sheet_set" />
 
     <TextView
         android:id="@+id/bottom_sheet_set"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/bottom_sheet_heading"
-        android:layout_alignRight="@id/bottom_sheet_heading" />
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        />
 
     <TextView
         android:id="@+id/bottom_sheet_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/bottom_sheet_set"
-        android:layout_alignRight="@id/bottom_sheet_set" />
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

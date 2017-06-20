@@ -78,7 +78,7 @@ class ExerciseSession {
         // return -1 if session is over
         // i.e., currentSet > sets
         if (currentSet > sets) {
-            return -1;
+            return Session.EXERCISE_COMPLETE;
         } else {
             return currentSet;
         }
