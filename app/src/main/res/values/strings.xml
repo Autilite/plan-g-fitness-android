@@ -33,6 +33,7 @@
     <string name="start_session">Start Workout</string>
 
     <string name="exercise_complete">Complete</string>
+    <string name="expand_exercise_details">Expand exercise details</string>
 
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>

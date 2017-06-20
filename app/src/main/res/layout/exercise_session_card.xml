@@ -44,6 +44,24 @@
                 android:text="&#8942;"
                 android:textAppearance="?android:textAppearanceMedium" />
 
+            <ImageView
+                android:id="@+id/expand_exercises"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/exercise_options"
+                android:padding="@dimen/option_button_padding"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/expand_exercise_details" />
+
+            <com.autilite.weightlifttracker.widget.ExtendableListView
+                android:id="@+id/exercise_details"
+                android:layout_below="@+id/expand_exercises"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </com.autilite.weightlifttracker.widget.ExtendableListView>
+
         </RelativeLayout>
+
     </android.support.v7.widget.CardView>
 </LinearLayout>
