@@ -34,15 +34,16 @@
                 android:layout_below="@+id/exercise_name"
                 android:textAppearance="?android:textAppearanceSmall"/>
 
-            <TextView
+            <ImageView
                 android:id="@+id/exercise_options"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:text="&#8942;"
-                android:textAppearance="?android:textAppearanceMedium" />
+                android:padding="@dimen/option_button_padding"
+                app:srcCompat="@drawable/ic_more_vert_black_24dp"
+                android:contentDescription="@string/select_additional_options" />
 
             <ImageView
                 android:id="@+id/expand_exercises"

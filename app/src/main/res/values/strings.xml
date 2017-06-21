@@ -35,6 +35,11 @@
     <string name="exercise_complete">Complete</string>
     <string name="expand_exercise_details">Expand exercise details</string>
 
+    <string name="select_additional_options">Select additional options</string>
+    <string name="add_set">Add set</string>
+    <string name="edit">Edit</string>
+    <string name="mark_complete">Mark all complete</string>
+
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
     </string>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/option_add_set"
+        android:title="@string/add_set" />
+    <item
+        android:id="@+id/option_edit"
+        android:title="@string/edit" />
+    <item
+        android:id="@+id/option_mark_complete"
+        android:title="@string/mark_complete" />
+</menu>

@@ -1,8 +1,10 @@
 package com.autilite.weightlifttracker.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -31,7 +33,7 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
 
         private TextView name;
         private TextView sets;
-        private TextView btnOptions;
+        private ImageView btnOptions;
         private ImageView expandExercises;
         private ExtendableListView listView;
 
@@ -41,7 +43,7 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.exercise_name);
             sets = (TextView) itemView.findViewById(R.id.complete_sets);
-            btnOptions = (TextView) itemView.findViewById(R.id.exercise_options);
+            btnOptions = (ImageView) itemView.findViewById(R.id.exercise_options);
             expandExercises = (ImageView) itemView.findViewById(R.id.expand_exercises);
             listView = (ExtendableListView) itemView.findViewById(R.id.exercise_details);
             listView.setVisibility(View.GONE);
@@ -87,7 +89,29 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
         holder.btnOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                PopupMenu menu = new PopupMenu(mContext, view);
+                menu.getMenuInflater().inflate(R.menu.options_session_exercise, menu.getMenu());
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return onMenuClick(item);
+                    }
+                });
+                menu.show();
+            }
+
+            private boolean onMenuClick(MenuItem item) {
+                // TODO add menu click functionality
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.option_add_set:
+                        break;
+                    case R.id.option_edit:
+                        break;
+                    case R.id.option_mark_complete:
+                        break;
+                }
+                return true;
             }
         });
 
