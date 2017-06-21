@@ -43,6 +43,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
     private Exercise mSelectedExercise;
+
     private TextView mExerciseTextView;
     private TextView mSetTextView;
     private TextView mTimerTextView;
@@ -121,6 +122,8 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                     weight = 0;
                 }
                 if (session.completeSet(mSelectedExercise, reps, weight)) {
+                    mSelectedExercise.setReps(reps);
+                    mSelectedExercise.setWeight(weight);
                     updateBottomSheetView();
                     // TODO reset timer
                 }
@@ -134,8 +137,10 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             mFab.setVisibility(View.VISIBLE);
         }
 
-        mSelectedExercise = e;
-        updateBottomSheetView();
+        if (e != null && !e.equals(mSelectedExercise)) {
+            mSelectedExercise = e;
+            updateBottomSheetView();
+        }
     }
 
     private void updateBottomSheetView() {
@@ -148,6 +153,9 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         String s = currentSet != Session.EXERCISE_COMPLETE ? setString : completeSet;
         mSetTextView.setText(s);
+
+        mRepEditText.setText(String.valueOf(mSelectedExercise.getReps()));
+        mWeightEditText.setText(String.valueOf(mSelectedExercise.getWeight()));
     }
 
     @Override
