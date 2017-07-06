@@ -1,6 +1,7 @@
 package com.autilite.weightlifttracker.program;
 
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Kelvin on Jun 19, 2017.
@@ -9,18 +10,16 @@ import java.util.Arrays;
 class ExerciseSession {
     private static final int INCOMPLETE_SET = -1;
 
-    private int sets;
-    private int[] reps;
-    private float[] weight;
     private int currentSet;
+    private List<SetSession> setSessions;
 
     ExerciseSession(int maxSets) {
-        sets = maxSets;
-        // add an extra entry for checking EOF in increment set
-        reps = new int[sets + 1];
-        weight = new float[sets + 1];
-        Arrays.fill(reps, INCOMPLETE_SET);
-        Arrays.fill(weight, INCOMPLETE_SET);
+        setSessions = new LinkedList<>();
+
+        for (int i = 1; i <= maxSets; i++) {
+            SetSession s = new SetSession(i, INCOMPLETE_SET, INCOMPLETE_SET);
+            setSessions.add(s);
+        }
         currentSet = 1;
     }
 
@@ -34,36 +33,42 @@ class ExerciseSession {
      *          true: paramters added to the session
      */
     boolean completeSet(int set, int reps, float weight) {
-        // this.reps and this.weight are 0-index whereas set is 1-index
-        if (set == currentSet) {
-            return completeSet(reps, weight);
-        } else if (set <= 0 || set > this.sets) {
-            return false;
-        } else if (reps < 0 || weight < 0) {
+        if (reps < 0 || weight < 0) {
             return false;
         }
-        this.reps[set-1] = reps;
-        this.weight[set-1] = weight;
-        return true;
+        try {
+            int index = set - 1;
+            SetSession s = setSessions.get(index);
+            s.setReps(reps);
+            s.setWeight(reps);
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 
     boolean completeSet(int reps, float weight) {
-        if (currentSet > sets) {
-            return false;
-        } else if (reps < 0 || weight < 0) {
-            return false;
+        if (completeSet(currentSet, reps, weight)) {
+            incrementCurrentSet();
+            return true;
         }
-        this.reps[currentSet-1] = reps;
-        this.weight[currentSet-1] = weight;
-        incrementCurrentSet();
         return true;
     }
 
     private void incrementCurrentSet() {
-        for (int i = currentSet; i <= sets; i++) {
+        if (currentSet == setSessions.size()) {
+            // Set the value to be 1 value outside the outer bound.
+            // This can be used to distinguish a complete set
+            // while keeping the counter consistent for when a new set is added.
+            currentSet++;
+            return;
+        }
+        // Find the first incomplete set
+        for (int i = currentSet; i < setSessions.size(); i++) {
             // current set is 1-index whereas reps[] is 0-index
-            // -> checking reps[currentSet] is the next entry
-            if (reps[i] == INCOMPLETE_SET) {
+            // -> checking currentSet is the next entry
+            SetSession s = setSessions.get(i);
+            if (s.getReps() == INCOMPLETE_SET) {
                 currentSet = i + 1;
                 break;
             }
@@ -77,7 +82,7 @@ class ExerciseSession {
     int getCurrentSet() {
         // return -1 if session is over
         // i.e., currentSet > sets
-        if (currentSet > sets) {
+        if (currentSet > setSessions.size()) {
             return Session.EXERCISE_COMPLETE;
         } else {
             return currentSet;
