@@ -10,4 +10,5 @@
     <dimen name="card_vertical_margin">5dp</dimen>
     <dimen name="bottom_sheet_padding">16dp</dimen>
     <dimen name="option_button_padding">4dp</dimen>
+    <dimen name="list_item_padding">8dp</dimen>
 </resources>

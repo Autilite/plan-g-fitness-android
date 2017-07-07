@@ -80,11 +80,7 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
 
         // Setup exercise sets
         holder.expandExercises.setImageResource(holder.expandedIcon);
-        String[] sets = new String[e.getSets()];
-        for (int i = 0; i < e.getSets(); ++i) {
-            sets[i] = String.valueOf(i+1);
-        }
-        ArrayAdapter adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1,sets);
+        ExerciseSessionItemAdapter adapter = new ExerciseSessionItemAdapter(mContext, R.layout.session_exercise_item_listview, es.getSetSessions());
         holder.listView.setAdapter(adapter);
 
         holder.btnOptions.setOnClickListener(new View.OnClickListener() {
