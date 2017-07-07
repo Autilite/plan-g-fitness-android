@@ -94,6 +94,16 @@ public class ExerciseSession {
         }
     }
 
+    public int getNumCompleteSets() {
+        int counter = 0;
+        for (SetSession set: setSessions) {
+            if (set.getReps() != INCOMPLETE_SET) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
     public List<SetSession> getSetSessions() {
         return setSessions;
     }

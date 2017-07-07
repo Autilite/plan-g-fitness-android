@@ -75,7 +75,8 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
         ExerciseSession es = session.get(position);
         Exercise e = es.getExercise();
         holder.name.setText(e.getName());
-        String completeSet = "Complete set: /" + e.getSets();
+        String completeSet = mContext.getString(R.string.complete_set) + ": "
+                + es.getNumCompleteSets() + "/" + e.getSets();
         holder.sets.setText(completeSet);
 
         // Setup exercise sets
