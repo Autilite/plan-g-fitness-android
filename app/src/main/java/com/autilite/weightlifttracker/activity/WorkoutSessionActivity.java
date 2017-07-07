@@ -20,7 +20,6 @@ import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
-import com.autilite.weightlifttracker.program.session.Session;
 import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.List;
@@ -36,14 +35,13 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private long programId;
     private WorkoutProgramDbHelper workoutDb;
     private List<Workout> workouts;
-    private Session session;
 
     private ViewPager mPager;
     private WorkoutPagerAdapter mAdapter;
     private FloatingActionButton mFab;
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
-    private Exercise mSelectedExercise;
+    private ExerciseSession mExerciseSession;
 
     private TextView mExerciseTextView;
     private TextView mSetTextView;
@@ -68,7 +66,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         setupBottomSheets();
         setupFab();
 
-        session = new Session();
     }
 
     private void setupToolbar() {
@@ -122,9 +119,10 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                 } catch (NumberFormatException e) {
                     weight = 0;
                 }
-                if (session.completeSet(mSelectedExercise, reps, weight)) {
-                    mSelectedExercise.setReps(reps);
-                    mSelectedExercise.setWeight(weight);
+                if (mExerciseSession.completeSet(reps, weight)) {
+                    Exercise exercise = mExerciseSession.getExercise();
+                    exercise.setReps(reps);
+                    exercise.setWeight(weight);
                     updateBottomSheetView();
                     // TODO reset timer
                 }
@@ -138,26 +136,26 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             mFab.setVisibility(View.VISIBLE);
         }
 
-        if (es != null && !es.getExercise().equals(mSelectedExercise)) {
-            // TODO store the exercise session
-            mSelectedExercise = es.getExercise();
+        if (es != null && !es.getExercise().equals(mExerciseSession)) {
+            mExerciseSession = es;
             updateBottomSheetView();
         }
     }
 
     private void updateBottomSheetView() {
-        mExerciseTextView.setText(mSelectedExercise.getName());
+        Exercise e = mExerciseSession.getExercise();
+        mExerciseTextView.setText(e.getName());
 
-        int currentSet = session.getCurrentSet(mSelectedExercise);
+        int currentSet = mExerciseSession.getCurrentSet();
         String setString = getResources().getString(R.string.set) + " "
-                + currentSet + "/" + mSelectedExercise.getSets();
+                + currentSet + "/" + e.getSets();
         String completeSet = getResources().getString(R.string.exercise_complete);
 
-        String s = currentSet != Session.EXERCISE_COMPLETE ? setString : completeSet;
+        String s = currentSet != ExerciseSession.EXERCISE_COMPLETE ? setString : completeSet;
         mSetTextView.setText(s);
 
-        mRepEditText.setText(String.valueOf(mSelectedExercise.getReps()));
-        mWeightEditText.setText(String.valueOf(mSelectedExercise.getWeight()));
+        mRepEditText.setText(String.valueOf(e.getReps()));
+        mWeightEditText.setText(String.valueOf(e.getWeight()));
     }
 
     @Override

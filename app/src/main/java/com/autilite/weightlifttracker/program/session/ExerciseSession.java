@@ -10,6 +10,7 @@ import java.util.List;
  */
 
 public class ExerciseSession {
+    public static final int EXERCISE_COMPLETE = -1;
     private static final int INCOMPLETE_SET = -1;
 
     private Exercise exercise;
@@ -87,7 +88,7 @@ public class ExerciseSession {
         // return -1 if session is over
         // i.e., currentSet > sets
         if (currentSet > setSessions.size()) {
-            return Session.EXERCISE_COMPLETE;
+            return EXERCISE_COMPLETE;
         } else {
             return currentSet;
         }
