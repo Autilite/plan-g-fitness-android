@@ -1,5 +1,7 @@
 package com.autilite.weightlifttracker.program.session;
 
+import com.autilite.weightlifttracker.program.Exercise;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,16 +9,18 @@ import java.util.List;
  * Created by Kelvin on Jun 19, 2017.
  */
 
-class ExerciseSession {
+public class ExerciseSession {
     private static final int INCOMPLETE_SET = -1;
 
+    private Exercise exercise;
     private int currentSet;
     private List<SetSession> setSessions;
 
-    ExerciseSession(int maxSets) {
+    public ExerciseSession(Exercise exercise) {
+        this.exercise = exercise;
         setSessions = new LinkedList<>();
 
-        for (int i = 1; i <= maxSets; i++) {
+        for (int i = 1; i <= exercise.getSets(); i++) {
             SetSession s = new SetSession(i, INCOMPLETE_SET, INCOMPLETE_SET);
             setSessions.add(s);
         }
@@ -32,7 +36,7 @@ class ExerciseSession {
      * @return  false: parameters invalid and were not added to session
      *          true: paramters added to the session
      */
-    boolean completeSet(int set, int reps, float weight) {
+    public boolean completeSet(int set, int reps, float weight) {
         if (reps < 0 || weight < 0) {
             return false;
         }
@@ -47,7 +51,7 @@ class ExerciseSession {
         }
     }
 
-    boolean completeSet(int reps, float weight) {
+    public boolean completeSet(int reps, float weight) {
         if (completeSet(currentSet, reps, weight)) {
             incrementCurrentSet();
             return true;
@@ -76,10 +80,10 @@ class ExerciseSession {
     }
 
     /**
-     * Return the current set or -1 if all sets are complete
+     * Return the current set or Session.EXERCISE_COMPLETE if all sets are complete
      * @return
      */
-    int getCurrentSet() {
+    public int getCurrentSet() {
         // return -1 if session is over
         // i.e., currentSet > sets
         if (currentSet > setSessions.size()) {
@@ -87,5 +91,13 @@ class ExerciseSession {
         } else {
             return currentSet;
         }
+    }
+
+    public List<SetSession> getSetSessions() {
+        return setSessions;
+    }
+
+    public Exercise getExercise() {
+        return exercise;
     }
 }

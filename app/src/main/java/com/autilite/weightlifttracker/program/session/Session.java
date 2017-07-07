@@ -62,7 +62,7 @@ public class Session {
      * @return
      */
     private ExerciseSession putNewExerciseSession(Exercise e) {
-        ExerciseSession es = new ExerciseSession(e.getSets());
+        ExerciseSession es = new ExerciseSession(e);
         sessionMap.put(e, es);
         return es;
     }

@@ -19,6 +19,7 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.program.session.Session;
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -132,13 +133,14 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     }
 
     @Override
-    public void onExerciseSelected(Exercise e) {
+    public void onExerciseSelected(ExerciseSession es) {
         if (mFab.getVisibility() == View.GONE) {
             mFab.setVisibility(View.VISIBLE);
         }
 
-        if (e != null && !e.equals(mSelectedExercise)) {
-            mSelectedExercise = e;
+        if (es != null && !es.getExercise().equals(mSelectedExercise)) {
+            // TODO store the exercise session
+            mSelectedExercise = es.getExercise();
             updateBottomSheetView();
         }
     }

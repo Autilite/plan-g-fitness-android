@@ -14,7 +14,9 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.adapter.ExerciseSessionAdapter;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.program.session.ExerciseSession;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -30,7 +32,7 @@ public class WorkoutSessionFragment extends Fragment {
 
     private long id;
     private String name;
-    private List<Exercise> exercises;
+    private List<ExerciseSession> session;
 
     private WorkoutProgramDbHelper workoutDb;
     private RecyclerView mRecyclerView;
@@ -76,6 +78,7 @@ public class WorkoutSessionFragment extends Fragment {
         if (getArguments() != null) {
             id = getArguments().getLong(ARG_ID);
             name = getArguments().getString(ARG_NAME);
+            session = new LinkedList<>();
         }
     }
 
@@ -91,23 +94,23 @@ public class WorkoutSessionFragment extends Fragment {
 
         // Get the exercises for this workout
         workoutDb = new WorkoutProgramDbHelper(getActivity());
-        exercises = workoutDb.getAllExerciseInfoList(id);
-        for (Exercise e :
-                exercises) {
-            System.out.println(e.getName());
+        List<Exercise> exercises = workoutDb.getAllExerciseInfoList(id);
+        for (Exercise e: exercises) {
+            ExerciseSession es = new ExerciseSession(e);
+            session.add(es);
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new ExerciseSessionAdapter(getActivity(), exercises);
+        mAdapter = new ExerciseSessionAdapter(getActivity(), session);
         mRecyclerView.setAdapter(mAdapter);
 
         mAdapter.setOnItemClickListener(new ExerciseSessionAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View itemView, Exercise exercise) {
-                mListener.onExerciseSelected(exercise);
+            public void onItemClick(View itemView, ExerciseSession session) {
+                mListener.onExerciseSelected(session);
             }
         });
 
@@ -121,6 +124,6 @@ public class WorkoutSessionFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onExerciseSelected(Exercise e);
+        void onExerciseSelected(ExerciseSession es);
     }
 }

@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.widget.ExtendableListView;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSessionAdapter.ExerciseSessionViewHolder> {
 
     private Context mContext;
-    private final List<Exercise> exercises;
+    private final List<ExerciseSession> session;
     private OnItemClickListener mListener;
 
     public class ExerciseSessionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -54,14 +54,14 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
         @Override
         public void onClick(View view) {
             if (mListener !=  null) {
-                mListener.onItemClick(view, exercises.get(getAdapterPosition()));
+                mListener.onItemClick(view, session.get(getAdapterPosition()));
             }
         }
     }
 
-    public ExerciseSessionAdapter(Context mContext, List<Exercise> exercises) {
+    public ExerciseSessionAdapter(Context mContext, List<ExerciseSession> exerciseSession) {
         this.mContext = mContext;
-        this.exercises = exercises;
+        this.session = exerciseSession;
     }
 
     @Override
@@ -72,7 +72,8 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
 
     @Override
     public void onBindViewHolder(final ExerciseSessionViewHolder holder, int position) {
-        Exercise e = exercises.get(position);
+        ExerciseSession es = session.get(position);
+        Exercise e = es.getExercise();
         holder.name.setText(e.getName());
         String completeSet = "Complete set: /" + e.getSets();
         holder.sets.setText(completeSet);
@@ -132,11 +133,11 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
 
     @Override
     public int getItemCount() {
-        return exercises.size();
+        return session.size();
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View itemView, Exercise exercise);
+        void onItemClick(View itemView, ExerciseSession session);
     }
 
 }
