@@ -45,7 +45,7 @@ public class ExerciseSession {
             int index = set - 1;
             SetSession s = setSessions.get(index);
             s.setReps(reps);
-            s.setWeight(reps);
+            s.setWeight(weight);
             return true;
         } catch (IndexOutOfBoundsException e) {
             return false;
