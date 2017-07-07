@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.autilite.weightlifttracker.IAdapterUpdate;
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.adapter.ExerciseSessionAdapter;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
@@ -24,7 +25,7 @@ import java.util.List;
  * Use the {@link WorkoutSessionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WorkoutSessionFragment extends Fragment {
+public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
     private static final String ARG_ID = "ID";
     private static final String ARG_NAME = "NAME";
 
@@ -121,6 +122,11 @@ public class WorkoutSessionFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void notifyAdapterDataChanged() {
+        mAdapter.notifyDataSetChanged();
     }
 
     public interface OnFragmentInteractionListener {

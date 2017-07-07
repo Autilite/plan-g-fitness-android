@@ -123,6 +123,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                     Exercise exercise = mExerciseSession.getExercise();
                     exercise.setReps(reps);
                     exercise.setWeight(weight);
+                    mPager.getAdapter().notifyDataSetChanged();
                     updateBottomSheetView();
                     // TODO reset timer
                 }
@@ -176,6 +177,15 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         public Fragment getItem(int position) {
             Workout w = workouts.get(position);
             return WorkoutSessionFragment.newInstance(w.getId(), w.getName());
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            WorkoutSessionFragment fragment = (WorkoutSessionFragment) object;
+            if (fragment != null) {
+                fragment.notifyAdapterDataChanged();
+            }
+            return super.getItemPosition(object);
         }
 
         @Override
