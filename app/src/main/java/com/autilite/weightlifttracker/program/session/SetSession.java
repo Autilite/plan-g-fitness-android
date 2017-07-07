@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker.program;
+package com.autilite.weightlifttracker.program.session;
 
 /**
  * Created by Kelvin on Jul 5, 2017.

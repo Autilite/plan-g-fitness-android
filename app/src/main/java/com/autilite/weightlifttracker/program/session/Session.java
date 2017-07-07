@@ -1,4 +1,6 @@
-package com.autilite.weightlifttracker.program;
+package com.autilite.weightlifttracker.program.session;
+
+import com.autilite.weightlifttracker.program.Exercise;
 
 import java.util.HashMap;
 import java.util.Map;

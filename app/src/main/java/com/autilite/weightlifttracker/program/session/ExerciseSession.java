@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker.program;
+package com.autilite.weightlifttracker.program.session;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -19,7 +19,7 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
-import com.autilite.weightlifttracker.program.Session;
+import com.autilite.weightlifttracker.program.session.Session;
 import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.List;
