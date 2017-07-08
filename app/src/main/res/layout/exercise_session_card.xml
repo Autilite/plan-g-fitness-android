@@ -18,17 +18,22 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:layout_height="wrap_content" >
 
             <TextView
                 android:id="@+id/exercise_name"
+                android:paddingStart="@dimen/list_item_padding"
+                android:paddingEnd="@dimen/list_item_padding"
+                android:paddingTop="@dimen/list_item_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:textAppearanceMedium"/>
 
             <TextView
                 android:id="@+id/complete_sets"
+                android:paddingStart="@dimen/list_item_padding"
+                android:paddingEnd="@dimen/list_item_padding"
+                android:paddingBottom="@dimen/list_item_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/exercise_name"
