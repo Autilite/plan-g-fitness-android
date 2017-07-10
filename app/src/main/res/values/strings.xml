@@ -31,6 +31,7 @@
     <string name="choose_workout">Select a workout</string>
     <string name="day">Day</string>
     <string name="start_session">Start Workout</string>
+    <string name="finish_workout">Finish</string>
 
     <string name="exercise_complete">Complete</string>
     <string name="complete_set">Complete sets</string>

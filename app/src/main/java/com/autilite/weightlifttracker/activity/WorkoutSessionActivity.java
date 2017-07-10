@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -66,6 +68,24 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         setupBottomSheets();
         setupFab();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.workout_session, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch(id) {
+            case R.id.option_finish_workout:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setupToolbar() {
