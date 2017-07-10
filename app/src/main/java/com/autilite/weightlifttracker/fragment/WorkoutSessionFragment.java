@@ -39,6 +39,7 @@ public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
     private RecyclerView mRecyclerView;
     private ExerciseSessionAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
+    private View view;
 
 
     public WorkoutSessionFragment() {
@@ -86,8 +87,12 @@ public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Return the view if it has already been instantiated
+        if (view != null)
+            return view;
+
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recycle_view, container, false);
+        view = inflater.inflate(R.layout.fragment_recycle_view, container, false);
 
         // Disable fab
         View fab = view.findViewById(R.id.fab);
