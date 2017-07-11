@@ -5,30 +5,36 @@ package com.autilite.weightlifttracker.program;
  */
 
 public class Exercise {
+    private final long id;
     private String name;
     private int sets;
     private int reps;
-    private float weight;
+    private double weight;
     private float weightIncrement;
     private int restTime;           // In seconds
 
-    public Exercise(String name, int sets, int reps, float weight) {
+    public Exercise(long id, String name, int sets, int reps, double weight) {
         // TODO configurable default values
-        this(name, sets, reps, weight, 5);
+        this(id, name, sets, reps, weight, 5);
     }
 
-    public Exercise(String name, int sets, int reps, float weight, float weightIncrement) {
+    public Exercise(long id, String name, int sets, int reps, double weight, float weightIncrement) {
         // TODO configurable default values
-        this(name, sets, reps, weight, 5, 90);
+        this(id, name, sets, reps, weight, weightIncrement, 90);
     }
 
-    public Exercise(String name, int sets, int reps, float weight, float increment, int restTime) {
+    public Exercise(long id, String name, int sets, int reps, double weight, float weightIncrement, int restTime) {
+        this.id = id;
         this.name = name;
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
-        this.weightIncrement = increment;
+        this.weightIncrement = weightIncrement;
         this.restTime = restTime;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -55,7 +61,7 @@ public class Exercise {
         this.reps = reps;
     }
 
-    public float getWeight() {
+    public double getWeight() {
         return weight;
     }
 
@@ -71,7 +77,7 @@ public class Exercise {
         this.weightIncrement = weightIncrement;
     }
 
-    public long getRestTime() {
+    public int getRestTime() {
         return restTime;
     }
 

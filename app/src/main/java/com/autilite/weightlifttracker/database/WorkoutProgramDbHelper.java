@@ -207,13 +207,13 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
     }
 
-    public boolean addExerciseToWorkout(long workoutId, long exerciseStatId) {
+    public long addExerciseToWorkout(long workoutId, long exerciseStatId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues cv = new ContentValues();
         cv.put(WorkoutListEntry.COLUMN_WORKOUT_ID, workoutId);
         cv.put(WorkoutListEntry.COLUMN_EXERCISE_ID, exerciseStatId);
-        return db.insert(WorkoutListEntry.TABLE_NAME, null, cv) != -1;
+        return db.insert(WorkoutListEntry.TABLE_NAME, null, cv);
     }
 
     public boolean addWorkoutToProgram(long programId, long workoutId, int day) {
@@ -378,7 +378,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                 int set = eStat.getInt(2);
                 int rep = eStat.getInt(3);
                 float weight = eStat.getFloat(4);
-                Exercise e = new Exercise(exerciseName, set, rep, weight);
+                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -408,7 +408,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                 int set = eStat.getInt(2);
                 int rep = eStat.getInt(3);
                 float weight = eStat.getFloat(4);
-                Exercise e = new Exercise(exerciseName, set, rep, weight);
+                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -430,7 +430,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
             int set = eStat.getInt(2);
             int rep = eStat.getInt(3);
             float weight = eStat.getFloat(4);
-            Exercise e = new Exercise(exerciseName, set, rep, weight);
+            Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
             list.add(e);
         }
         eStat.close();
