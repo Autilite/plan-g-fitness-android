@@ -2,6 +2,7 @@ package com.autilite.weightlifttracker.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -24,6 +25,7 @@ import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.program.Workout;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -44,6 +46,8 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
     private ExerciseSession mExerciseSession;
+
+    private CountDownTimer timer;
 
     private TextView mExerciseTextView;
     private TextView mSetTextView;
@@ -87,6 +91,25 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void startTimer(long milliseconds) {
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = new CountDownTimer(milliseconds, 500) {
+            @Override
+            public void onTick(long l) {
+                mTimerTextView.setText(new SimpleDateFormat("mm:ss").format(l));
+            }
+
+            @Override
+            public void onFinish() {
+                mTimerTextView.setText(new SimpleDateFormat("mm:ss").format(0));
+            }
+        };
+        timer.start();
+    }
+
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -145,7 +168,8 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                     exercise.setWeight(weight);
                     mPager.getAdapter().notifyDataSetChanged();
                     updateBottomSheetView();
-                    // TODO reset timer
+
+                    startTimer(mExerciseSession.getExercise().getRestTime() * 1000);
                 }
             }
         });
