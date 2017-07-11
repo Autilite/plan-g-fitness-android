@@ -1,10 +1,15 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.activity.MainActivity;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
@@ -78,8 +84,29 @@ public class StartProgramFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Activity intent
                 Intent intent = new Intent(getActivity(), WorkoutSessionActivity.class);
                 intent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                // Add back stack
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getActivity());
+                stackBuilder.addParentStack(MainActivity.class);
+                stackBuilder.addNextIntent(intent);
+                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                // Set notification info
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(programName)
+                        .setContentText(getString(R.string.choose_exercise))
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true);
+
+                // Build the notification
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(WorkoutSessionActivity.NOTIFY_ID, builder.build());
                 startActivity(intent);
             }
         });

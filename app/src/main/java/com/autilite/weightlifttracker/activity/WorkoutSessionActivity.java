@@ -1,5 +1,8 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -35,6 +38,7 @@ import java.util.List;
 public class WorkoutSessionActivity extends AppCompatActivity implements WorkoutSessionFragment.OnFragmentInteractionListener {
 
     public static String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
+    public static final int NOTIFY_ID = 100;
 
     private long programId;
     private WorkoutProgramDbHelper workoutDb;
@@ -86,6 +90,11 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         switch(id) {
             case R.id.option_finish_workout:
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.cancel(NOTIFY_ID);
+                // TODO save data
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
