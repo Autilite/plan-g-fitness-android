@@ -12,6 +12,8 @@ import android.support.v4.app.TaskStackBuilder;
 import com.autilite.weightlifttracker.activity.MainActivity;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by Kelvin on Jul 11, 2017.
  */
@@ -20,8 +22,8 @@ public class WorkoutService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
-        public LocalBinder getService() {
-            return LocalBinder.this;
+        public WorkoutService getService() {
+            return WorkoutService.this;
         }
     }
 

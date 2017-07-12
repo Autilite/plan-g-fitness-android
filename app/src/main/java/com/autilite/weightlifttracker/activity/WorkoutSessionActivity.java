@@ -62,7 +62,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private EditText mWeightEditText;
 
     private boolean mBound = false;
-    private WorkoutService.LocalBinder mService;
+    private WorkoutService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
