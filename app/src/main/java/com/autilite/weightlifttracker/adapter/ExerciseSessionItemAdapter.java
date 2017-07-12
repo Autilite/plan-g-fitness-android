@@ -41,7 +41,7 @@ public class ExerciseSessionItemAdapter extends ArrayAdapter<SetSession> {
             TextView repWeightView = (TextView) view.findViewById(R.id.exercise_item_repweight);
 
             int reps = set.getReps();
-            float weight = set.getWeight();
+            double weight = set.getWeight();
 
             setNoView.setText(getContext().getResources().getString(R.string.set) + " "
                     + String.valueOf(set.getSetNumber()));

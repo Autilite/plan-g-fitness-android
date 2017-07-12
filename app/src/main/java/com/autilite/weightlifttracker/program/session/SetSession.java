@@ -7,9 +7,9 @@ package com.autilite.weightlifttracker.program.session;
 public class SetSession {
     private int setNumber;
     private int reps;
-    private float weight;
+    private double weight;
 
-    protected SetSession(int setNumber, int reps, float weight) {
+    protected SetSession(int setNumber, int reps, double weight) {
         this.setNumber = setNumber;
         this.reps = reps;
         this.weight = weight;
@@ -27,7 +27,7 @@ public class SetSession {
         this.reps = reps;
     }
 
-    public float getWeight() {
+    public double getWeight() {
         return weight;
     }
 
