@@ -190,7 +190,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             mFab.setVisibility(View.VISIBLE);
         }
 
-        if (es != null && !es.getExercise().equals(mExerciseSession)) {
+        if (es != null && !es.equals(mExerciseSession)) {
             mExerciseSession = es;
             updateBottomSheetView();
         }
