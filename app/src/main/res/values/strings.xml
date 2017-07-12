@@ -42,6 +42,8 @@
     <string name="edit">Edit</string>
     <string name="mark_complete">Mark all complete</string>
 
+    <string name="time_until_next_set">Time until next set</string>
+
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
     </string>

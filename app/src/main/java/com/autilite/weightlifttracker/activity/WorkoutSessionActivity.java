@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -30,7 +29,6 @@ import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.program.Workout;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -52,8 +50,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
     private ExerciseSession mExerciseSession;
-
-    private CountDownTimer timer;
 
     private TextView mExerciseTextView;
     private TextView mSetTextView;
@@ -136,24 +132,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         }
     }
 
-    private void startTimer(long milliseconds) {
-        if (timer != null) {
-            timer.cancel();
-        }
-        timer = new CountDownTimer(milliseconds, 500) {
-            @Override
-            public void onTick(long l) {
-                mTimerTextView.setText(new SimpleDateFormat("mm:ss").format(l));
-            }
-
-            @Override
-            public void onFinish() {
-                mTimerTextView.setText(new SimpleDateFormat("mm:ss").format(0));
-            }
-        };
-        timer.start();
-    }
-
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -213,7 +191,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                     mPager.getAdapter().notifyDataSetChanged();
                     updateBottomSheetView();
 
-                    startTimer(mExerciseSession.getExercise().getRestTime() * 1000);
+                    mService.startTimer(mExerciseSession.getExercise().getRestTime() * 1000);
                 }
             }
         });
