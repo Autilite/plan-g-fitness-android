@@ -14,6 +14,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 import com.autilite.weightlifttracker.activity.MainActivity;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
+import com.autilite.weightlifttracker.program.session.ExerciseSession;
 
 import java.text.SimpleDateFormat;
 
@@ -24,8 +25,11 @@ import java.text.SimpleDateFormat;
 public class WorkoutService extends Service {
     private final IBinder mBinder = new LocalBinder();
     private CountDownTimer timer;
+    private boolean isTimerRunning = false;
     private NotificationManager mNotificationManager;
     private PendingIntent pendingIntent;
+
+    private ExerciseSession currentExercise;
 
     public class LocalBinder extends Binder {
         public WorkoutService getService() {
@@ -77,19 +81,35 @@ public class WorkoutService extends Service {
             @Override
             public void onTick(long l) {
                 String timer = new SimpleDateFormat("mm:ss").format(l);
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentText(getString(R.string.time_until_next_set) + ": " + timer)
-                        .setContentIntent(pendingIntent);
-
-                mNotificationManager.notify(WorkoutSessionActivity.NOTIFY_ID, builder.build());
+                updateExerciseNotification(getString(R.string.time_until_next_set) + ": " + timer);
             }
 
             @Override
             public void onFinish() {
                 // TODO ping the user
+                isTimerRunning = false;
+                updateExerciseNotification(getString(R.string.start_set));
             }
         };
         timer.start();
+        isTimerRunning = true;
+    }
+
+    public void setSelectedExercise(ExerciseSession es) {
+        currentExercise = es;
+
+        if (!isTimerRunning) {
+            updateExerciseNotification(getString(R.string.start_set));
+        }
+    }
+
+    private void updateExerciseNotification(String content) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(currentExercise == null ? "" : currentExercise.getExercise().getName())
+                .setContentText(content)
+                .setContentIntent(pendingIntent);
+
+        mNotificationManager.notify(WorkoutSessionActivity.NOTIFY_ID, builder.build());
     }
 }

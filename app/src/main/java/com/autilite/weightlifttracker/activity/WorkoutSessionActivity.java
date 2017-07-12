@@ -204,6 +204,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         }
 
         if (es != null && !es.equals(mExerciseSession)) {
+            mService.setSelectedExercise(es);
             mExerciseSession = es;
             updateBottomSheetView();
         }
