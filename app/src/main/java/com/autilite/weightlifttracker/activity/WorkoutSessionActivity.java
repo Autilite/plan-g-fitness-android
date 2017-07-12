@@ -1,11 +1,12 @@
 package com.autilite.weightlifttracker.activity;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.WorkoutService;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
@@ -59,6 +61,9 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private EditText mRepEditText;
     private EditText mWeightEditText;
 
+    private boolean mBound = false;
+    private WorkoutService.LocalBinder mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +84,38 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to service
+        Intent intent = new Intent(this, WorkoutService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from service
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            WorkoutService.LocalBinder binder = (WorkoutService.LocalBinder) iBinder;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBound = false;
+        }
+    };
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.workout_session, menu);
         return true;
@@ -90,9 +127,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         switch(id) {
             case R.id.option_finish_workout:
-                NotificationManager mNotificationManager =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.cancel(NOTIFY_ID);
+                stopService(new Intent(this, WorkoutService.class));
                 // TODO save data
                 finish();
                 return true;

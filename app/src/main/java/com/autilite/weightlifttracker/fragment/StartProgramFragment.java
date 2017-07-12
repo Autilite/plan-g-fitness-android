@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.WorkoutService;
 import com.autilite.weightlifttracker.activity.MainActivity;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
@@ -85,29 +86,16 @@ public class StartProgramFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // Activity intent
-                Intent intent = new Intent(getActivity(), WorkoutSessionActivity.class);
-                intent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Intent activityIntent = new Intent(getActivity(), WorkoutSessionActivity.class);
+                activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
+                activityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                // Add back stack
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getActivity());
-                stackBuilder.addParentStack(MainActivity.class);
-                stackBuilder.addNextIntent(intent);
-                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                // Start the service
+                Intent workoutService = new Intent(getActivity(), WorkoutService.class);
+                getActivity().startService(workoutService);
 
-                // Set notification info
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(programName)
-                        .setContentText(getString(R.string.choose_exercise))
-                        .setContentIntent(pendingIntent)
-                        .setOngoing(true);
-
-                // Build the notification
-                NotificationManager mNotificationManager =
-                        (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(WorkoutSessionActivity.NOTIFY_ID, builder.build());
-                startActivity(intent);
+                // Start the activity
+                startActivity(activityIntent);
             }
         });
 
