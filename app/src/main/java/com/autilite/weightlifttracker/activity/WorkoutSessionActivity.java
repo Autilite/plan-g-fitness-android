@@ -39,7 +39,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
     public static String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
     public static String EXTRA_PROGRAM_NAME = "EXTRA_PROGRAM_NAME";
-    public static final int NOTIFY_ID = 100;
 
     private long programId;
     private String programName;

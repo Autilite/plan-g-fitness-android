@@ -31,6 +31,8 @@ import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXT
  */
 
 public class WorkoutService extends Service {
+    private final int SESSION_NOTIFY_ID = 100;
+
     private final IBinder mBinder = new LocalBinder();
     private CountDownTimer timer;
     private boolean isTimerRunning = false;
@@ -72,7 +74,7 @@ public class WorkoutService extends Service {
                 .setContentText(getString(R.string.choose_exercise))
                 .setContentIntent(pendingIntent);
 
-        startForeground(WorkoutSessionActivity.NOTIFY_ID, builder.build());
+        startForeground(SESSION_NOTIFY_ID, builder.build());
 
         startActivity(activityIntent);
         return START_STICKY;
@@ -105,7 +107,7 @@ public class WorkoutService extends Service {
         super.onDestroy();
 
         stopTimer();
-        mNotificationManager.cancel(WorkoutSessionActivity.NOTIFY_ID);
+        mNotificationManager.cancel(SESSION_NOTIFY_ID);
 
         workoutDb.close();
     }
@@ -160,7 +162,7 @@ public class WorkoutService extends Service {
                 .setContentText(content)
                 .setContentIntent(pendingIntent);
 
-        mNotificationManager.notify(WorkoutSessionActivity.NOTIFY_ID, builder.build());
+        mNotificationManager.notify(SESSION_NOTIFY_ID, builder.build());
     }
 
     public List<Workout> getWorkouts() {
