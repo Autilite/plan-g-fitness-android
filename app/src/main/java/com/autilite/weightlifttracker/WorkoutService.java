@@ -60,6 +60,7 @@ public class WorkoutService extends Service {
 
         startForeground(WorkoutSessionActivity.NOTIFY_ID, builder.build());
 
+        startActivity(activityIntent);
         return START_STICKY;
     }
 
