@@ -10,13 +10,13 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 
-import com.autilite.weightlifttracker.activity.MainActivity;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 
 import java.text.SimpleDateFormat;
+
+import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_ID;
 
 /**
  * Created by Kelvin on Jul 11, 2017.
@@ -29,6 +29,7 @@ public class WorkoutService extends Service {
     private NotificationManager mNotificationManager;
     private PendingIntent pendingIntent;
 
+    private long programId;
     private ExerciseSession currentExercise;
 
     public class LocalBinder extends Binder {
@@ -39,22 +40,12 @@ public class WorkoutService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
+        programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+        Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
+        activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
 
-        mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Intent notificationIntent = new Intent(this, WorkoutSessionActivity.class);
-        // Add back stack
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(notificationIntent);
-        pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+        pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set notification info
@@ -65,6 +56,15 @@ public class WorkoutService extends Service {
 
         startForeground(WorkoutSessionActivity.NOTIFY_ID, builder.build());
 
+        return START_STICKY;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Nullable

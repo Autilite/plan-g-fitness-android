@@ -1,15 +1,10 @@
 package com.autilite.weightlifttracker.fragment;
 
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +14,6 @@ import android.widget.FrameLayout;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.WorkoutService;
-import com.autilite.weightlifttracker.activity.MainActivity;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
@@ -90,8 +84,11 @@ public class StartProgramFragment extends Fragment {
                 activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
                 activityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
+                // TODO prompt to resume existing session
                 // Start the service
                 Intent workoutService = new Intent(getActivity(), WorkoutService.class);
+                System.out.println("starting program id " + programId + " " + programName);
+                workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
                 getActivity().startService(workoutService);
 
                 // Start the activity
