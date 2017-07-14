@@ -84,6 +84,9 @@ public class WorkoutService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        stopTimer();
+        mNotificationManager.cancel(WorkoutSessionActivity.NOTIFY_ID);
+
         workoutDb.close();
     }
 
@@ -113,6 +116,13 @@ public class WorkoutService extends Service {
         };
         timer.start();
         isTimerRunning = true;
+    }
+
+    public void stopTimer() {
+        if (isTimerRunning) {
+            timer.cancel();
+            isTimerRunning = false;
+        }
     }
 
     public void setSelectedExercise(ExerciseSession es) {
