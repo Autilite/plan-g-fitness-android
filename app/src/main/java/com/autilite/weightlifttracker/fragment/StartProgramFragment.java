@@ -82,13 +82,14 @@ public class StartProgramFragment extends Fragment {
                 // Activity intent
                 Intent activityIntent = new Intent(getActivity(), WorkoutSessionActivity.class);
                 activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
+                activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
                 activityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                 // TODO prompt to resume existing session
                 // Start the service
                 Intent workoutService = new Intent(getActivity(), WorkoutService.class);
-                System.out.println("starting program id " + programId + " " + programName);
                 workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
+                workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
                 getActivity().startService(workoutService);
 
                 // Start the activity

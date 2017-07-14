@@ -38,9 +38,11 @@ import java.util.List;
 public class WorkoutSessionActivity extends AppCompatActivity implements WorkoutSessionFragment.OnFragmentInteractionListener {
 
     public static String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
+    public static String EXTRA_PROGRAM_NAME = "EXTRA_PROGRAM_NAME";
     public static final int NOTIFY_ID = 100;
 
     private long programId;
+    private String programName;
     private WorkoutProgramDbHelper workoutDb;
     private List<Workout> workouts;
 
@@ -66,6 +68,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         Intent intent = getIntent();
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
+        programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
 
         setContentView(R.layout.activity_workout_session);
 
@@ -138,7 +141,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String programName = workoutDb.getProgramName(programId);
         setTitle(programName);
     }
 

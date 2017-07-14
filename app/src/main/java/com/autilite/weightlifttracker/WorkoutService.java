@@ -17,6 +17,7 @@ import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import java.text.SimpleDateFormat;
 
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_ID;
+import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_NAME;
 
 /**
  * Created by Kelvin on Jul 11, 2017.
@@ -30,6 +31,7 @@ public class WorkoutService extends Service {
     private PendingIntent pendingIntent;
 
     private long programId;
+    private String programName;
     private ExerciseSession currentExercise;
 
     public class LocalBinder extends Binder {
@@ -41,9 +43,11 @@ public class WorkoutService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
+        programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
 
         Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
+        activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
 
         pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
