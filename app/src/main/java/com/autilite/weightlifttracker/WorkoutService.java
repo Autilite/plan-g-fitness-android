@@ -12,9 +12,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
+import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.program.Workout;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_ID;
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_NAME;
@@ -33,6 +36,8 @@ public class WorkoutService extends Service {
     private long programId;
     private String programName;
     private ExerciseSession currentExercise;
+    private List<Workout> workouts;
+    private WorkoutProgramDbHelper workoutDb;
 
     public class LocalBinder extends Binder {
         public WorkoutService getService() {
@@ -44,6 +49,8 @@ public class WorkoutService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
+
+        workouts = workoutDb.getProgramWorkouts(programId);
 
         Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
@@ -70,6 +77,14 @@ public class WorkoutService extends Service {
 
         mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        workoutDb = new WorkoutProgramDbHelper(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        workoutDb.close();
     }
 
     @Nullable
@@ -116,5 +131,9 @@ public class WorkoutService extends Service {
                 .setContentIntent(pendingIntent);
 
         mNotificationManager.notify(WorkoutSessionActivity.NOTIFY_ID, builder.build());
+    }
+
+    public List<Workout> getWorkouts() {
+        return workouts;
     }
 }

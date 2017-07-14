@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.WorkoutService;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
@@ -43,8 +42,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
     private long programId;
     private String programName;
-    private WorkoutProgramDbHelper workoutDb;
-    private List<Workout> workouts;
 
     private ViewPager mPager;
     private WorkoutPagerAdapter mAdapter;
@@ -72,11 +69,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         setContentView(R.layout.activity_workout_session);
 
-        workoutDb = new WorkoutProgramDbHelper(this);
-        workouts = workoutDb.getProgramWorkouts(programId);
-
         setupToolbar();
-        setupPager();
         setupBottomSheets();
         setupFab();
 
@@ -106,6 +99,8 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             WorkoutService.LocalBinder binder = (WorkoutService.LocalBinder) iBinder;
             mService = binder.getService();
             mBound = true;
+
+            setupPager(mService.getWorkouts());
         }
 
         @Override
@@ -144,7 +139,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         setTitle(programName);
     }
 
-    private void setupPager() {
+    private void setupPager(List<Workout> workouts) {
         mPager = (ViewPager) findViewById(R.id.view_pager);
         mAdapter = new WorkoutPagerAdapter(getSupportFragmentManager(), workouts);
         mPager.setAdapter(mAdapter);
@@ -226,12 +221,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         mRepEditText.setText(String.valueOf(e.getReps()));
         mWeightEditText.setText(String.valueOf(e.getWeight()));
-    }
-
-    @Override
-    protected void onDestroy() {
-        workoutDb.close();
-        super.onDestroy();
     }
 
     private class WorkoutPagerAdapter extends FragmentPagerAdapter {
