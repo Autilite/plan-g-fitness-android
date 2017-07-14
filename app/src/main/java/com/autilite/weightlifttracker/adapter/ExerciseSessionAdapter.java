@@ -15,7 +15,7 @@ import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.widget.ExtendableListView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Kelvin on Jun 17, 2017.
@@ -24,7 +24,7 @@ import java.util.List;
 public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSessionAdapter.ExerciseSessionViewHolder> {
 
     private Context mContext;
-    private final List<ExerciseSession> session;
+    private final ArrayList<? extends ExerciseSession> session;
     private OnItemClickListener mListener;
 
     public class ExerciseSessionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -59,7 +59,7 @@ public class ExerciseSessionAdapter extends RecyclerView.Adapter<ExerciseSession
         }
     }
 
-    public ExerciseSessionAdapter(Context mContext, List<ExerciseSession> exerciseSession) {
+    public ExerciseSessionAdapter(Context mContext, ArrayList<? extends ExerciseSession> exerciseSession) {
         this.mContext = mContext;
         this.session = exerciseSession;
     }

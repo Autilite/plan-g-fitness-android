@@ -28,6 +28,7 @@ import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.program.Workout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -234,7 +235,8 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         @Override
         public Fragment getItem(int position) {
             Workout w = workouts.get(position);
-            return WorkoutSessionFragment.newInstance(w.getId(), w.getName());
+            ArrayList<? extends ExerciseSession> s = mService.getSession(w);
+            return WorkoutSessionFragment.newInstance(w.getId(), w.getName(), s);
         }
 
         @Override

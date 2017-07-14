@@ -13,11 +13,15 @@ import android.support.v4.app.NotificationCompat;
 
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_ID;
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_NAME;
@@ -39,6 +43,8 @@ public class WorkoutService extends Service {
     private List<Workout> workouts;
     private WorkoutProgramDbHelper workoutDb;
 
+    private Map<Workout, ArrayList<? extends ExerciseSession>> sessions;
+
     public class LocalBinder extends Binder {
         public WorkoutService getService() {
             return WorkoutService.this;
@@ -51,6 +57,7 @@ public class WorkoutService extends Service {
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
 
         workouts = workoutDb.getProgramWorkouts(programId);
+        initSession(workouts);
 
         Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
@@ -69,6 +76,19 @@ public class WorkoutService extends Service {
 
         startActivity(activityIntent);
         return START_STICKY;
+    }
+
+    private void initSession(List<Workout> workouts) {
+        sessions = new HashMap<>();
+        for (Workout w : workouts) {
+            List<Exercise> exercises = workoutDb.getAllExerciseInfoList(w.getId());
+            ArrayList<ExerciseSession> session = new ArrayList<>();
+            for (Exercise e: exercises) {
+                ExerciseSession es = new ExerciseSession(e);
+                session.add(es);
+            }
+            sessions.put(w, session);
+        }
     }
 
     @Override
@@ -146,4 +166,9 @@ public class WorkoutService extends Service {
     public List<Workout> getWorkouts() {
         return workouts;
     }
+
+    public ArrayList<? extends ExerciseSession> getSession(Workout w) {
+        return sessions.get(w);
+    }
+
 }

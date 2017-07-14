@@ -13,12 +13,9 @@ import android.view.ViewGroup;
 import com.autilite.weightlifttracker.IAdapterUpdate;
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.adapter.ExerciseSessionAdapter;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
-import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,14 +25,14 @@ import java.util.List;
 public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
     private static final String ARG_ID = "ID";
     private static final String ARG_NAME = "NAME";
+    private static final String ARG_SESSION = "SESSION";
 
     private OnFragmentInteractionListener mListener;
 
     private long id;
     private String name;
-    private List<ExerciseSession> session;
+    private ArrayList<? extends ExerciseSession> session;
 
-    private WorkoutProgramDbHelper workoutDb;
     private RecyclerView mRecyclerView;
     private ExerciseSessionAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -65,11 +62,13 @@ public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
      * @param name Parameter 2.
      * @return A new instance of fragment WorkoutSessionFragment.
      */
-    public static WorkoutSessionFragment newInstance(long id, String name) {
+    public static WorkoutSessionFragment newInstance(long id, String name,
+                                                     ArrayList<? extends ExerciseSession> session ) {
         WorkoutSessionFragment fragment = new WorkoutSessionFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_ID, id);
         args.putString(ARG_NAME, name);
+        args.putParcelableArrayList(ARG_SESSION, session);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,15 +79,7 @@ public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
         if (getArguments() != null) {
             id = getArguments().getLong(ARG_ID);
             name = getArguments().getString(ARG_NAME);
-            session = new LinkedList<>();
-
-            // Get the exercises for this workout
-            workoutDb = new WorkoutProgramDbHelper(getActivity());
-            List<Exercise> exercises = workoutDb.getAllExerciseInfoList(id);
-            for (Exercise e: exercises) {
-                ExerciseSession es = new ExerciseSession(e);
-                session.add(es);
-            }
+            session = getArguments().getParcelableArrayList(ARG_SESSION);
         }
     }
 
