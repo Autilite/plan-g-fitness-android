@@ -81,6 +81,14 @@ public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
             id = getArguments().getLong(ARG_ID);
             name = getArguments().getString(ARG_NAME);
             session = new LinkedList<>();
+
+            // Get the exercises for this workout
+            workoutDb = new WorkoutProgramDbHelper(getActivity());
+            List<Exercise> exercises = workoutDb.getAllExerciseInfoList(id);
+            for (Exercise e: exercises) {
+                ExerciseSession es = new ExerciseSession(e);
+                session.add(es);
+            }
         }
     }
 
@@ -97,14 +105,6 @@ public class WorkoutSessionFragment extends Fragment implements IAdapterUpdate{
         // Disable fab
         View fab = view.findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
-
-        // Get the exercises for this workout
-        workoutDb = new WorkoutProgramDbHelper(getActivity());
-        List<Exercise> exercises = workoutDb.getAllExerciseInfoList(id);
-        for (Exercise e: exercises) {
-            ExerciseSession es = new ExerciseSession(e);
-            session.add(es);
-        }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getContext());
