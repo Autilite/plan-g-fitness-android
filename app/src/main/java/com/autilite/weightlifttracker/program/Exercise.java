@@ -1,10 +1,13 @@
 package com.autilite.weightlifttracker.program;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by kelvin on 09/12/16.
  */
 
-public class Exercise {
+public class Exercise implements Parcelable {
     private final long id;
     private String name;
     private int sets;
@@ -32,6 +35,28 @@ public class Exercise {
         this.weightIncrement = weightIncrement;
         this.restTime = restTime;
     }
+
+    protected Exercise(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        sets = in.readInt();
+        reps = in.readInt();
+        weight = in.readDouble();
+        weightIncrement = in.readFloat();
+        restTime = in.readInt();
+    }
+
+    public static final Creator<Exercise> CREATOR = new Creator<Exercise>() {
+        @Override
+        public Exercise createFromParcel(Parcel in) {
+            return new Exercise(in);
+        }
+
+        @Override
+        public Exercise[] newArray(int size) {
+            return new Exercise[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -83,5 +108,21 @@ public class Exercise {
 
     public void setRestTime(int restTime) {
         this.restTime = restTime;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(name);
+        parcel.writeInt(sets);
+        parcel.writeInt(reps);
+        parcel.writeDouble(weight);
+        parcel.writeFloat(weightIncrement);
+        parcel.writeInt(restTime);
     }
 }

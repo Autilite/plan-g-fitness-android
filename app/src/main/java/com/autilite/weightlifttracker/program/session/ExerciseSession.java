@@ -1,5 +1,8 @@
 package com.autilite.weightlifttracker.program.session;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.autilite.weightlifttracker.program.Exercise;
 
 import java.util.LinkedList;
@@ -9,7 +12,7 @@ import java.util.List;
  * Created by Kelvin on Jun 19, 2017.
  */
 
-public class ExerciseSession {
+public class ExerciseSession implements Parcelable {
     public static final int EXERCISE_COMPLETE = -1;
     private static final int INCOMPLETE_SET = -1;
 
@@ -27,6 +30,24 @@ public class ExerciseSession {
         }
         currentSet = 1;
     }
+
+    protected ExerciseSession(Parcel in) {
+        exercise = in.readParcelable(Exercise.class.getClassLoader());
+        currentSet = in.readInt();
+        setSessions = in.createTypedArrayList(SetSession.CREATOR);
+    }
+
+    public static final Creator<ExerciseSession> CREATOR = new Creator<ExerciseSession>() {
+        @Override
+        public ExerciseSession createFromParcel(Parcel in) {
+            return new ExerciseSession(in);
+        }
+
+        @Override
+        public ExerciseSession[] newArray(int size) {
+            return new ExerciseSession[size];
+        }
+    };
 
     /**
      * Complete the set for param set with the respective rep and weight
@@ -110,5 +131,17 @@ public class ExerciseSession {
 
     public Exercise getExercise() {
         return exercise;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(exercise, i);
+        parcel.writeInt(currentSet);
+        parcel.writeTypedList(setSessions);
     }
 }
