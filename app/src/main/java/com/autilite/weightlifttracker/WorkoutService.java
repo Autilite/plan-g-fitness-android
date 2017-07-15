@@ -58,6 +58,9 @@ public class WorkoutService extends Service {
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
 
+        currentExercise = null;
+        stopTimer();
+
         workouts = workoutDb.getProgramWorkouts(programId);
         initSession(workouts);
 
