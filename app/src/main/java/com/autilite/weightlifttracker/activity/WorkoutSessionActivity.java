@@ -101,6 +101,11 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             mBound = true;
 
             setupPager(mService.getWorkouts());
+
+            mExerciseSession = mService.getCurrentExercise();
+            if (mExerciseSession != null) {
+                updateBottomSheetView();
+            }
         }
 
         @Override

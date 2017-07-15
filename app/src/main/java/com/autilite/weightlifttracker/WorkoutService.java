@@ -169,6 +169,10 @@ public class WorkoutService extends Service {
         return workouts;
     }
 
+    public ExerciseSession getCurrentExercise() {
+        return currentExercise;
+    }
+
     public ArrayList<? extends ExerciseSession> getSession(Workout w) {
         return sessions.get(w);
     }
