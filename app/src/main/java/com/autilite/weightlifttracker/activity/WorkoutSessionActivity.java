@@ -106,6 +106,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             if (mExerciseSession != null) {
                 updateBottomSheetView();
             }
+            updateFabVisibility();
         }
 
         @Override
@@ -168,7 +169,6 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
     private void setupFab() {
         mFab = (FloatingActionButton) findViewById(R.id.session_fab);
-        mFab.setVisibility(View.GONE);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,17 +199,25 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         });
     }
 
+    private void updateFabVisibility() {
+        if (mExerciseSession != null) {
+            mFab.setVisibility(View.VISIBLE);
+        } else {
+            mFab.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onExerciseSelected(ExerciseSession es) {
-        if (mFab.getVisibility() == View.GONE) {
-            mFab.setVisibility(View.VISIBLE);
-        }
-
         if (es != null && !es.equals(mExerciseSession)) {
             mService.setSelectedExercise(es);
             mExerciseSession = es;
             updateBottomSheetView();
         }
+        if (mFab.getVisibility() == View.GONE) {
+            updateFabVisibility();
+        }
+
     }
 
     private void updateBottomSheetView() {
