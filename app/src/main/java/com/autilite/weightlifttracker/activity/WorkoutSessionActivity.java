@@ -1,8 +1,10 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -12,6 +14,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +31,7 @@ import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
 import com.autilite.weightlifttracker.program.Workout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +85,9 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         // Bind to service
         Intent intent = new Intent(this, WorkoutService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mTimerReceiver,
+                new IntentFilter(WorkoutService.ACTION_BROADCAST_COUNTDOWN));
     }
 
     @Override
@@ -91,6 +98,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
             unbindService(mConnection);
             mBound = false;
         }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mTimerReceiver);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -112,6 +120,19 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBound = false;
+        }
+    };
+
+    private BroadcastReceiver mTimerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (WorkoutService.ACTION_BROADCAST_COUNTDOWN.equals(intent.getAction())) {
+                if (intent.getExtras() != null) {
+                    long millisUntilFinished = intent.getLongExtra(WorkoutService.EXTRA_BROADCAST_COUNTDOWN, 0);
+                    String timer = new SimpleDateFormat("mm:ss").format(millisUntilFinished);
+                    mTimerTextView.setText(timer);
+                }
+            }
         }
     };
 

@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
@@ -31,6 +32,9 @@ import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXT
  */
 
 public class WorkoutService extends Service {
+    public final static String ACTION_BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.WorkoutService.broadcast";
+    public final static String EXTRA_BROADCAST_COUNTDOWN = "countdown";
+
     private final int SESSION_NOTIFY_ID = 100;
 
     private final IBinder mBinder = new LocalBinder();
@@ -130,6 +134,10 @@ public class WorkoutService extends Service {
             public void onTick(long l) {
                 String timer = new SimpleDateFormat("mm:ss").format(l);
                 updateExerciseNotification(getString(R.string.time_until_next_set) + ": " + timer);
+
+                Intent broadcastTimerIntent = new Intent(ACTION_BROADCAST_COUNTDOWN);
+                broadcastTimerIntent.putExtra(EXTRA_BROADCAST_COUNTDOWN, l);
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastTimerIntent);
             }
 
             @Override
