@@ -87,7 +87,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mTimerReceiver,
-                new IntentFilter(WorkoutService.ACTION_BROADCAST_COUNTDOWN));
+                new IntentFilter(WorkoutService.BROADCAST_COUNTDOWN));
     }
 
     @Override
@@ -126,7 +126,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
     private BroadcastReceiver mTimerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (WorkoutService.ACTION_BROADCAST_COUNTDOWN.equals(intent.getAction())) {
+            if (WorkoutService.BROADCAST_COUNTDOWN.equals(intent.getAction())) {
                 if (intent.getExtras() != null) {
                     long millisUntilFinished = intent.getLongExtra(WorkoutService.EXTRA_BROADCAST_COUNTDOWN, 0);
                     String timer = new SimpleDateFormat("mm:ss").format(millisUntilFinished);

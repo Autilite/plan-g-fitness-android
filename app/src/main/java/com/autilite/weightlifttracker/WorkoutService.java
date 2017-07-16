@@ -32,23 +32,22 @@ import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXT
  */
 
 public class WorkoutService extends Service {
-    public final static String ACTION_BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.WorkoutService.broadcast";
+    public final static String BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.WorkoutService.broadcast";
     public final static String EXTRA_BROADCAST_COUNTDOWN = "countdown";
 
-    private final int SESSION_NOTIFY_ID = 100;
+    private final static int SESSION_NOTIFY_ID = 100;
 
     private final IBinder mBinder = new LocalBinder();
     private CountDownTimer timer;
     private boolean isTimerRunning = false;
     private NotificationManager mNotificationManager;
-    private PendingIntent pendingIntent;
+    private NotificationCompat.Builder notificationBuilder;
 
     private long programId;
     private String programName;
     private ExerciseSession currentExercise;
     private List<Workout> workouts;
     private WorkoutProgramDbHelper workoutDb;
-
     private Map<Workout, ArrayList<? extends ExerciseSession>> sessions;
 
     public class LocalBinder extends Binder {
@@ -59,35 +58,45 @@ public class WorkoutService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        initializeService(intent);
+        // TODO handle null intent if service is killed and restarted with START_STICKY
+        return START_STICKY;
+    }
+
+    private void initializeService(Intent intent) {
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
 
+        // null out/cancel existing variables
         currentExercise = null;
         stopTimer();
 
-        workouts = workoutDb.getProgramWorkouts(programId);
-        initSession(workouts);
+        // initializeService the service
+        initSession();
 
         Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
 
-        pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
+        initNotificationBuilder(activityIntent);
+
+        startForeground(SESSION_NOTIFY_ID, notificationBuilder.build());
+        startActivity(activityIntent);
+    }
+
+    private void initNotificationBuilder(Intent activityIntent) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set notification info
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentText(getString(R.string.choose_exercise))
                 .setContentIntent(pendingIntent);
-
-        startForeground(SESSION_NOTIFY_ID, builder.build());
-
-        startActivity(activityIntent);
-        return START_STICKY;
     }
 
-    private void initSession(List<Workout> workouts) {
+    private void initSession() {
+        workouts = workoutDb.getProgramWorkouts(programId);
         sessions = new HashMap<>();
         for (Workout w : workouts) {
             List<Exercise> exercises = workoutDb.getAllExerciseInfoList(w.getId());
@@ -133,9 +142,9 @@ public class WorkoutService extends Service {
             @Override
             public void onTick(long l) {
                 String timer = new SimpleDateFormat("mm:ss").format(l);
-                updateExerciseNotification(getString(R.string.time_until_next_set) + ": " + timer);
+                updateNotificationContent(getString(R.string.time_until_next_set) + ": " + timer);
 
-                Intent broadcastTimerIntent = new Intent(ACTION_BROADCAST_COUNTDOWN);
+                Intent broadcastTimerIntent = new Intent(BROADCAST_COUNTDOWN);
                 broadcastTimerIntent.putExtra(EXTRA_BROADCAST_COUNTDOWN, l);
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastTimerIntent);
             }
@@ -144,7 +153,7 @@ public class WorkoutService extends Service {
             public void onFinish() {
                 // TODO ping the user
                 isTimerRunning = false;
-                updateExerciseNotification(getString(R.string.start_set));
+                updateNotificationContent(getString(R.string.start_set));
             }
         };
         timer.start();
@@ -162,18 +171,16 @@ public class WorkoutService extends Service {
         currentExercise = es;
 
         if (!isTimerRunning) {
-            updateExerciseNotification(getString(R.string.start_set));
+            updateNotificationContent(getString(R.string.start_set));
         }
     }
 
-    private void updateExerciseNotification(String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.mipmap.ic_launcher)
+    private void updateNotificationContent(String content) {
+        notificationBuilder
                 .setContentTitle(currentExercise == null ? "" : currentExercise.getExercise().getName())
-                .setContentText(content)
-                .setContentIntent(pendingIntent);
+                .setContentText(content);
 
-        mNotificationManager.notify(SESSION_NOTIFY_ID, builder.build());
+        mNotificationManager.notify(SESSION_NOTIFY_ID, notificationBuilder.build());
     }
 
     public List<Workout> getWorkouts() {
