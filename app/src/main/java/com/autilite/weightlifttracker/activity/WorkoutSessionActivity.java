@@ -25,7 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.WorkoutService;
+import com.autilite.weightlifttracker.service.WorkoutService;
 import com.autilite.weightlifttracker.fragment.WorkoutSessionFragment;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;

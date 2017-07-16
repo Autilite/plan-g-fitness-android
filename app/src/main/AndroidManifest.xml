@@ -28,7 +28,7 @@
                 android:value=".activity.MainActivity" />
         </activity>
 
-        <service android:name=".WorkoutService"
+        <service android:name=".service.WorkoutService"
             android:exported="false"/>
     </application>
 

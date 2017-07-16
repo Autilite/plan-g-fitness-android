@@ -1,4 +1,4 @@
-package com.autilite.weightlifttracker;
+package com.autilite.weightlifttracker.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.program.Exercise;
@@ -32,7 +33,7 @@ import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXT
  */
 
 public class WorkoutService extends Service {
-    public final static String BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.WorkoutService.broadcast";
+    public final static String BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.service.WorkoutService.broadcast";
     public final static String EXTRA_BROADCAST_COUNTDOWN = "countdown";
 
     private final static int SESSION_NOTIFY_ID = 100;

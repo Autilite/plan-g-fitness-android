@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.WorkoutService;
+import com.autilite.weightlifttracker.service.WorkoutService;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
 import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
