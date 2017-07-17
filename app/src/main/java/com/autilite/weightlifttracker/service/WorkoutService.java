@@ -36,6 +36,10 @@ public class WorkoutService extends Service {
     public final static String BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.service.WorkoutService.broadcast";
     public final static String EXTRA_BROADCAST_COUNTDOWN = "countdown";
 
+    public final static String ACTION_START_NEW_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.START_NEW_SESSION";
+    public final static String ACTION_COMPLETE_SET = "com.autilite.weightlifttracker.service.WorkoutService.COMPLETE_SET";
+    public final static String ACTION_FAIL_SET = "com.autilite.weightlifttracker.service.WorkoutService.FAIL_SET";
+
     private final static int SESSION_NOTIFY_ID = 100;
 
     private final IBinder mBinder = new LocalBinder();
@@ -59,7 +63,14 @@ public class WorkoutService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        initializeService(intent);
+        String action = intent.getAction();
+        if (action == null || action.equals(ACTION_START_NEW_SESSION)) {
+            initializeService(intent);
+        } else if (action.equals(ACTION_COMPLETE_SET)) {
+            completeSet(intent);
+        } else if (action.equals(ACTION_FAIL_SET)) {
+            failSet(intent);
+        }
         // TODO handle null intent if service is killed and restarted with START_STICKY
         return START_STICKY;
     }
@@ -108,6 +119,16 @@ public class WorkoutService extends Service {
             }
             sessions.put(w, session);
         }
+    }
+
+    private void completeSet(Intent intent) {
+        if (currentExercise == null) {
+            throw new RuntimeException("There is no current exercise selected");
+        }
+    }
+
+    private void failSet(Intent intent) {
+        completeSet(intent);
     }
 
     @Override
