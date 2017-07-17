@@ -33,21 +33,25 @@ import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXT
  */
 
 public class WorkoutService extends Service {
-    public final static String BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.service.WorkoutService.broadcast";
+    public final static String BROADCAST_COUNTDOWN = "com.autilite.weightlifttracker.service.WorkoutService.broadcast.COUNTDOWN";
+    public final static String BROADCAST_UPDATED_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.broadcast.UPDATED_SESSION";
     public final static String EXTRA_BROADCAST_COUNTDOWN = "countdown";
 
-    public final static String ACTION_START_NEW_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.START_NEW_SESSION";
-    public final static String ACTION_COMPLETE_SET = "com.autilite.weightlifttracker.service.WorkoutService.COMPLETE_SET";
-    public final static String ACTION_FAIL_SET = "com.autilite.weightlifttracker.service.WorkoutService.FAIL_SET";
+    public final static String ACTION_START_NEW_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.action.START_NEW_SESSION";
+    public final static String ACTION_COMPLETE_SET = "com.autilite.weightlifttracker.service.WorkoutService.action.COMPLETE_SET";
+    public final static String ACTION_FAIL_SET = "com.autilite.weightlifttracker.service.WorkoutService.action.FAIL_SET";
 
     private final static int SESSION_NOTIFY_ID = 100;
 
     private final IBinder mBinder = new LocalBinder();
-    private CountDownTimer timer;
-    private boolean isTimerRunning = false;
+    private LocalBroadcastManager mLocalBroadcastManager;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder notificationBuilder;
     private Intent activityIntent;
+
+    private CountDownTimer timer;
+    private boolean isTimerRunning = false;
+
 
     private long programId;
     private String programName;
@@ -133,7 +137,9 @@ public class WorkoutService extends Service {
         double weight = exercise.getWeight();
         // TODO fix exercise/exercise session to use consistent primitives
         if (currentExercise.completeSet(reps, (float) weight)) {
-            // send broadcast that exercise updated
+            Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
+            mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
+
             startTimer(exercise.getRestTime() * 1000);
         }
     }
@@ -148,7 +154,9 @@ public class WorkoutService extends Service {
         int reps = 0;
         double weight = exercise.getWeight();
         if (currentExercise.completeSet(reps, (float) weight)) {
-            // send broadcast that exercise updated
+            Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
+            mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
+
             startTimer(exercise.getRestTime() * 1000);
         }
     }
@@ -157,6 +165,7 @@ public class WorkoutService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         workoutDb = new WorkoutProgramDbHelper(this);
@@ -167,6 +176,7 @@ public class WorkoutService extends Service {
         super.onDestroy();
 
         stopTimer();
+        mLocalBroadcastManager = null;
         mNotificationManager.cancel(SESSION_NOTIFY_ID);
 
         workoutDb.close();
@@ -190,7 +200,7 @@ public class WorkoutService extends Service {
 
                 Intent broadcastTimerIntent = new Intent(BROADCAST_COUNTDOWN);
                 broadcastTimerIntent.putExtra(EXTRA_BROADCAST_COUNTDOWN, l);
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastTimerIntent);
+                mLocalBroadcastManager.sendBroadcast(broadcastTimerIntent);
             }
 
             @Override

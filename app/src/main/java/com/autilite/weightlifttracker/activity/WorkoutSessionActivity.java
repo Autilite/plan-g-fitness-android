@@ -86,8 +86,10 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         Intent intent = new Intent(this, WorkoutService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mTimerReceiver,
-                new IntentFilter(WorkoutService.BROADCAST_COUNTDOWN));
+        IntentFilter actions = new IntentFilter();
+        actions.addAction(WorkoutService.BROADCAST_COUNTDOWN);
+        actions.addAction(WorkoutService.BROADCAST_UPDATED_SESSION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mTimerReceiver, actions);
     }
 
     @Override
@@ -132,6 +134,9 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                     String timer = new SimpleDateFormat("mm:ss").format(millisUntilFinished);
                     mTimerTextView.setText(timer);
                 }
+            } else if (WorkoutService.BROADCAST_UPDATED_SESSION.equals(intent.getAction())) {
+                mPager.getAdapter().notifyDataSetChanged();
+                updateBottomSheetView();
             }
         }
     };
