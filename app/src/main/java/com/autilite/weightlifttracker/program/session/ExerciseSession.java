@@ -78,7 +78,7 @@ public class ExerciseSession implements Parcelable {
             incrementCurrentSet();
             return true;
         }
-        return true;
+        return false;
     }
 
     private void incrementCurrentSet() {
