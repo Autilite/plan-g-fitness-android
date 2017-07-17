@@ -82,6 +82,7 @@ public class StartProgramFragment extends Fragment {
                 // TODO prompt to resume existing session
                 // Start the service
                 Intent workoutService = new Intent(getActivity(), WorkoutService.class);
+                workoutService.setAction(WorkoutService.ACTION_START_NEW_SESSION);
                 workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
                 workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
                 getActivity().startService(workoutService);
