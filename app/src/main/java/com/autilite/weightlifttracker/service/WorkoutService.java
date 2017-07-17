@@ -136,9 +136,13 @@ public class WorkoutService extends Service {
         // For now, just take the current values from the exercise
         Exercise exercise = currentExercise.getExercise();
         int reps = intent.getIntExtra(EXTRA_SET_REP, exercise.getReps());
+        // TODO handle "complete" where the default reps is 0
+        // E.g., if the user presses fail followed by complete action in the notification
         double weight = intent.getDoubleExtra(EXTRA_SET_WEIGHT, exercise.getWeight());
         // TODO fix exercise/exercise session to use consistent primitives
         if (currentExercise.completeSet(reps, (float) weight)) {
+            exercise.setReps(reps);
+            exercise.setWeight((float) weight);
             Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
             mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
 
@@ -213,6 +217,13 @@ public class WorkoutService extends Service {
             timer.cancel();
             isTimerRunning = false;
         }
+    }
+
+    public void completeSet(int reps, double weight) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_SET_REP, reps);
+        intent.putExtra(EXTRA_SET_WEIGHT, weight);
+        completeSet(intent);
     }
 
     public void setSelectedExercise(ExerciseSession es) {

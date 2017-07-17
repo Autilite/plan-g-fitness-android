@@ -212,15 +212,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                 } catch (NumberFormatException e) {
                     weight = 0;
                 }
-                if (mExerciseSession.completeSet(reps, weight)) {
-                    Exercise exercise = mExerciseSession.getExercise();
-                    exercise.setReps(reps);
-                    exercise.setWeight(weight);
-                    mPager.getAdapter().notifyDataSetChanged();
-                    updateBottomSheetView();
-
-                    mService.startTimer(mExerciseSession.getExercise().getRestTime() * 1000);
-                }
+                mService.completeSet(reps, weight);
             }
         });
     }
