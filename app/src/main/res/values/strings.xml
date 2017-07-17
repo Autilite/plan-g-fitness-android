@@ -37,6 +37,9 @@
     <string name="complete_set">Complete sets</string>
     <string name="expand_exercise_details">Expand exercise details</string>
 
+    <string name="notification_complete_set">Complete</string>
+    <string name="notification_fail_set">Failed</string>
+
     <string name="select_additional_options">Select additional options</string>
     <string name="add_set">Add set</string>
     <string name="edit">Edit</string>

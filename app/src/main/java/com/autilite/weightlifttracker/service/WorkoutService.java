@@ -47,6 +47,7 @@ public class WorkoutService extends Service {
     private boolean isTimerRunning = false;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder notificationBuilder;
+    private Intent activityIntent;
 
     private long programId;
     private String programName;
@@ -86,17 +87,17 @@ public class WorkoutService extends Service {
         // initializeService the service
         initSession();
 
-        Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
+        activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
 
-        initNotificationBuilder(activityIntent);
+        initNotificationBuilder();
 
         startForeground(SESSION_NOTIFY_ID, notificationBuilder.build());
         startActivity(activityIntent);
     }
 
-    private void initNotificationBuilder(Intent activityIntent) {
+    private void initNotificationBuilder() {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -191,6 +192,34 @@ public class WorkoutService extends Service {
 
     public void setSelectedExercise(ExerciseSession es) {
         currentExercise = es;
+        if (es.getCurrentSet() != ExerciseSession.EXERCISE_COMPLETE) {
+            // Reinitialize notification builder
+            initNotificationBuilder();
+
+            // Add complete/fail actions to notification
+            Intent completeSetIntent = new Intent(this, WorkoutService.class);
+            completeSetIntent.setAction(ACTION_COMPLETE_SET);
+            PendingIntent pCompleteSetIntent = PendingIntent.getService(this, 0, completeSetIntent, 0);
+
+            NotificationCompat.Action completeAction = new NotificationCompat.Action.Builder(
+                    R.drawable.ic_check_black_24dp,
+                    getString(R.string.notification_complete_set),
+                    pCompleteSetIntent)
+                    .build();
+
+            Intent failSetIntent = new Intent(this, WorkoutService.class);
+            failSetIntent.setAction(ACTION_FAIL_SET);
+            PendingIntent pFailSetIntent = PendingIntent.getService(this, 0, failSetIntent, 0);
+
+            NotificationCompat.Action failAction = new NotificationCompat.Action.Builder(
+                    R.drawable.ic_fail_black_24dp,
+                    getString(R.string.notification_fail_set),
+                    pFailSetIntent)
+                    .build();
+
+            notificationBuilder.addAction(completeAction)
+                    .addAction(failAction);
+        }
 
         if (!isTimerRunning) {
             updateNotificationContent(getString(R.string.start_set));
