@@ -40,6 +40,9 @@ public class WorkoutService extends Service {
     public final static String ACTION_START_NEW_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.action.START_NEW_SESSION";
     public final static String ACTION_COMPLETE_SET = "com.autilite.weightlifttracker.service.WorkoutService.action.COMPLETE_SET";
     public final static String ACTION_FAIL_SET = "com.autilite.weightlifttracker.service.WorkoutService.action.FAIL_SET";
+    public final static String EXTRA_SET_REP = "rep";
+    public final static String EXTRA_SET_WEIGHT = "weight";
+
 
     private final static int SESSION_NOTIFY_ID = 100;
 
@@ -130,11 +133,10 @@ public class WorkoutService extends Service {
         if (currentExercise == null) {
             throw new RuntimeException("There is no current exercise selected");
         }
-        // TODO possibly add feature of selecting the set/rep/weight to complete
         // For now, just take the current values from the exercise
         Exercise exercise = currentExercise.getExercise();
-        int reps = exercise.getReps();
-        double weight = exercise.getWeight();
+        int reps = intent.getIntExtra(EXTRA_SET_REP, exercise.getReps());
+        double weight = intent.getDoubleExtra(EXTRA_SET_WEIGHT, exercise.getWeight());
         // TODO fix exercise/exercise session to use consistent primitives
         if (currentExercise.completeSet(reps, (float) weight)) {
             Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
@@ -142,23 +144,15 @@ public class WorkoutService extends Service {
 
             startTimer(exercise.getRestTime() * 1000);
         }
+        // TODO Check if the current exercise is done
     }
 
     private void failSet(Intent intent) {
-        if (currentExercise == null) {
-            throw new RuntimeException("There is no current exercise selected");
-        }
-        Exercise exercise = currentExercise.getExercise();
         // For simplicity, we take the values to be binary complete/fail
         // Either you completely pass or you completely failed
-        int reps = 0;
-        double weight = exercise.getWeight();
-        if (currentExercise.completeSet(reps, (float) weight)) {
-            Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
-            mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
-
-            startTimer(exercise.getRestTime() * 1000);
-        }
+        Intent failIntent = new Intent();
+        failIntent.putExtra(EXTRA_SET_REP, 0);
+        completeSet(failIntent);
     }
 
     @Override
