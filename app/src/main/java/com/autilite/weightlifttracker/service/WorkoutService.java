@@ -126,10 +126,31 @@ public class WorkoutService extends Service {
         if (currentExercise == null) {
             throw new RuntimeException("There is no current exercise selected");
         }
+        // TODO possibly add feature of selecting the set/rep/weight to complete
+        // For now, just take the current values from the exercise
+        Exercise exercise = currentExercise.getExercise();
+        int reps = exercise.getReps();
+        double weight = exercise.getWeight();
+        // TODO fix exercise/exercise session to use consistent primitives
+        if (currentExercise.completeSet(reps, (float) weight)) {
+            // send broadcast that exercise updated
+            startTimer(exercise.getRestTime() * 1000);
+        }
     }
 
     private void failSet(Intent intent) {
-        completeSet(intent);
+        if (currentExercise == null) {
+            throw new RuntimeException("There is no current exercise selected");
+        }
+        Exercise exercise = currentExercise.getExercise();
+        // For simplicity, we take the values to be binary complete/fail
+        // Either you completely pass or you completely failed
+        int reps = 0;
+        double weight = exercise.getWeight();
+        if (currentExercise.completeSet(reps, (float) weight)) {
+            // send broadcast that exercise updated
+            startTimer(exercise.getRestTime() * 1000);
+        }
     }
 
     @Override
