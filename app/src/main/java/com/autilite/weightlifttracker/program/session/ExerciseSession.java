@@ -67,18 +67,19 @@ public class ExerciseSession implements Parcelable {
             SetSession s = setSessions.get(index);
             s.setReps(reps);
             s.setWeight(weight);
+            if (set == currentSet) {
+                incrementCurrentSet();
+            }
             return true;
         } catch (IndexOutOfBoundsException e) {
+            // Since we handle the set number by the position in SetSession, we can use this
+            // exception to determine if the set number if valid
             return false;
         }
     }
 
     public boolean completeSet(int reps, double weight) {
-        if (completeSet(currentSet, reps, weight)) {
-            incrementCurrentSet();
-            return true;
-        }
-        return false;
+        return completeSet(currentSet, reps, weight);
     }
 
     private void incrementCurrentSet() {
