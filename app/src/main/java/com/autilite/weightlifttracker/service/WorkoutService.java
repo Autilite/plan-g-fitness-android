@@ -139,10 +139,9 @@ public class WorkoutService extends Service {
         // TODO handle "complete" where the default reps is 0
         // E.g., if the user presses fail followed by complete action in the notification
         double weight = intent.getDoubleExtra(EXTRA_SET_WEIGHT, exercise.getWeight());
-        // TODO fix exercise/exercise session to use consistent primitives
-        if (currentExercise.completeSet(reps, (float) weight)) {
+        if (currentExercise.completeSet(reps, weight)) {
             exercise.setReps(reps);
-            exercise.setWeight((float) weight);
+            exercise.setWeight(weight);
             Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
             mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
 

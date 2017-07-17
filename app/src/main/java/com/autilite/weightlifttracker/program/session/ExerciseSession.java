@@ -58,7 +58,7 @@ public class ExerciseSession implements Parcelable {
      * @return  false: parameters invalid and were not added to session
      *          true: paramters added to the session
      */
-    public boolean completeSet(int set, int reps, float weight) {
+    public boolean completeSet(int set, int reps, double weight) {
         if (reps < 0 || weight < 0) {
             return false;
         }
@@ -73,7 +73,7 @@ public class ExerciseSession implements Parcelable {
         }
     }
 
-    public boolean completeSet(int reps, float weight) {
+    public boolean completeSet(int reps, double weight) {
         if (completeSet(currentSet, reps, weight)) {
             incrementCurrentSet();
             return true;

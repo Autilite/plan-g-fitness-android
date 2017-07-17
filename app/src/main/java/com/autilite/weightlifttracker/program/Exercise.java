@@ -90,7 +90,7 @@ public class Exercise implements Parcelable {
         return weight;
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 
