@@ -133,15 +133,16 @@ public class WorkoutService extends Service {
         if (currentExercise == null) {
             throw new RuntimeException("There is no current exercise selected");
         }
-        // For now, just take the current values from the exercise
+        // Take default values from the Exercise object, not the current session
+        // This is so the default intent for complete is to... complete.
+        // The currentRep and currentWeight can store values that are 'fail' such as 0
         Exercise exercise = currentExercise.getExercise();
         int reps = intent.getIntExtra(EXTRA_SET_REP, exercise.getReps());
-        // TODO handle "complete" where the default reps is 0
-        // E.g., if the user presses fail followed by complete action in the notification
         double weight = intent.getDoubleExtra(EXTRA_SET_WEIGHT, exercise.getWeight());
+
         if (currentExercise.completeSet(reps, weight)) {
-            exercise.setReps(reps);
-            exercise.setWeight(weight);
+            currentExercise.setCurrentRep(reps);
+            currentExercise.setCurrentWeight(weight);
             Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
             mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
 

@@ -189,6 +189,10 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         mSetTextView = (TextView) findViewById(R.id.bottom_sheet_set);
         mTimerTextView = (TextView) findViewById(R.id.bottom_sheet_timer);
 
+        // TODO setup watcher so the service gets the rep/weight value when it is changed
+        // Currently, it is set so that the service only knows the user-input when they click
+        // on the fab.
+        // There is another case where the user can complete the set via notification.
         mRepEditText = (EditText) findViewById(R.id.edit_reps);
         mWeightEditText = (EditText) findViewById(R.id.edit_weight);
     }
@@ -240,18 +244,21 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
     private void updateBottomSheetView() {
         Exercise e = mExerciseSession.getExercise();
-        mExerciseTextView.setText(e.getName());
 
         int currentSet = mExerciseSession.getCurrentSet();
+        int currentRep = mExerciseSession.getCurrentRep();
+        double currentWeight = mExerciseSession.getCurrentWeight();
+
         String setString = getResources().getString(R.string.set) + " "
                 + currentSet + "/" + e.getSets();
         String completeSet = getResources().getString(R.string.exercise_complete);
 
         String s = mExerciseSession.isSessionDone() ? completeSet : setString;
-        mSetTextView.setText(s);
 
-        mRepEditText.setText(String.valueOf(e.getReps()));
-        mWeightEditText.setText(String.valueOf(e.getWeight()));
+        mExerciseTextView.setText(e.getName());
+        mSetTextView.setText(s);
+        mRepEditText.setText(String.valueOf(currentRep));
+        mWeightEditText.setText(String.valueOf(currentWeight));
     }
 
     private class WorkoutPagerAdapter extends FragmentPagerAdapter {

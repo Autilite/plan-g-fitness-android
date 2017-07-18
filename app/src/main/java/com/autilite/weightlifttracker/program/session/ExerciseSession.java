@@ -18,6 +18,8 @@ public class ExerciseSession implements Parcelable {
 
     private Exercise exercise;
     private int currentSet;
+    private int currentRep;
+    private double currentWeight;
     private List<SetSession> setSessions;
 
     public ExerciseSession(Exercise exercise) {
@@ -29,12 +31,30 @@ public class ExerciseSession implements Parcelable {
             setSessions.add(s);
         }
         currentSet = 1;
+        currentRep = exercise.getReps();
+        currentWeight = exercise.getWeight();
     }
 
     protected ExerciseSession(Parcel in) {
         exercise = in.readParcelable(Exercise.class.getClassLoader());
         currentSet = in.readInt();
+        currentRep = in.readInt();
+        currentWeight = in.readDouble();
         setSessions = in.createTypedArrayList(SetSession.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(exercise, flags);
+        dest.writeInt(currentSet);
+        dest.writeInt(currentRep);
+        dest.writeDouble(currentWeight);
+        dest.writeTypedList(setSessions);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ExerciseSession> CREATOR = new Creator<ExerciseSession>() {
@@ -138,15 +158,19 @@ public class ExerciseSession implements Parcelable {
         return exercise;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public int getCurrentRep() {
+        return currentRep;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeParcelable(exercise, i);
-        parcel.writeInt(currentSet);
-        parcel.writeTypedList(setSessions);
+    public void setCurrentRep(int currentRep) {
+        this.currentRep = currentRep;
+    }
+
+    public double getCurrentWeight() {
+        return currentWeight;
+    }
+
+    public void setCurrentWeight(double currentWeight) {
+        this.currentWeight = currentWeight;
     }
 }
