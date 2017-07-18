@@ -147,7 +147,13 @@ public class WorkoutService extends Service {
 
             startTimer(exercise.getRestTime() * 1000);
         }
-        // TODO Check if the current exercise is done
+        // TODO Clean up notification
+        // The purpose of re-initializing the notification is to remove the
+        // complete and fail actions
+        if (currentExercise.isSessionDone()) {
+            initNotificationBuilder();
+            mNotificationManager.notify(SESSION_NOTIFY_ID, notificationBuilder.build());
+        }
     }
 
     private void failSet(Intent intent) {
@@ -262,10 +268,20 @@ public class WorkoutService extends Service {
     }
 
     private void updateNotificationContent(String content) {
-        notificationBuilder
-                .setContentTitle(currentExercise == null ? "" : currentExercise.getExercise().getName())
-                .setContentText(content);
+        if (currentExercise != null) {
+            Exercise e = currentExercise.getExercise();
+            int currentSet = currentExercise.getCurrentSet();
 
+            String setString = currentSet + "/" + e.getSets();
+            String completeSet = getResources().getString(R.string.exercise_complete);
+            String s = currentExercise.isSessionDone() ? completeSet : setString;
+            notificationBuilder
+                    .setContentTitle(e.getName() + " " + s);
+        } else {
+            notificationBuilder
+                    .setContentTitle("");
+        }
+        notificationBuilder.setContentText(content);
         mNotificationManager.notify(SESSION_NOTIFY_ID, notificationBuilder.build());
     }
 
