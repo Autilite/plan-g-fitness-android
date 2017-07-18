@@ -126,6 +126,10 @@ public class ExerciseSession implements Parcelable {
         return counter;
     }
 
+    public boolean isSessionDone() {
+        return getCurrentSet() == EXERCISE_COMPLETE;
+    }
+
     public List<SetSession> getSetSessions() {
         return setSessions;
     }

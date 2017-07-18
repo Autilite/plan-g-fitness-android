@@ -227,7 +227,7 @@ public class WorkoutService extends Service {
 
     public void setSelectedExercise(ExerciseSession es) {
         currentExercise = es;
-        if (es.getCurrentSet() != ExerciseSession.EXERCISE_COMPLETE) {
+        if (!currentExercise.isSessionDone()) {
             // Reinitialize notification builder
             initNotificationBuilder();
 

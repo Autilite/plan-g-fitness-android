@@ -247,7 +247,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
                 + currentSet + "/" + e.getSets();
         String completeSet = getResources().getString(R.string.exercise_complete);
 
-        String s = currentSet != ExerciseSession.EXERCISE_COMPLETE ? setString : completeSet;
+        String s = mExerciseSession.isSessionDone() ? completeSet : setString;
         mSetTextView.setText(s);
 
         mRepEditText.setText(String.valueOf(e.getReps()));
