@@ -20,7 +20,8 @@ import static com.autilite.weightlifttracker.database.WorkoutContract.WorkoutEnt
 import static com.autilite.weightlifttracker.database.WorkoutListContract.WorkoutListEntry;
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;
 import static com.autilite.weightlifttracker.database.ProgramWorkoutContract.ProgramWorkoutEntry;
-import static com.autilite.weightlifttracker.database.WorkoutSessionContract.WorkoutSessionEntry;
+import static com.autilite.weightlifttracker.database.ProgramSessionContract.ProgramSessionEntry;
+import static com.autilite.weightlifttracker.database.ExerciseSessionContract.ExerciseSessionEntry;
 
 /**
  * Created by Kelvin on Jun 10, 2017.
@@ -28,7 +29,7 @@ import static com.autilite.weightlifttracker.database.WorkoutSessionContract.Wor
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
     private static final String SQL_CREATE_TABLE_EXERCISE_INFO =
@@ -100,36 +101,48 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_TABLE_PROGRAM_WORKOUTS =
             "DROP TABLE IF EXISTS " + ProgramWorkoutContract.ProgramWorkoutEntry.TABLE_NAME;
 
-    private static final String SQL_CREATE_TABLE_WORKOUT_SESSION =
-            "CREATE TABLE " + WorkoutSessionEntry.TABLE_NAME+ " (" +
-                    WorkoutSessionEntry.COLUMN_PROGRAM_ID + " INTEGER NOT NULL," +
-                    WorkoutSessionEntry.COLUMN_WORKOUT_ID + " INTEGER NOT NULL," +
-                    WorkoutSessionEntry.COLUMN_EXERCISE_ID + " INTEGER NOT NULL," +
-                    WorkoutSessionEntry.COLUMN_DATE + " TEXT NOT NULL," +
-                    WorkoutSessionEntry.COLUMN_SET_NUMBER + " INTEGER NOT NULL," +
-                    WorkoutSessionEntry.COLUMN_SUCCESSFUL_REPS + " INTEGER NOT NULL," +
-                    WorkoutSessionEntry.COLUMN_IS_SET_SUCCESSFUL + " INTEGER NOT NULL DEFAULT 0," +
-                    WorkoutSessionEntry.COLUMN_WEIGHT + " REAL," +
-                    "PRIMARY KEY ("+ WorkoutSessionEntry.COLUMN_PROGRAM_ID +", " +
-                    WorkoutSessionEntry.COLUMN_WORKOUT_ID + "," +
-                    WorkoutSessionEntry.COLUMN_EXERCISE_ID + "," +
-                    WorkoutSessionEntry.COLUMN_DATE + "," +
-                    WorkoutSessionEntry.COLUMN_SET_NUMBER + ")," +
-                    "FOREIGN KEY (" + WorkoutSessionEntry.COLUMN_PROGRAM_ID + ") " +
-                    "REFERENCES " + ProgramWorkoutEntry.TABLE_NAME + " (" +
-                    ProgramWorkoutEntry.COLUMN_PROGRAM_ID +") " +
-                    "ON DELETE CASCADE ON UPDATE CASCADE," +
-                    "FOREIGN KEY (" + WorkoutSessionEntry.COLUMN_WORKOUT_ID +") " +
-                    "REFERENCES " + ProgramWorkoutEntry.TABLE_NAME +
-                    " (" + ProgramWorkoutEntry.COLUMN_WORKOUT_ID + ") " +
-                    "ON DELETE CASCADE ON UPDATE CASCADE," +
-                    "FOREIGN KEY (" + WorkoutSessionEntry.COLUMN_EXERCISE_ID +")" +
-                    " REFERENCES " + ExerciseStatEntry.TABLE_NAME +
-                    " ("+ ExerciseStatEntry._ID +") " +
+    private static final String SQL_CREATE_TABLE_PROGRAM_SESSION =
+            "CREATE TABLE " + ProgramSessionEntry.TABLE_NAME+ " (" +
+                    ProgramSessionEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    ProgramSessionEntry.COLUMN_PROGRAM_ID + " INTEGER NOT NULL," +
+                    ProgramSessionEntry.COLUMN_PROGRAM_DAY + " INTEGER NOT NULL," +
+                    ProgramSessionEntry.COLUMN_DATE + " INTEGER NOT NULL," +
+                    "FOREIGN KEY (" + ProgramSessionEntry.COLUMN_PROGRAM_ID + ") " +
+                    "REFERENCES " + ProgramEntry.TABLE_NAME + " (" +
+                    ProgramEntry._ID +") " +
                     "ON DELETE CASCADE ON UPDATE CASCADE)";
 
-    private static final String SQL_DELETE_TABLE_WORKOUT_SESSION =
-            "DROP TABLE IF EXISTS " + WorkoutSessionEntry.TABLE_NAME;
+    private static final String SQL_DELETE_TABLE_PROGRAM_SESSION =
+            "DROP TABLE IF EXISTS " + ProgramSessionEntry.TABLE_NAME;
+
+    private static final String SQL_CREATE_TABLE_EXERCISE_SESSION =
+            "CREATE TABLE " + ExerciseSessionEntry.TABLE_NAME+ " (" +
+                    ExerciseSessionEntry.COLUMN_PROGRAM_SESSION_ID + " INTEGER NOT NULL," +
+                    ExerciseSessionEntry.COLUMN_WORKOUT_ID + " INTEGER NOT NULL," +
+                    ExerciseSessionEntry.COLUMN_EXERCISE_ID + " INTEGER NOT NULL," +
+                    ExerciseSessionEntry.COLUMN_SET_NUMBER + " INTEGER NOT NULL," +
+                    ExerciseSessionEntry.COLUMN_SUCCESSFUL_REPS + " INTEGER NOT NULL," +
+                    ExerciseSessionEntry.COLUMN_WEIGHT + " REAL," +
+                    ExerciseSessionEntry.COLUMN_IS_SET_SUCCESSFUL + " INTEGER NOT NULL DEFAULT 0," +
+                    "PRIMARY KEY ("+ ExerciseSessionEntry.COLUMN_PROGRAM_SESSION_ID +", " +
+                    ExerciseSessionEntry.COLUMN_WORKOUT_ID + "," +
+                    ExerciseSessionEntry.COLUMN_EXERCISE_ID + "," +
+                    ExerciseSessionEntry.COLUMN_SET_NUMBER + ")," +
+                    "FOREIGN KEY (" + ExerciseSessionEntry.COLUMN_PROGRAM_SESSION_ID + ") " +
+                    "REFERENCES " + ProgramSessionEntry.TABLE_NAME + " (" +
+                    ProgramSessionEntry._ID +") " +
+                    "ON DELETE CASCADE ON UPDATE CASCADE," +
+                    "FOREIGN KEY (" + ExerciseSessionEntry.COLUMN_WORKOUT_ID +") " +
+                    "REFERENCES " + WorkoutListEntry.TABLE_NAME +
+                    " (" + WorkoutListEntry.COLUMN_WORKOUT_ID + ") " +
+                    "ON DELETE CASCADE ON UPDATE CASCADE," +
+                    "FOREIGN KEY (" + ExerciseSessionEntry.COLUMN_EXERCISE_ID +")" +
+                    " REFERENCES " + WorkoutListEntry.TABLE_NAME +
+                    " ("+ WorkoutListEntry.COLUMN_EXERCISE_ID +") " +
+                    "ON DELETE CASCADE ON UPDATE CASCADE)";
+
+    private static final String SQL_DELETE_TABLE_EXERCISE_SESSION =
+            "DROP TABLE IF EXISTS " + ExerciseSessionContract.ExerciseSessionEntry.TABLE_NAME;
 
     public WorkoutProgramDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -144,7 +157,8 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_WORKOUT_LIST);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_PROGRAM);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_PROGRAM_WORKOUTS);
-        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_WORKOUT_SESSION);
+        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_PROGRAM_SESSION);
+        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_EXERCISE_SESSION);
     }
 
     @Override
