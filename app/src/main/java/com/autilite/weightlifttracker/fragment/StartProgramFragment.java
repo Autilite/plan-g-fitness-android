@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.service.WorkoutService;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
 import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class StartProgramFragment extends Fragment {
 
     private long programId;
     private String programName;
-    private WorkoutProgramDbHelper workoutDb;
+    private WorkoutDatabase workoutDb;
     private List<Workout> workouts;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -89,7 +89,7 @@ public class StartProgramFragment extends Fragment {
             }
         });
 
-        workoutDb = new WorkoutProgramDbHelper(getActivity());
+        workoutDb = new WorkoutDatabase(getActivity());
         workouts = workoutDb.getProgramWorkouts(programId);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 

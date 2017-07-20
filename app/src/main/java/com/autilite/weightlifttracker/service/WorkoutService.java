@@ -14,7 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.WorkoutSessionActivity;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 import com.autilite.weightlifttracker.program.session.ExerciseSession;
@@ -60,7 +60,7 @@ public class WorkoutService extends Service {
     private String programName;
     private ExerciseSession currentExercise;
     private List<Workout> workouts;
-    private WorkoutProgramDbHelper workoutDb;
+    private WorkoutDatabase workoutDb;
     private Map<Workout, ArrayList<? extends ExerciseSession>> sessions;
 
     public class LocalBinder extends Binder {
@@ -172,7 +172,7 @@ public class WorkoutService extends Service {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        workoutDb = new WorkoutProgramDbHelper(this);
+        workoutDb = new WorkoutDatabase(this);
     }
 
     @Override

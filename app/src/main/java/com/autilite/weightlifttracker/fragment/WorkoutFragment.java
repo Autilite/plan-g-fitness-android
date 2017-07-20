@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.fragment.dialog.AbstractCreateDialog;
 import com.autilite.weightlifttracker.fragment.dialog.CreateWorkoutDialog;
 import com.autilite.weightlifttracker.program.Exercise;
@@ -33,7 +33,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private WorkoutProgramDbHelper workoutDb;
+    private WorkoutDatabase workoutDb;
     private List<Workout> workouts;
 
     public WorkoutFragment() {
@@ -59,7 +59,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
                 frag.show(getActivity().getSupportFragmentManager(), "CreateWorkoutDialog");
             }
         });
-        workoutDb = new WorkoutProgramDbHelper(getActivity());
+        workoutDb = new WorkoutDatabase(getActivity());
         workouts = workoutDb.getAllWorkoutsList();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 

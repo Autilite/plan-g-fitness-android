@@ -24,7 +24,7 @@ import android.widget.Spinner;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.ProgramContract;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.fragment.ProgramFragment;
 import com.autilite.weightlifttracker.fragment.StartProgramFragment;
 import com.autilite.weightlifttracker.fragment.WorkoutFragment;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity
 {
 
     private CharSequence mTitle;
-    private WorkoutProgramDbHelper workoutDb;
+    private WorkoutDatabase workoutDb;
     private Spinner spinner;
 
     @Override
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_workout);
 
-        workoutDb = new WorkoutProgramDbHelper(this);
+        workoutDb = new WorkoutDatabase(this);
     }
 
     @Override

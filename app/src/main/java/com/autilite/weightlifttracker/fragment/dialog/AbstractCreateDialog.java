@@ -15,13 +15,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.database.WorkoutProgramDbHelper;
+import com.autilite.weightlifttracker.database.WorkoutDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public abstract class AbstractCreateDialog extends DialogFragment {
-    protected WorkoutProgramDbHelper db;
+    protected WorkoutDatabase db;
 
     public interface CreateDialogListener {
         void onDialogPositiveClick(DialogFragment dialog);
@@ -36,7 +36,7 @@ public abstract class AbstractCreateDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         try {
             mListener = (CreateDialogListener) getTargetFragment();
-            db = new WorkoutProgramDbHelper(getActivity());
+            db = new WorkoutDatabase(getActivity());
         } catch (ClassCastException e) {
             throw new ClassCastException(getTargetFragment().toString()
                     + " must implement CreateWorkoutListener");
