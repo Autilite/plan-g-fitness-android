@@ -122,10 +122,12 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
                     Toast.makeText(getActivity(), "Could not create exercise " + exBtn.getText().toString(), Toast.LENGTH_LONG).show();
                     continue;
                 }
-                long id = workoutDb.addExerciseToWorkout(workoutId, exerciseId);
+                long id = workoutDb.addExerciseToWorkout(workoutId, exerciseStatId);
+                System.out.println("the id is " + id);
                 if (id == -1){
                     Toast.makeText(getActivity(), "Could not add " + exBtn.getText().toString() +
                             " to " + workoutName, Toast.LENGTH_LONG).show();
+                    continue;
                 }
                 Exercise e = new Exercise(id, exBtn.getText().toString(), wSets, wReps, wWeight);
                 workout.addExercise(e);
