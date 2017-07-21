@@ -173,4 +173,54 @@ public class ExerciseSession implements Parcelable {
     public void setCurrentWeight(double currentWeight) {
         this.currentWeight = currentWeight;
     }
+
+    public boolean isSetComplete(SetSession session) {
+        checkValidSession(session);
+        return isSetComplete(session.getSetNumber());
+    }
+
+    public boolean isSetComplete(int setNumber) {
+        int index = setNumber - 1;
+        SetSession set = setSessions.get(index);
+        return isSetComplete(set.getReps(), set.getWeight());
+    }
+
+    private boolean isSetComplete(int reps, double weight) {
+        return reps != INCOMPLETE_SET && weight != INCOMPLETE_SET;
+    }
+
+    public boolean isSetSuccessful(SetSession session) {
+        checkValidSession(session);
+        return isSetSuccessful(session.getSetNumber());
+    }
+
+    public boolean isSetSuccessful(int setNumber) {
+        int index = setNumber - 1;
+        SetSession set = setSessions.get(index);
+        return isSetSuccesful(set.getReps());
+    }
+
+    private boolean isSetSuccesful(int reps) {
+        return reps >= exercise.getReps();
+    }
+
+    /**
+     * Checks if this SetSession belongs to the ExerciseSession
+     *
+     * Throw an IllegalArgumentException if it doesn't
+     *
+     * @param session
+     */
+    private void checkValidSession(SetSession session) {
+        // Get the session's set number and check if this is the same this object's session
+        // This is so we only need to compare a single object rather than iterating through
+        // the entire list to find session
+        int index = session.getSetNumber() - 1;
+        SetSession set = setSessions.get(index);
+
+        if (!session.equals(set)) {
+            throw new IllegalArgumentException("This "+ SetSession.class.getSimpleName() +
+                    " doesn't belong to the " + ExerciseSession.class.getSimpleName());
+        }
+    }
 }

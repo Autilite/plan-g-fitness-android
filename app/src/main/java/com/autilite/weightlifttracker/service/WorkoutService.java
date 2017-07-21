@@ -40,6 +40,7 @@ public class WorkoutService extends Service {
     public final static String ACTION_START_NEW_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.action.START_NEW_SESSION";
     public final static String ACTION_COMPLETE_SET = "com.autilite.weightlifttracker.service.WorkoutService.action.COMPLETE_SET";
     public final static String ACTION_FAIL_SET = "com.autilite.weightlifttracker.service.WorkoutService.action.FAIL_SET";
+    public final static String ACTION_SAVE_SESSION = "com.autilite.weightlifttracker.service.WorkoutService.action.SAVE_SESSION";
     public final static String EXTRA_SET_REP = "rep";
     public final static String EXTRA_SET_WEIGHT = "weight";
 
@@ -55,6 +56,7 @@ public class WorkoutService extends Service {
     private CountDownTimer timer;
     private boolean isTimerRunning = false;
 
+    private long startTime;
 
     private long programId;
     private String programName;
@@ -78,6 +80,8 @@ public class WorkoutService extends Service {
             completeSet(intent);
         } else if (action.equals(ACTION_FAIL_SET)) {
             failSet(intent);
+        } else if (action.equals(ACTION_SAVE_SESSION)) {
+            saveSession(intent);
         }
         // TODO handle null intent if service is killed and restarted with START_STICKY
         return START_STICKY;
@@ -116,6 +120,7 @@ public class WorkoutService extends Service {
     }
 
     private void initSession() {
+        startTime = System.currentTimeMillis();
         workouts = workoutDb.getProgramWorkouts(programId);
         sessions = new HashMap<>();
         for (Workout w : workouts) {
@@ -163,6 +168,15 @@ public class WorkoutService extends Service {
         Intent failIntent = new Intent();
         failIntent.putExtra(EXTRA_SET_REP, 0);
         completeSet(failIntent);
+    }
+
+    private void saveSession(Intent intent) {
+        // TODO handle empty session
+        // TODO handle progDay
+        long timeEnd = System.currentTimeMillis();
+        workoutDb.addSession(programId, 1, startTime, timeEnd, sessions);
+        // TODO update exercise with any changes from this session
+        // e.g., exercise auto increment if the exercise session was successful
     }
 
     @Override

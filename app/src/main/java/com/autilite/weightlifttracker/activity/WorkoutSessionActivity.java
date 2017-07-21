@@ -153,8 +153,11 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
         switch(id) {
             case R.id.option_finish_workout:
+                Intent intent = new Intent(this, WorkoutService.class);
+                intent.setAction(WorkoutService.ACTION_SAVE_SESSION);
+                startService(intent);
+
                 stopService(new Intent(this, WorkoutService.class));
-                // TODO save data
                 finish();
                 return true;
             default:

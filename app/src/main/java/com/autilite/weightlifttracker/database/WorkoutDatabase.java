@@ -4,14 +4,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.autilite.weightlifttracker.exception.SQLiteInsertException;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
+import com.autilite.weightlifttracker.program.session.ExerciseSession;
+import com.autilite.weightlifttracker.program.session.SetSession;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static com.autilite.weightlifttracker.database.ExerciseInfoContract.ExerciseInfoEntry;
 import static com.autilite.weightlifttracker.database.ExerciseStatContract.ExerciseStatEntry;
@@ -91,6 +96,55 @@ public class WorkoutDatabase {
         cv.put(ProgramWorkoutEntry.COLUMN_NAME_DAY, day);
         cv.put(ProgramWorkoutEntry.COLUMN_DATE_ADDED, System.currentTimeMillis());
         return db.insert(ProgramWorkoutEntry.TABLE_NAME, null, cv) != -1;
+    }
+
+    public boolean addSession(long progId, int progDay, long timeStart, long timeEnd, Map<Workout, ArrayList<? extends ExerciseSession>> session) {
+        try {
+            db.beginTransaction();
+            // Add the program session
+            ContentValues cv = new ContentValues();
+            cv.put(ProgramSessionEntry.COLUMN_PROGRAM_ID, progId);
+            cv.put(ProgramSessionEntry.COLUMN_PROGRAM_DAY, progDay);
+            cv.put(ProgramSessionEntry.COLUMN_TIME_START, timeStart);
+            cv.put(ProgramSessionEntry.COLUMN_TIME_END, timeEnd);
+            long sessionId = db.insertOrThrow(ProgramSessionEntry.TABLE_NAME, null, cv);
+            // Ensure this program insert is successful
+            if (sessionId == -1) {
+                throw new SQLiteInsertException("Could not insert ProgramSession entry");
+            }
+
+            // Iterate each entry of the session map
+            for (Map.Entry<Workout, ArrayList<? extends ExerciseSession>> entry : session.entrySet()) {
+                Workout w = entry.getKey();
+                ArrayList<? extends ExerciseSession> sessions = entry.getValue();
+                for (ExerciseSession es : sessions) {
+                    for (SetSession set : es.getSetSessions()) {
+                        if (!es.isSetComplete(set)) {
+                            continue;
+                        }
+                        cv.clear();
+                        cv.put(ExerciseSessionEntry.COLUMN_PROGRAM_SESSION_ID, sessionId);
+                        cv.put(ExerciseSessionEntry.COLUMN_WORKOUT_ID, w.getId());
+                        cv.put(ExerciseSessionEntry.COLUMN_EXERCISE_ID, es.getExercise().getId());
+                        cv.put(ExerciseSessionEntry.COLUMN_SET_NUMBER, set.getSetNumber());
+                        cv.put(ExerciseSessionEntry.COLUMN_SUCCESSFUL_REPS, set.getReps());
+                        cv.put(ExerciseSessionEntry.COLUMN_WEIGHT, set.getWeight());
+                        cv.put(ExerciseSessionEntry.COLUMN_IS_SET_SUCCESSFUL, es.isSetSuccessful(set));
+
+                        long esId = db.insertOrThrow(ExerciseSessionEntry.TABLE_NAME, null, cv);
+                        if (esId == -1) {
+                            throw new SQLiteInsertException("Could not insert ProgramSession entry");
+                        }
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
     }
 
     public Cursor getAllExerciseInfo() {
