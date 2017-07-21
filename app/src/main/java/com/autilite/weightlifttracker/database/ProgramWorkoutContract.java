@@ -13,5 +13,6 @@ public final class ProgramWorkoutContract {
         public static final String COLUMN_PROGRAM_ID = "ProgId";
         public static final String COLUMN_WORKOUT_ID = "WorkoutId";
         public static final String COLUMN_NAME_DAY = "Day";
+        public static final String COLUMN_DATE_ADDED = "DateAdded";
     }
 }

@@ -13,5 +13,7 @@ public final class WorkoutContract {
     public static class WorkoutEntry implements BaseColumns {
         public static final String TABLE_NAME = "Workouts";
         public static final String COLUMN_NAME = "Name";
+        public static final String COLUMN_DESCRIPTION = "Description";
+        public static final String COLUMN_CREATION = "CreationTime";
     }
 }

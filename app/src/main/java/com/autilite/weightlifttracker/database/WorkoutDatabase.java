@@ -42,12 +42,16 @@ public class WorkoutDatabase {
     public long createProgram(String programName) {
         ContentValues cv = new ContentValues();
         cv.put(ProgramEntry.COLUMN_NAME, programName);
+        // TODO cv.put(ProgramEntry.COLUMN_DESCRIPTION, description);
+        cv.put(ProgramEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(ProgramEntry.TABLE_NAME, null, cv);
     }
 
     public long createWorkout(String workoutName) {
         ContentValues cv = new ContentValues();
         cv.put(WorkoutEntry.COLUMN_NAME, workoutName);
+        // TODO cv.put(WorkoutEntry.COLUMN_DESCRIPTION, description);
+        cv.put(WorkoutEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
     }
 
@@ -58,6 +62,7 @@ public class WorkoutDatabase {
         cv.put(ExerciseStatEntry.COLUMN_REP, reps);
         cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
         cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
     }
 
@@ -67,6 +72,7 @@ public class WorkoutDatabase {
         cv.put(ExerciseStatEntry.COLUMN_SET, sets);
         cv.put(ExerciseStatEntry.COLUMN_REP, reps);
         cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
     }
 
@@ -74,6 +80,7 @@ public class WorkoutDatabase {
         ContentValues cv = new ContentValues();
         cv.put(WorkoutListEntry.COLUMN_WORKOUT_ID, workoutId);
         cv.put(WorkoutListEntry.COLUMN_EXERCISE_ID, exerciseStatId);
+        cv.put(WorkoutListEntry.COLUMN_DATE_ADDED, System.currentTimeMillis());
         return db.insert(WorkoutListEntry.TABLE_NAME, null, cv);
     }
 
@@ -82,6 +89,7 @@ public class WorkoutDatabase {
         cv.put(ProgramWorkoutEntry.COLUMN_PROGRAM_ID, programId);
         cv.put(ProgramWorkoutEntry.COLUMN_WORKOUT_ID, workoutId);
         cv.put(ProgramWorkoutEntry.COLUMN_NAME_DAY, day);
+        cv.put(ProgramWorkoutEntry.COLUMN_DATE_ADDED, System.currentTimeMillis());
         return db.insert(ProgramWorkoutEntry.TABLE_NAME, null, cv) != -1;
     }
 

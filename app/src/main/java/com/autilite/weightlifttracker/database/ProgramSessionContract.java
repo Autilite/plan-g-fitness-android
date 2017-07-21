@@ -14,6 +14,7 @@ public final class ProgramSessionContract {
         public static final String TABLE_NAME = "ProgramSession";
         public static final String COLUMN_PROGRAM_ID = "ProgId";
         public static final String COLUMN_PROGRAM_DAY = "ProgDay";
-        public static final String COLUMN_DATE = "SessionDate";
+        public static final String COLUMN_TIME_START = "TimeStart";
+        public static final String COLUMN_TIME_END = "TimeEnd";
     }
 }

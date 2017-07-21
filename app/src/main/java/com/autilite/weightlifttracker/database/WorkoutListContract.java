@@ -14,5 +14,6 @@ public final class WorkoutListContract {
         public static final String TABLE_NAME = "WorkoutList";
         public static final String COLUMN_WORKOUT_ID = "WorkoutId";
         public static final String COLUMN_EXERCISE_ID = "ExerciseId";
+        public static final String COLUMN_DATE_ADDED = "DateAdded";
     }
 }

@@ -20,7 +20,7 @@ import static com.autilite.weightlifttracker.database.WorkoutListContract.Workou
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
     private static final String SQL_CREATE_TABLE_EXERCISE_INFO =
@@ -40,6 +40,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ExerciseStatEntry.COLUMN_REP + " INTEGER," +
                     ExerciseStatEntry.COLUMN_WEIGHT + " REAL," +
                     ExerciseStatEntry.COLUMN_AUTOINC + " REAL," +
+                    ExerciseStatEntry.COLUMN_CREATION + " INTEGER," +
                     "FOREIGN KEY (" + ExerciseStatEntry.COLUMN_EXERCISE_ID + ") " +
                     "REFERENCES " + ExerciseInfoEntry.TABLE_NAME + " (" + ExerciseInfoEntry._ID + ") " +
                     "ON DELETE RESTRICT ON UPDATE CASCADE)";
@@ -50,7 +51,9 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TABLE_WORKOUT =
             "CREATE TABLE " + WorkoutEntry.TABLE_NAME + " (" +
                     WorkoutEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    WorkoutEntry.COLUMN_NAME + " TEXT NOT NULL)";
+                    WorkoutEntry.COLUMN_NAME + " TEXT NOT NULL," +
+                    WorkoutEntry.COLUMN_DESCRIPTION + " TEXT," +
+                    WorkoutEntry.COLUMN_CREATION + " INTEGER)";
 
     private static final String SQL_DELETE_TABLE_WORKOUT =
             "DROP TABLE IF EXISTS " + WorkoutEntry.TABLE_NAME;
@@ -59,6 +62,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + WorkoutListEntry.TABLE_NAME + " (" +
                     WorkoutListEntry.COLUMN_WORKOUT_ID + " INTEGER NOT NULL," +
                     WorkoutListEntry.COLUMN_EXERCISE_ID + " INTEGER NOT NULL," +
+                    WorkoutListEntry.COLUMN_DATE_ADDED + " INTEGER," +
                     "FOREIGN KEY (" + WorkoutListEntry.COLUMN_WORKOUT_ID + ") " +
                     "REFERENCES " + WorkoutEntry.TABLE_NAME + "(" + WorkoutEntry._ID + ") " +
                     "ON DELETE CASCADE ON UPDATE CASCADE," +
@@ -72,7 +76,9 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TABLE_PROGRAM =
             "CREATE TABLE " + ProgramEntry.TABLE_NAME + " (" +
                     ProgramEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    ProgramEntry.COLUMN_NAME + " TEXT NOT NULL)";
+                    ProgramEntry.COLUMN_NAME + " TEXT NOT NULL," +
+                    ProgramEntry.COLUMN_DESCRIPTION + " TEXT," +
+                    ProgramEntry.COLUMN_CREATION + " INTEGER )";
 
     private static final String SQL_DELETE_TABLE_PROGRAM =
             "DROP TABLE IF EXISTS " + ProgramEntry.TABLE_NAME;
@@ -82,6 +88,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ProgramWorkoutEntry.COLUMN_PROGRAM_ID + " INTEGER NOT NULL," +
                     ProgramWorkoutEntry.COLUMN_WORKOUT_ID + " INTEGER NOT NULL," +
                     ProgramWorkoutEntry.COLUMN_NAME_DAY + " INTEGER NOT NULL," +
+                    ProgramWorkoutEntry.COLUMN_DATE_ADDED + " INTEGER," +
                     "FOREIGN KEY (" + ProgramWorkoutEntry.COLUMN_PROGRAM_ID + " )" +
                     "REFERENCES " + ProgramEntry.TABLE_NAME + "(" + ProgramEntry._ID + ") " +
                     "ON DELETE CASCADE ON UPDATE CASCADE," +
@@ -97,7 +104,8 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ProgramSessionEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     ProgramSessionEntry.COLUMN_PROGRAM_ID + " INTEGER NOT NULL," +
                     ProgramSessionEntry.COLUMN_PROGRAM_DAY + " INTEGER NOT NULL," +
-                    ProgramSessionEntry.COLUMN_DATE + " INTEGER NOT NULL," +
+                    ProgramSessionEntry.COLUMN_TIME_START + " INTEGER NOT NULL," +
+                    ProgramSessionEntry.COLUMN_TIME_END + " INTEGER NOT NULL," +
                     "FOREIGN KEY (" + ProgramSessionEntry.COLUMN_PROGRAM_ID + ") " +
                     "REFERENCES " + ProgramEntry.TABLE_NAME + " (" +
                     ProgramEntry._ID +") " +
