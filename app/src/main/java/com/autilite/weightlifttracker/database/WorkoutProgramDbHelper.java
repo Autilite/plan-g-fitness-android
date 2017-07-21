@@ -67,7 +67,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     "ON DELETE CASCADE ON UPDATE CASCADE)";
 
     private static final String SQL_DELETE_TABLE_WORKOUT_LIST =
-            "DROP TABLE IF EXISTS " + ExerciseStatContract.ExerciseStatEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + WorkoutListEntry.TABLE_NAME;
 
     private static final String SQL_CREATE_TABLE_PROGRAM =
             "CREATE TABLE " + ProgramEntry.TABLE_NAME + " (" +
@@ -75,7 +75,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ProgramEntry.COLUMN_NAME + " TEXT NOT NULL)";
 
     private static final String SQL_DELETE_TABLE_PROGRAM =
-            "DROP TABLE IF EXISTS " + WorkoutContract.WorkoutEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + ProgramEntry.TABLE_NAME;
 
     private static final String SQL_CREATE_TABLE_PROGRAM_WORKOUTS =
             "CREATE TABLE " + ProgramWorkoutEntry.TABLE_NAME + " (" +
@@ -154,7 +154,15 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_EXERCISE_INFO);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_EXERCISE_STATS);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_WORKOUT);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_WORKOUT_LIST);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_PROGRAM);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_PROGRAM_WORKOUTS);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_PROGRAM_SESSION);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_EXERCISE_SESSION);
+        onCreate(sqLiteDatabase);
     }
 
     private void insertDefaultExercises(SQLiteDatabase db){
