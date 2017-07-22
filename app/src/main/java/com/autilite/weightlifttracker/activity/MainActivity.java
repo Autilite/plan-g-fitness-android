@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        spinner = (Spinner) toolbar.findViewById(R.id.spinner_program);
+        spinner = new Spinner(getSupportActionBar().getThemedContext());
+        toolbar.addView(spinner);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
