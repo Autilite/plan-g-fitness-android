@@ -48,6 +48,10 @@
     <string name="time_until_next_set">Time until next set</string>
     <string name="start_set">Start your next set</string>
 
+    <string name="action_create">Create</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
     </string>
