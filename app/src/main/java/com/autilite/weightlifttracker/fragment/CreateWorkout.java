@@ -67,14 +67,15 @@ public class CreateWorkout extends Fragment {
 
         private static final int HEADER_VIEW = 0;
         private static final int CONTENT_VIEW = 1;
+        private static final int FOOTER_VIEW = 2;
 
         private static final int HEADER_SIZE = 1;
+        private static final int FOOTER_SIZE = 1;
 
         private List<Exercise> exercises;
 
         public AddExerciseAdapter() {
             exercises = new ArrayList<>();
-            exercises.add(null);
         }
 
         @Override
@@ -99,6 +100,10 @@ public class CreateWorkout extends Fragment {
                 ExerciseViewHolder vh = (ExerciseViewHolder) holder;
                 vh.setExercise(e);
                 vh.updateView();
+            } else if (holder.getItemViewType() == FOOTER_VIEW) {
+                ExerciseViewHolder vh = (ExerciseViewHolder) holder;
+                vh.setExercise(null);
+                vh.updateView();
             }
         }
 
@@ -106,13 +111,15 @@ public class CreateWorkout extends Fragment {
         public int getItemViewType(int position) {
             if (position < HEADER_SIZE) {
                 return HEADER_VIEW;
-            }
-            return CONTENT_VIEW;
+            } else if (position >= HEADER_SIZE + exercises.size()) {
+                return FOOTER_VIEW;
+            } else
+                return CONTENT_VIEW;
         }
 
         @Override
         public int getItemCount() {
-            return exercises.size() + HEADER_SIZE;
+            return exercises.size() + HEADER_SIZE + FOOTER_SIZE;
         }
 
         public class TitleViewHolder extends RecyclerView.ViewHolder {
@@ -139,45 +146,34 @@ public class CreateWorkout extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final long[] exerciseId = new long[1];
-                        final String[] name = new String[1];
-                        final String[] description = new String[1];
                         if (exercise == null) {
-                            final Cursor cursor = db.getAllExerciseInfo();
-                            AlertDialog dialog = new AlertDialog.Builder(getContext())
-                                    .setCursor(cursor, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            cursor.moveToPosition(i);
-                                            exerciseId[0] = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
-                                            name[0] = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
-                                            description[0] = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_DESCRIPTION));
-                                            cursor.close();
-                                            // TODO stub
-                                            setName(name[0]);
-                                        }
-                                    }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME).create();
-                            dialog.show();
+                            addNewExercise();
                         }
 
                         // Start activity to change exercise info
-                        // Check if there's any null
+                    }
+
+                    private void addNewExercise() {
+                        final Cursor cursor = db.getAllExerciseInfo();
+                        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                                .setCursor(cursor, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        cursor.moveToPosition(i);
+                                        long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
+                                        String name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
+                                        String description = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_DESCRIPTION));
+                                        cursor.close();
+
+                                        // TODO STUB - start activity to create the exercise
+                                        Exercise e = new Exercise(-1, name, -1, -1, -1);
+                                        exercises.add(e);
+                                        notifyItemInserted(HEADER_SIZE + exercises.size() - 1);
+                                    }
+                                }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME).create();
+                        dialog.show();
                     }
                 });
-            }
-
-            private void addNullIfNone() {
-                boolean _hasNull = false;
-                for (Exercise e : exercises) {
-                    if (e == null) {
-                        _hasNull = true;
-                        break;
-                    }
-                }
-                if (!_hasNull) {
-                    exercises.add(null);
-                    notifyDataSetChanged();
-                }
             }
 
             public void setName(String name) {
