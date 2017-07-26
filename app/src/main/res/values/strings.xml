@@ -53,7 +53,13 @@
     <string name="name">Name</string>
     <string name="description">Description</string>
 
+    <string name="add_note">Add note</string>
+    <string name="note">Note</string>
+    <string name="autoincrement">Auto Increment</string>
+    <string name="edit_exercise">Edit Exercise</string>
+
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
     </string>
+    <string name="rest_between_sets">Rest time between sets</string>
 </resources>

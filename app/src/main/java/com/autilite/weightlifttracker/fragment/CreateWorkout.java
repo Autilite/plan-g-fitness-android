@@ -2,6 +2,7 @@ package com.autilite.weightlifttracker.fragment;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.activity.EditExerciseStat;
 import com.autilite.weightlifttracker.database.ExerciseInfoContract;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Exercise;
@@ -148,9 +150,11 @@ public class CreateWorkout extends Fragment {
                     public void onClick(View view) {
                         if (exercise == null) {
                             addNewExercise();
+                        } else {
+                            Intent intent = new Intent(getActivity(), EditExerciseStat.class);
+                            intent.putExtra(EditExerciseStat.EXTRA_EXERCISE, exercise);
+                            startActivity(intent);
                         }
-
-                        // Start activity to change exercise info
                     }
 
                     private void addNewExercise() {

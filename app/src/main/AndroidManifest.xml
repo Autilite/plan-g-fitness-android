@@ -39,6 +39,16 @@
                 android:value=".activity.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".activity.EditExerciseStat"
+            android:label="@string/edit_exercise"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.CreateForm" />
+        </activity>
+
         <service android:name=".service.WorkoutService"
             android:exported="false"/>
     </application>
