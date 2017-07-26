@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.program.Exercise;
@@ -28,14 +29,8 @@ public class EditExerciseStat extends CreateForm {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        EditText mEditName = (EditText) findViewById(R.id.input_name);
-        TextInputLayout mTextInputNote = (TextInputLayout) findViewById(R.id.text_input_description);
-        mTextInputNote.setHint(getResources().getString(R.string.note));
-        EditText mEditNote = (EditText) findViewById(R.id.input_description);
-
         if (getIntent().getExtras() != null) {
             Exercise e = getIntent().getParcelableExtra(EXTRA_EXERCISE);
-            mEditName.setText(e.getName());
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -81,6 +76,9 @@ public class EditExerciseStat extends CreateForm {
        @Override
        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
            View view = inflater.inflate(R.layout.fragment_edit_exercise, container, false);
+
+           TextView mEditName = (TextView) view.findViewById(R.id.exercise_name);
+           EditText mEditNote = (EditText) view.findViewById(R.id.add_note);
            mEditSets = (EditText) view.findViewById(R.id.input_sets);
            mEditReps = (EditText) view.findViewById(R.id.input_reps);
            mEditRestTime = (EditText) view.findViewById(R.id.input_rest_time);
@@ -88,6 +86,7 @@ public class EditExerciseStat extends CreateForm {
            mEditAutoIncrement = (EditText) view.findViewById(R.id.input_auto_increment);
 
            if (exercise != null) {
+               mEditName.setText(exercise.getName());
                if (exercise.getSets() > 0)
                    mEditSets.setText(String.valueOf(exercise.getSets()));
                if (exercise.getReps() > 0)

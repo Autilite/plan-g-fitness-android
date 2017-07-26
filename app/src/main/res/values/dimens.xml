@@ -12,7 +12,6 @@
     <dimen name="option_button_padding">4dp</dimen>
     <dimen name="list_header_margin">16dp</dimen>
     <dimen name="list_item_padding">8dp</dimen>
-    <dimen name="collapsing_form_vertical_padding">24dp</dimen>
-    <dimen name="collapsing_form_left_padding">56dp</dimen>
-    <dimen name="collapsing_form_right_padding">32dp</dimen>
+    <dimen name="form_vertical_padding">24dp</dimen>
+    <dimen name="form_horitzonal_padding">32dp</dimen>
 </resources>

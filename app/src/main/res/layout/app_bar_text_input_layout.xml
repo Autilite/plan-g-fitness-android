@@ -45,12 +45,10 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/collapsing_form_vertical_padding"
-                android:paddingBottom="@dimen/collapsing_form_vertical_padding"
-                android:paddingStart="@dimen/collapsing_form_left_padding"
-                android:paddingLeft="@dimen/collapsing_form_left_padding"
-                android:paddingEnd="@dimen/collapsing_form_right_padding"
-                android:paddingRight="@dimen/collapsing_form_right_padding">
+                android:paddingTop="@dimen/form_vertical_padding"
+                android:paddingBottom="@dimen/form_vertical_padding"
+                android:paddingLeft="@dimen/form_horitzonal_padding"
+                android:paddingRight="@dimen/form_horitzonal_padding">
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
