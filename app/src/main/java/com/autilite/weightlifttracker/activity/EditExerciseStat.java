@@ -2,7 +2,6 @@ package com.autilite.weightlifttracker.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -42,6 +41,8 @@ public class EditExerciseStat extends CreateForm {
    public static class EditExerciseStatFragment extends Fragment {
        private static final String ARG_EXERCISE_OBJ = "ARG_EXERCISE_OBJ";
 
+       private TextView mEditName;
+       private EditText mEditNote;
        private EditText mEditSets;
        private EditText mEditReps;
        private EditText mEditRestTime;
@@ -77,8 +78,8 @@ public class EditExerciseStat extends CreateForm {
        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
            View view = inflater.inflate(R.layout.fragment_edit_exercise, container, false);
 
-           TextView mEditName = (TextView) view.findViewById(R.id.exercise_name);
-           EditText mEditNote = (EditText) view.findViewById(R.id.add_note);
+           mEditName = (TextView) view.findViewById(R.id.exercise_name);
+           mEditNote = (EditText) view.findViewById(R.id.add_note);
            mEditSets = (EditText) view.findViewById(R.id.input_sets);
            mEditReps = (EditText) view.findViewById(R.id.input_reps);
            mEditRestTime = (EditText) view.findViewById(R.id.input_rest_time);
@@ -86,17 +87,18 @@ public class EditExerciseStat extends CreateForm {
            mEditAutoIncrement = (EditText) view.findViewById(R.id.input_auto_increment);
 
            if (exercise != null) {
+               int sets = exercise.getSets();
+               int reps = exercise.getReps();
+               int restTime = exercise.getRestTime();
+               double weight = exercise.getWeight();
+               double weightIncrement = exercise.getWeightIncrement();
+
                mEditName.setText(exercise.getName());
-               if (exercise.getSets() > 0)
-                   mEditSets.setText(String.valueOf(exercise.getSets()));
-               if (exercise.getReps() > 0)
-                   mEditReps.setText(String.valueOf(exercise.getReps()));
-               if (exercise.getRestTime() > 0)
-                   mEditRestTime.setText(String.valueOf(exercise.getRestTime()));
-               if (exercise.getWeight() > 0)
-                   mEditWeight.setText(String.valueOf(exercise.getWeight()));
-               if (exercise.getWeightIncrement() > 0)
-                   mEditAutoIncrement.setText(String.valueOf(exercise.getWeightIncrement()));
+               mEditSets.setText(sets >= 0 ? String.valueOf(sets) : "");
+               mEditReps.setText(reps >= 0 ? String.valueOf(reps) : "");
+               mEditRestTime.setText(restTime >= 0 ? String.valueOf(restTime) : "");
+               mEditWeight.setText(weight >= 0 ? String.valueOf(weight) : "");
+               mEditAutoIncrement.setText(weightIncrement >= 0 ? String.valueOf(weightIncrement) : "");
            }
            return view;
        }
