@@ -32,6 +32,8 @@ public class CreateWorkout extends Fragment {
     private AddExerciseAdapter mAdapter;
     private WorkoutDatabase db;
 
+    private List<Exercise> exercises;
+
     public CreateWorkout() {
         // Required empty public constructor
     }
@@ -59,7 +61,8 @@ public class CreateWorkout extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        mAdapter = new AddExerciseAdapter();
+        exercises = new ArrayList<>();
+        mAdapter = new AddExerciseAdapter(exercises);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
@@ -76,8 +79,8 @@ public class CreateWorkout extends Fragment {
 
         private List<Exercise> exercises;
 
-        public AddExerciseAdapter() {
-            exercises = new ArrayList<>();
+        public AddExerciseAdapter(List<Exercise> exercises) {
+            this.exercises = exercises;
         }
 
         @Override
