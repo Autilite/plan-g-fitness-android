@@ -107,7 +107,6 @@ public class CreateWorkout extends Fragment {
                 vh.updateView();
             } else if (holder.getItemViewType() == FOOTER_VIEW) {
                 ExerciseViewHolder vh = (ExerciseViewHolder) holder;
-                vh.setExercise(null);
                 vh.updateView();
             }
         }
@@ -151,7 +150,7 @@ public class CreateWorkout extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (exercise == null) {
+                        if (getItemViewType() == FOOTER_VIEW) {
                             addNewExercise();
                         } else {
                             Intent intent = new Intent(getActivity(), EditExerciseStat.class);
@@ -204,8 +203,8 @@ public class CreateWorkout extends Fragment {
             }
 
             public void updateView() {
-                if (exercise == null) {
-                    setName(getString(R.string.choose_exercise));
+                if (getItemViewType() == FOOTER_VIEW) {
+                    setName(getString(R.string.add_exercise));
                     setStatGone();
                 } else {
                     setStatVisible();

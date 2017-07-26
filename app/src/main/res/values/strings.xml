@@ -15,7 +15,7 @@
     <string name="create_workout_title">Create a workout</string>
     <string name="choose_exercise">Select an exercise</string>
     <string name="exercises">Exercises</string>
-    <string name="add_exercises">Add exercises</string>
+    <string name="add_exercise">Add exercise</string>
     <string name="add_row">Add new row</string>
     <string name="set">Set</string>
     <string name="sets">Sets</string>
