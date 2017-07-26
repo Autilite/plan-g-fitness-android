@@ -16,6 +16,7 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.ExerciseInfoContract;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.util.NumberFormat;
 
 /**
  * Created by Kelvin on Jul 25, 2017.
@@ -46,6 +47,8 @@ public class EditExerciseStat extends CreateForm {
 
     public static class EditExerciseStatFragment extends Fragment {
         private static final String ARG_EXERCISE_OBJ = "ARG_EXERCISE_OBJ";
+
+        private static final long EXERCISE_NOT_SELECTED = -1;
 
         private TextView mEditName;
         private EditText mEditNote;
@@ -81,6 +84,9 @@ public class EditExerciseStat extends CreateForm {
             db = new WorkoutDatabase(getContext());
             if (getArguments() != null) {
                 exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
+                exerciseId = exercise != null ? exercise.getId() : EXERCISE_NOT_SELECTED;
+            } else {
+                exerciseId = EXERCISE_NOT_SELECTED;
             }
         }
 
@@ -149,6 +155,28 @@ public class EditExerciseStat extends CreateForm {
             } else {
                 mEditName.setText(R.string.choose_exercise);
             }
+        }
+
+        private boolean save() {
+            if (exerciseId == EXERCISE_NOT_SELECTED) {
+                return false;
+            }
+            String sets = mEditSets.getText().toString();
+            String reps = mEditReps.getText().toString();
+            String weight = mEditWeight.getText().toString();
+            String autoIncrement = mEditAutoIncrement.getText().toString();
+            // TODO place EditText watcher on form views
+            // For now, assume UI correctly sanitizes the input
+
+            // TODO get default values
+            int wSets = NumberFormat.parseInt(sets, 5);
+            int wReps = NumberFormat.parseInt(reps, 5);
+            float wWeight = NumberFormat.parseFloat(weight, 0);
+            float wAutoInc = NumberFormat.parseFloat(autoIncrement, 0);
+
+            // TODO update if exerciseStat already exists
+            long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc);
+            return exerciseStatId != -1;
         }
     }
 }
