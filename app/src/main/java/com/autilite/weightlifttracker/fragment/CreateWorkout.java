@@ -1,12 +1,9 @@
 package com.autilite.weightlifttracker.fragment;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +13,6 @@ import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.EditExerciseStat;
-import com.autilite.weightlifttracker.database.ExerciseInfoContract;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Exercise;
 
@@ -151,33 +147,15 @@ public class CreateWorkout extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if (getItemViewType() == FOOTER_VIEW) {
-                            addNewExercise();
+                            // Start activity to create new exercise
+                            Intent intent = new Intent(getActivity(), EditExerciseStat.class);
+                            startActivity(intent);
                         } else {
+                            // Start activity to edit the existing exercise
                             Intent intent = new Intent(getActivity(), EditExerciseStat.class);
                             intent.putExtra(EditExerciseStat.EXTRA_EXERCISE, exercise);
                             startActivity(intent);
                         }
-                    }
-
-                    private void addNewExercise() {
-                        final Cursor cursor = db.getAllExerciseInfo();
-                        AlertDialog dialog = new AlertDialog.Builder(getContext())
-                                .setCursor(cursor, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        cursor.moveToPosition(i);
-                                        long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
-                                        String name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
-                                        String description = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_DESCRIPTION));
-                                        cursor.close();
-
-                                        // TODO STUB - start activity to create the exercise
-                                        Exercise e = new Exercise(-1, name, -1, -1, -1);
-                                        exercises.add(e);
-                                        notifyItemInserted(HEADER_SIZE + exercises.size() - 1);
-                                    }
-                                }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME).create();
-                        dialog.show();
                     }
                 });
             }

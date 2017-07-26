@@ -1,8 +1,11 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.database.ExerciseInfoContract;
+import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Exercise;
 
 /**
@@ -51,6 +56,10 @@ public class EditExerciseStat extends CreateForm {
        private EditText mEditAutoIncrement;
 
        private Exercise exercise;
+       private long exerciseId;
+       private String exerciseName;
+
+       private WorkoutDatabase db;
 
 
        public EditExerciseStatFragment() {
@@ -69,12 +78,19 @@ public class EditExerciseStat extends CreateForm {
        @Override
        public void onCreate(@Nullable Bundle savedInstanceState) {
            super.onCreate(savedInstanceState);
+           db = new WorkoutDatabase(getContext());
            if (getArguments() != null) {
                exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
            }
        }
 
-       @Nullable
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            db.close();
+        }
+
+        @Nullable
        @Override
        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
            View view = inflater.inflate(R.layout.fragment_edit_exercise, container, false);
@@ -87,6 +103,36 @@ public class EditExerciseStat extends CreateForm {
            mEditWeight = (EditText) view.findViewById(R.id.input_weight);
            mEditAutoIncrement = (EditText) view.findViewById(R.id.input_auto_increment);
 
+           setViewDefault();
+
+           mEditName.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   selectExercise();
+               }
+           });
+
+           return view;
+       }
+
+        private void selectExercise() {
+            final Cursor cursor = db.getAllExerciseInfo();
+            AlertDialog dialog = new AlertDialog.Builder(getContext())
+                    .setCursor(cursor, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            cursor.moveToPosition(i);
+                            exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
+                            exerciseName = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
+                            cursor.close();
+
+                            mEditName.setText(exerciseName);
+                        }
+                    }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME).create();
+            dialog.show();
+        }
+
+        private void setViewDefault() {
            if (exercise != null) {
                int sets = exercise.getSets();
                int reps = exercise.getReps();
@@ -100,8 +146,9 @@ public class EditExerciseStat extends CreateForm {
                mEditRestTime.setText(restTime >= 0 ? String.valueOf(restTime) : "");
                mEditWeight.setText(weight >= 0 ? String.valueOf(weight) : "");
                mEditAutoIncrement.setText(weightIncrement >= 0 ? String.valueOf(weightIncrement) : "");
+           } else {
+               mEditName.setText(R.string.choose_exercise);
            }
-           return view;
        }
    }
 }
