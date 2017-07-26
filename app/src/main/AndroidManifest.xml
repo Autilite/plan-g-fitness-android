@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".activity.CreateForm"
+            android:name=".activity.EditWorkout"
             android:label="@string/create_workout_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">
@@ -46,7 +46,7 @@
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.CreateForm" />
+                android:value=".activity.EditWorkout" />
         </activity>
 
         <service android:name=".service.WorkoutService"

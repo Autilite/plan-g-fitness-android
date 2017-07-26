@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.CreateForm;
+import com.autilite.weightlifttracker.activity.EditWorkout;
 import com.autilite.weightlifttracker.adapter.WorkoutAdapter;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.fragment.dialog.AbstractCreateDialog;
@@ -58,7 +59,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
 //                CreateWorkoutDialog frag = new CreateWorkoutDialog();
 //                frag.setTargetFragment(WorkoutFragment.this, 0);
 //                frag.show(getActivity().getSupportFragmentManager(), "CreateWorkoutDialog");
-                Intent createWorkout = new Intent(getActivity(), CreateForm.class);
+                Intent createWorkout = new Intent(getActivity(), EditWorkout.class);
                 startActivity(createWorkout);
             }
         });

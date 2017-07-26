@@ -3,7 +3,6 @@ package com.autilite.weightlifttracker.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,20 +24,22 @@ public class EditExerciseStat extends CreateForm {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected Fragment createContentFragment() {
         if (getIntent().getExtras() != null) {
             Exercise e = getIntent().getParcelableExtra(EXTRA_EXERCISE);
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, EditExerciseStatFragment.newInstance(e))
-                    .commit();
+            return EditExerciseStatFragment.newInstance(e);
+        } else {
+            return EditExerciseStatFragment.newInstance(null);
         }
     }
 
-   public static class EditExerciseStatFragment extends Fragment {
+    @Override
+    protected boolean saveForm() {
+        // TODO
+        return false;
+    }
+
+    public static class EditExerciseStatFragment extends Fragment {
        private static final String ARG_EXERCISE_OBJ = "ARG_EXERCISE_OBJ";
 
        private TextView mEditName;

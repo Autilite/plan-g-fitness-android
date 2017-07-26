@@ -3,6 +3,7 @@ package com.autilite.weightlifttracker.activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -12,13 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.fragment.CreateWorkout;
 
 /**
  * Created by Kelvin on Jul 21, 2017.
  */
 
-public class CreateForm extends AppCompatActivity {
+public abstract class CreateForm extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class CreateForm extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, new CreateWorkout())
+                .replace(R.id.content_frame, createContentFragment())
                 .commit();
     }
 
@@ -53,8 +53,9 @@ public class CreateForm extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.create_form:
-                // TODO save workout
-                finish();
+                if (saveForm()) {
+                    finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -65,4 +66,14 @@ public class CreateForm extends AppCompatActivity {
         int color = ContextCompat.getColor(this, colorResId);
         DrawableCompat.setTint(drawable, color);
     }
+
+    protected abstract Fragment createContentFragment();
+
+    /**
+     * Save the form
+     *
+     * @return  true if the save was successful.
+     *          false otherwise
+     */
+    protected abstract boolean saveForm();
 }
