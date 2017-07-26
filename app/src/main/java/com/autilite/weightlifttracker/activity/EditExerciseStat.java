@@ -45,44 +45,44 @@ public class EditExerciseStat extends CreateForm {
     }
 
     public static class EditExerciseStatFragment extends Fragment {
-       private static final String ARG_EXERCISE_OBJ = "ARG_EXERCISE_OBJ";
+        private static final String ARG_EXERCISE_OBJ = "ARG_EXERCISE_OBJ";
 
-       private TextView mEditName;
-       private EditText mEditNote;
-       private EditText mEditSets;
-       private EditText mEditReps;
-       private EditText mEditRestTime;
-       private EditText mEditWeight;
-       private EditText mEditAutoIncrement;
+        private TextView mEditName;
+        private EditText mEditNote;
+        private EditText mEditSets;
+        private EditText mEditReps;
+        private EditText mEditRestTime;
+        private EditText mEditWeight;
+        private EditText mEditAutoIncrement;
 
-       private Exercise exercise;
-       private long exerciseId;
-       private String exerciseName;
+        private Exercise exercise;
+        private long exerciseId;
+        private String exerciseName;
 
-       private WorkoutDatabase db;
+        private WorkoutDatabase db;
 
 
-       public EditExerciseStatFragment() {
-       }
+        public EditExerciseStatFragment() {
+        }
 
-       public static EditExerciseStatFragment newInstance(Exercise exercise) {
+        public static EditExerciseStatFragment newInstance(Exercise exercise) {
 
-           Bundle args = new Bundle();
-           args.putParcelable(ARG_EXERCISE_OBJ, exercise);
+            Bundle args = new Bundle();
+            args.putParcelable(ARG_EXERCISE_OBJ, exercise);
 
-           EditExerciseStatFragment fragment = new EditExerciseStatFragment();
-           fragment.setArguments(args);
-           return fragment;
-       }
+            EditExerciseStatFragment fragment = new EditExerciseStatFragment();
+            fragment.setArguments(args);
+            return fragment;
+        }
 
-       @Override
-       public void onCreate(@Nullable Bundle savedInstanceState) {
-           super.onCreate(savedInstanceState);
-           db = new WorkoutDatabase(getContext());
-           if (getArguments() != null) {
-               exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
-           }
-       }
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            db = new WorkoutDatabase(getContext());
+            if (getArguments() != null) {
+                exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
+            }
+        }
 
         @Override
         public void onDestroy() {
@@ -91,29 +91,29 @@ public class EditExerciseStat extends CreateForm {
         }
 
         @Nullable
-       @Override
-       public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-           View view = inflater.inflate(R.layout.fragment_edit_exercise, container, false);
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.fragment_edit_exercise, container, false);
 
-           mEditName = (TextView) view.findViewById(R.id.exercise_name);
-           mEditNote = (EditText) view.findViewById(R.id.add_note);
-           mEditSets = (EditText) view.findViewById(R.id.input_sets);
-           mEditReps = (EditText) view.findViewById(R.id.input_reps);
-           mEditRestTime = (EditText) view.findViewById(R.id.input_rest_time);
-           mEditWeight = (EditText) view.findViewById(R.id.input_weight);
-           mEditAutoIncrement = (EditText) view.findViewById(R.id.input_auto_increment);
+            mEditName = (TextView) view.findViewById(R.id.exercise_name);
+            mEditNote = (EditText) view.findViewById(R.id.add_note);
+            mEditSets = (EditText) view.findViewById(R.id.input_sets);
+            mEditReps = (EditText) view.findViewById(R.id.input_reps);
+            mEditRestTime = (EditText) view.findViewById(R.id.input_rest_time);
+            mEditWeight = (EditText) view.findViewById(R.id.input_weight);
+            mEditAutoIncrement = (EditText) view.findViewById(R.id.input_auto_increment);
 
-           setViewDefault();
+            setViewDefault();
 
-           mEditName.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   selectExercise();
-               }
-           });
+            mEditName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    selectExercise();
+                }
+            });
 
-           return view;
-       }
+            return view;
+        }
 
         private void selectExercise() {
             final Cursor cursor = db.getAllExerciseInfo();
@@ -133,22 +133,22 @@ public class EditExerciseStat extends CreateForm {
         }
 
         private void setViewDefault() {
-           if (exercise != null) {
-               int sets = exercise.getSets();
-               int reps = exercise.getReps();
-               int restTime = exercise.getRestTime();
-               double weight = exercise.getWeight();
-               double weightIncrement = exercise.getWeightIncrement();
+            if (exercise != null) {
+                int sets = exercise.getSets();
+                int reps = exercise.getReps();
+                int restTime = exercise.getRestTime();
+                double weight = exercise.getWeight();
+                double weightIncrement = exercise.getWeightIncrement();
 
-               mEditName.setText(exercise.getName());
-               mEditSets.setText(sets >= 0 ? String.valueOf(sets) : "");
-               mEditReps.setText(reps >= 0 ? String.valueOf(reps) : "");
-               mEditRestTime.setText(restTime >= 0 ? String.valueOf(restTime) : "");
-               mEditWeight.setText(weight >= 0 ? String.valueOf(weight) : "");
-               mEditAutoIncrement.setText(weightIncrement >= 0 ? String.valueOf(weightIncrement) : "");
-           } else {
-               mEditName.setText(R.string.choose_exercise);
-           }
-       }
-   }
+                mEditName.setText(exercise.getName());
+                mEditSets.setText(sets >= 0 ? String.valueOf(sets) : "");
+                mEditReps.setText(reps >= 0 ? String.valueOf(reps) : "");
+                mEditRestTime.setText(restTime >= 0 ? String.valueOf(restTime) : "");
+                mEditWeight.setText(weight >= 0 ? String.valueOf(weight) : "");
+                mEditAutoIncrement.setText(weightIncrement >= 0 ? String.valueOf(weightIncrement) : "");
+            } else {
+                mEditName.setText(R.string.choose_exercise);
+            }
+        }
+    }
 }
