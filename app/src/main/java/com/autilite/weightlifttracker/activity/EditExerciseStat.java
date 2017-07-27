@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.ExerciseInfoContract;
@@ -41,8 +42,11 @@ public class EditExerciseStat extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        // TODO
-        return false;
+        boolean isSuccess =  ((EditExerciseStatFragment ) contentFragment).save();
+        if (!isSuccess) {
+            Toast.makeText(this, R.string.create_exercise_fail, Toast.LENGTH_SHORT).show();
+        }
+        return isSuccess;
     }
 
     public static class EditExerciseStatFragment extends Fragment {

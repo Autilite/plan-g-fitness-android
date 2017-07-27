@@ -62,4 +62,5 @@
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
     </string>
     <string name="rest_between_sets">Rest time between sets</string>
+    <string name="create_exercise_fail">Exercise could not be created</string>
 </resources>
