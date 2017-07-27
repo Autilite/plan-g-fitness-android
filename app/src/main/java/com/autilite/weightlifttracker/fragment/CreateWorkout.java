@@ -1,6 +1,7 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,9 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class CreateWorkout extends Fragment {
+
+    private static final int CREATE_EXERCISE = 1;
+    private static final int EDIT_EXERCISE = 2;
 
     private RecyclerView mRecyclerView;
     private AddExerciseAdapter mAdapter;
@@ -62,6 +66,21 @@ public class CreateWorkout extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CREATE_EXERCISE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Exercise e = data.getParcelableExtra(EditExerciseStat.EXTRA_RESULT_EXERCISE);
+                exercises.add(e);
+                mAdapter.notifyExerciseInserted(exercises.size() - 1);
+            }
+        } else if (requestCode == EDIT_EXERCISE) {
+            if (resultCode == Activity.RESULT_OK) {
+                // TODO get result object and replace existing exercise
+            }
+        }
     }
 
     public class AddExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -122,6 +141,18 @@ public class CreateWorkout extends Fragment {
             return exercises.size() + HEADER_SIZE + FOOTER_SIZE;
         }
 
+        /**
+         * A helper function to notify any registered observers that the <code>Exercise</code>
+         * reflected at <code>position</code> has been newly inserted.
+         *
+         * @param position Position of the newly inserted Exercise in the data set
+         *
+         * @see #notifyItemInserted(int)
+         */
+        public void notifyExerciseInserted(int position) {
+            notifyItemInserted(HEADER_SIZE + position);
+        }
+
         public class TitleViewHolder extends RecyclerView.ViewHolder {
 
             private TextView textView;
@@ -149,12 +180,12 @@ public class CreateWorkout extends Fragment {
                         if (getItemViewType() == FOOTER_VIEW) {
                             // Start activity to create new exercise
                             Intent intent = new Intent(getActivity(), EditExerciseStat.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, CREATE_EXERCISE);
                         } else {
                             // Start activity to edit the existing exercise
                             Intent intent = new Intent(getActivity(), EditExerciseStat.class);
                             intent.putExtra(EditExerciseStat.EXTRA_EXERCISE, exercise);
-                            startActivity(intent);
+                            startActivityForResult(intent, EDIT_EXERCISE);
                         }
                     }
                 });

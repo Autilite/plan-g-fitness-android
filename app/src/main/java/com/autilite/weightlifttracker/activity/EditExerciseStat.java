@@ -1,6 +1,8 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +28,8 @@ import com.autilite.weightlifttracker.util.NumberFormat;
 public class EditExerciseStat extends CreateForm {
 
     public static final String EXTRA_EXERCISE = "EXTRA_EXERCISE";
+    public static final String RESULT_ACTION = "com.autilite.weightlifttracker.activity.EditExerciseStat.RESULT_ACTION";
+    public static final String EXTRA_RESULT_EXERCISE = "RESULT_EXERCISE";
 
     public EditExerciseStat() {
     }
@@ -42,9 +46,15 @@ public class EditExerciseStat extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        boolean isSuccess =  ((EditExerciseStatFragment ) contentFragment).save();
+        Exercise exercise =  ((EditExerciseStatFragment ) contentFragment).save();
+        boolean isSuccess = exercise != null;
         if (!isSuccess) {
             Toast.makeText(this, R.string.create_exercise_fail, Toast.LENGTH_SHORT).show();
+        } else {
+            Intent result = new Intent(RESULT_ACTION);
+            result.setAction(RESULT_ACTION);
+            result.putExtra(EXTRA_RESULT_EXERCISE, exercise);
+            setResult(Activity.RESULT_OK, result);
         }
         return isSuccess;
     }
@@ -161,9 +171,16 @@ public class EditExerciseStat extends CreateForm {
             }
         }
 
-        private boolean save() {
+        /**
+         * Returns a newly created <code>Exercise</code> object containing the data that was saved.
+         * If the save is unsuccessful, the function will return null.
+         *
+         * @return  The <code>Exercise</code> object if save successful
+         *          <code>null</code> if save failed
+         */
+        private Exercise save() {
             if (exerciseId == EXERCISE_NOT_SELECTED) {
-                return false;
+                return null;
             }
             String sets = mEditSets.getText().toString();
             String reps = mEditReps.getText().toString();
@@ -180,7 +197,10 @@ public class EditExerciseStat extends CreateForm {
 
             // TODO update if exerciseStat already exists
             long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc);
-            return exerciseStatId != -1;
+            if (exerciseStatId != -1) {
+                return new Exercise(exerciseStatId, exerciseName , wSets, wReps, wWeight, wAutoInc);
+            }
+            return null;
         }
     }
 }
