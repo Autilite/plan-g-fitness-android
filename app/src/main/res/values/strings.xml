@@ -57,6 +57,7 @@
     <string name="note">Note</string>
     <string name="autoincrement">Auto Increment</string>
     <string name="edit_exercise">Edit Exercise</string>
+    <string name="create_exercise">Create Exercise</string>
 
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>

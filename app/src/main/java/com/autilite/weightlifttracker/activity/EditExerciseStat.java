@@ -37,9 +37,11 @@ public class EditExerciseStat extends CreateForm {
     @Override
     protected Fragment createContentFragment() {
         if (getIntent().getExtras() != null) {
+            setTitle(R.string.edit_exercise);
             Exercise e = getIntent().getParcelableExtra(EXTRA_EXERCISE);
             return EditExerciseStatFragment.newInstance(e);
         } else {
+            setTitle(R.string.create_exercise);
             return EditExerciseStatFragment.newInstance(null);
         }
     }
