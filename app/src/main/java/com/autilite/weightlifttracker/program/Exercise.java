@@ -13,7 +13,7 @@ public class Exercise implements Parcelable {
     private int sets;
     private int reps;
     private double weight;
-    private float weightIncrement;
+    private double weightIncrement;
     private int restTime;           // In seconds
 
     public Exercise(long id, String name, int sets, int reps, double weight) {
@@ -21,12 +21,12 @@ public class Exercise implements Parcelable {
         this(id, name, sets, reps, weight, 5);
     }
 
-    public Exercise(long id, String name, int sets, int reps, double weight, float weightIncrement) {
+    public Exercise(long id, String name, int sets, int reps, double weight, double weightIncrement) {
         // TODO configurable default values
         this(id, name, sets, reps, weight, weightIncrement, 90);
     }
 
-    public Exercise(long id, String name, int sets, int reps, double weight, float weightIncrement, int restTime) {
+    public Exercise(long id, String name, int sets, int reps, double weight, double weightIncrement, int restTime) {
         this.id = id;
         this.name = name;
         this.sets = sets;
@@ -42,8 +42,24 @@ public class Exercise implements Parcelable {
         sets = in.readInt();
         reps = in.readInt();
         weight = in.readDouble();
-        weightIncrement = in.readFloat();
+        weightIncrement = in.readDouble();
         restTime = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeInt(sets);
+        dest.writeInt(reps);
+        dest.writeDouble(weight);
+        dest.writeDouble(weightIncrement);
+        dest.writeInt(restTime);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Exercise> CREATOR = new Creator<Exercise>() {
@@ -110,19 +126,4 @@ public class Exercise implements Parcelable {
         this.restTime = restTime;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeLong(id);
-        parcel.writeString(name);
-        parcel.writeInt(sets);
-        parcel.writeInt(reps);
-        parcel.writeDouble(weight);
-        parcel.writeFloat(weightIncrement);
-        parcel.writeInt(restTime);
-    }
 }

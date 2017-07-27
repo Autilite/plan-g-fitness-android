@@ -175,8 +175,8 @@ public class EditExerciseStat extends CreateForm {
             // TODO get default values
             int wSets = NumberFormat.parseInt(sets, 5);
             int wReps = NumberFormat.parseInt(reps, 5);
-            float wWeight = NumberFormat.parseFloat(weight, 0);
-            float wAutoInc = NumberFormat.parseFloat(autoIncrement, 0);
+            double wWeight = NumberFormat.parseDouble(weight, 0);
+            double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
 
             // TODO update if exerciseStat already exists
             long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc);

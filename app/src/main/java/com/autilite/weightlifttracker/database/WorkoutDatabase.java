@@ -60,7 +60,7 @@ public class WorkoutDatabase {
         return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExerciseStat(long exerciseId,  int sets, int reps, float weight, float autoInc) {
+    public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
         cv.put(ExerciseStatEntry.COLUMN_SET, sets);
@@ -71,7 +71,7 @@ public class WorkoutDatabase {
         return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExerciseStat(long exerciseId, int sets, int reps, float weight) {
+    public long createExerciseStat(long exerciseId, int sets, int reps, double weight) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
         cv.put(ExerciseStatEntry.COLUMN_SET, sets);
@@ -264,7 +264,7 @@ public class WorkoutDatabase {
                 String exerciseName = eStat.getString(1);
                 int set = eStat.getInt(2);
                 int rep = eStat.getInt(3);
-                float weight = eStat.getFloat(4);
+                double weight = eStat.getDouble(4);
                 Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
                 w.addExercise(e);
             }
@@ -294,7 +294,7 @@ public class WorkoutDatabase {
                 String exerciseName = eStat.getString(1);
                 int set = eStat.getInt(2);
                 int rep = eStat.getInt(3);
-                float weight = eStat.getFloat(4);
+                double weight = eStat.getDouble(4);
                 Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
                 w.addExercise(e);
             }
@@ -316,7 +316,7 @@ public class WorkoutDatabase {
             String exerciseName = eStat.getString(1);
             int set = eStat.getInt(2);
             int rep = eStat.getInt(3);
-            float weight = eStat.getFloat(4);
+            double weight = eStat.getDouble(4);
             Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
             list.add(e);
         }
