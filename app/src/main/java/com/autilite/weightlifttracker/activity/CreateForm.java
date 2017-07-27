@@ -20,6 +20,8 @@ import com.autilite.weightlifttracker.R;
 
 public abstract class CreateForm extends AppCompatActivity {
 
+    protected Fragment contentFragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +36,11 @@ public abstract class CreateForm extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(mDrawable);
 
+        contentFragment = createContentFragment();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, createContentFragment())
+                .replace(R.id.content_frame, contentFragment)
                 .commit();
     }
 
