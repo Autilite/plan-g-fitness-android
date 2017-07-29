@@ -78,7 +78,18 @@ public class CreateWorkout extends Fragment {
             }
         } else if (requestCode == EDIT_EXERCISE) {
             if (resultCode == Activity.RESULT_OK) {
-                // TODO get result object and replace existing exercise
+                Exercise e = data.getParcelableExtra(EditExerciseStat.EXTRA_RESULT_EXERCISE);
+                // Traversing through the entire exercise list is okay because the usual
+                // length of a single workout should not be very high
+                // As such, we don't need to worry about performance
+                for (int i = 0; i < exercises.size(); i++) {
+                    Exercise exercise = exercises.get(i);
+                    if (exercise.getId() == e.getId()) {
+                        exercises.set(i, e);
+                        mAdapter.notifyExerciseChanged(i);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -151,6 +162,18 @@ public class CreateWorkout extends Fragment {
          */
         public void notifyExerciseInserted(int position) {
             notifyItemInserted(HEADER_SIZE + position);
+        }
+
+        /**
+         * A helper function to notify any registered observers that the <code>Exercise</code>
+         * reflected at <code>position</code> has been changed.
+         *
+         * @param position Position of the newly inserted Exercise in the data set
+         *
+         * @see #notifyItemChanged(int)
+         */
+        public void notifyExerciseChanged(int position) {
+            notifyItemChanged(HEADER_SIZE + position);
         }
 
         public class TitleViewHolder extends RecyclerView.ViewHolder {
