@@ -197,6 +197,7 @@ public class EditExerciseStat extends CreateForm {
             String reps = mEditReps.getText().toString();
             String weight = mEditWeight.getText().toString();
             String autoIncrement = mEditAutoIncrement.getText().toString();
+            String restTime = mEditRestTime.getText().toString();
             // TODO place EditText watcher on form views
             // For now, assume UI correctly sanitizes the input
 
@@ -205,19 +206,20 @@ public class EditExerciseStat extends CreateForm {
             int wReps = NumberFormat.parseInt(reps, 5);
             double wWeight = NumberFormat.parseDouble(weight, 0);
             double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
+            int wRestTime = NumberFormat.parseInt(restTime, 90);
 
             if (isNewEntry) {
-                long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc);
+                long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
                 if (exerciseStatId != -1) {
-                    return new Exercise(exerciseStatId, exerciseName , wSets, wReps, wWeight, wAutoInc);
+                    return new Exercise(exerciseId, exerciseName , wSets, wReps, wWeight, wAutoInc, wRestTime);
                 }
             } else {
                 long exerciseStatId = exercise.getId();
                 int numRowsUpdate = db.updateExerciseStat(
-                        exerciseStatId, exerciseId, wSets, wReps, wWeight, wAutoInc);
+                        exerciseStatId, exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
                 if (numRowsUpdate == 1) {
                     // TODO change Exercise model to include both ExerciseStatId and ExerciseId
-                    return new Exercise(exerciseId, exerciseName, wSets, wReps, wWeight, wAutoInc);
+                    return new Exercise(exerciseId, exerciseName, wSets, wReps, wWeight, wAutoInc, wRestTime);
                 }
             }
             return null;

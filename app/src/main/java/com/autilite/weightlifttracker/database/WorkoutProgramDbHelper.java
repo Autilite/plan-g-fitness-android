@@ -20,7 +20,7 @@ import static com.autilite.weightlifttracker.database.WorkoutListContract.Workou
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
     private static final String SQL_CREATE_TABLE_EXERCISE_INFO =
@@ -40,6 +40,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ExerciseStatEntry.COLUMN_REP + " INTEGER," +
                     ExerciseStatEntry.COLUMN_WEIGHT + " REAL," +
                     ExerciseStatEntry.COLUMN_AUTOINC + " REAL," +
+                    ExerciseStatEntry.COLUMN_REST_TIME + " INTEGER," +
                     ExerciseStatEntry.COLUMN_CREATION + " INTEGER," +
                     "FOREIGN KEY (" + ExerciseStatEntry.COLUMN_EXERCISE_ID + ") " +
                     "REFERENCES " + ExerciseInfoEntry.TABLE_NAME + " (" + ExerciseInfoEntry._ID + ") " +

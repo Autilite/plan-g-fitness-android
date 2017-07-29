@@ -17,6 +17,7 @@ public final class ExerciseStatContract {
         public static final String COLUMN_REP = "Reps";
         public static final String COLUMN_WEIGHT = "Weight";
         public static final String COLUMN_AUTOINC = "AutoIncr";
+        public static final String COLUMN_REST_TIME = "RestTime";
         public static final String COLUMN_CREATION = "CreationTime";
     }
 }

@@ -60,6 +60,18 @@ public class WorkoutDatabase {
         return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
     }
 
+    public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc, int restTime) {
+        ContentValues cv = new ContentValues();
+        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
+        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
+        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseStatEntry.COLUMN_REST_TIME, restTime);
+        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
+        return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
+    }
+
     public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
@@ -81,7 +93,7 @@ public class WorkoutDatabase {
         return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
     }
 
-    public int updateExerciseStat(long exerciseStatId, long exerciseId,  int sets, int reps, double weight, double autoInc) {
+    public int updateExerciseStat(long exerciseStatId, long exerciseId,  int sets, int reps, double weight, double autoInc, int restTime) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseStatEntry._ID, exerciseStatId);
         cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
@@ -89,6 +101,7 @@ public class WorkoutDatabase {
         cv.put(ExerciseStatEntry.COLUMN_REP, reps);
         cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
         cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseStatEntry.COLUMN_REST_TIME, restTime);
         cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
         String whereClause = ExerciseStatEntry._ID + "=" + exerciseStatId;
         return db.update(ExerciseStatEntry.TABLE_NAME, cv, whereClause, null);
@@ -195,6 +208,8 @@ public class WorkoutDatabase {
                 ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_SET + ", " +
                 ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_REP + ", " +
                 ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_WEIGHT + ", " +
+                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_AUTOINC + ", " +
+                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_REST_TIME + ", " +
                 WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + " " +
                 "FROM " + WorkoutEntry.TABLE_NAME + " " +
                 "INNER JOIN  " + WorkoutListEntry.TABLE_NAME + " ON " +
@@ -278,7 +293,9 @@ public class WorkoutDatabase {
                 int set = eStat.getInt(2);
                 int rep = eStat.getInt(3);
                 double weight = eStat.getDouble(4);
-                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
+                double autoIncr = eStat.getDouble(5);
+                int restTime = eStat.getInt(6);
+                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -308,7 +325,9 @@ public class WorkoutDatabase {
                 int set = eStat.getInt(2);
                 int rep = eStat.getInt(3);
                 double weight = eStat.getDouble(4);
-                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
+                double autoIncr = eStat.getDouble(5);
+                int restTime = eStat.getInt(6);
+                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -330,7 +349,9 @@ public class WorkoutDatabase {
             int set = eStat.getInt(2);
             int rep = eStat.getInt(3);
             double weight = eStat.getDouble(4);
-            Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight);
+            double autoIncr = eStat.getDouble(5);
+            int restTime = eStat.getInt(6);
+            Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight, autoIncr , restTime);
             list.add(e);
         }
         eStat.close();
