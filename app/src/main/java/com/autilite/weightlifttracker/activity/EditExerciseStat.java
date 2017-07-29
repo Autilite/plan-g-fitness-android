@@ -80,6 +80,8 @@ public class EditExerciseStat extends CreateForm {
 
         private WorkoutDatabase db;
 
+        private boolean isNewEntry;
+
 
         public EditExerciseStatFragment() {
         }
@@ -100,9 +102,16 @@ public class EditExerciseStat extends CreateForm {
             db = new WorkoutDatabase(getContext());
             if (getArguments() != null) {
                 exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
-                exerciseId = exercise != null ? exercise.getId() : EXERCISE_NOT_SELECTED;
+                if (exercise != null) {
+                    exerciseId = exercise.getId();
+                    isNewEntry = false;
+                } else {
+                    exerciseId = EXERCISE_NOT_SELECTED;
+                    isNewEntry = true;
+                }
             } else {
                 exerciseId = EXERCISE_NOT_SELECTED;
+                isNewEntry = true;
             }
         }
 
@@ -197,10 +206,19 @@ public class EditExerciseStat extends CreateForm {
             double wWeight = NumberFormat.parseDouble(weight, 0);
             double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
 
-            // TODO update if exerciseStat already exists
-            long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc);
-            if (exerciseStatId != -1) {
-                return new Exercise(exerciseStatId, exerciseName , wSets, wReps, wWeight, wAutoInc);
+            if (isNewEntry) {
+                long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc);
+                if (exerciseStatId != -1) {
+                    return new Exercise(exerciseStatId, exerciseName , wSets, wReps, wWeight, wAutoInc);
+                }
+            } else {
+                long exerciseStatId = exercise.getId();
+                int numRowsUpdate = db.updateExerciseStat(
+                        exerciseStatId, exerciseId, wSets, wReps, wWeight, wAutoInc);
+                if (numRowsUpdate == 1) {
+                    // TODO change Exercise model to include both ExerciseStatId and ExerciseId
+                    return new Exercise(exerciseId, exerciseName, wSets, wReps, wWeight, wAutoInc);
+                }
             }
             return null;
         }

@@ -81,6 +81,19 @@ public class WorkoutDatabase {
         return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
     }
 
+    public int updateExerciseStat(long exerciseStatId, long exerciseId,  int sets, int reps, double weight, double autoInc) {
+        ContentValues cv = new ContentValues();
+        cv.put(ExerciseStatEntry._ID, exerciseStatId);
+        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
+        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
+        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
+        String whereClause = ExerciseStatEntry._ID + "=" + exerciseStatId;
+        return db.update(ExerciseStatEntry.TABLE_NAME, cv, whereClause, null);
+    }
+
     public long addExerciseToWorkout(long workoutId, long exerciseStatId) {
         ContentValues cv = new ContentValues();
         cv.put(WorkoutListEntry.COLUMN_WORKOUT_ID, workoutId);
