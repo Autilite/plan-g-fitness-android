@@ -104,6 +104,7 @@ public class EditExerciseStat extends CreateForm {
                 exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
                 if (exercise != null) {
                     exerciseId = exercise.getId();
+                    exerciseName = exercise.getName();
                     isNewEntry = false;
                 } else {
                     exerciseId = EXERCISE_NOT_SELECTED;
