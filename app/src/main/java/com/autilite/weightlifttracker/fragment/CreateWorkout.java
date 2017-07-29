@@ -10,12 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.EditExerciseStat;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Exercise;
+import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,9 @@ public class CreateWorkout extends Fragment {
     private RecyclerView mRecyclerView;
     private AddExerciseAdapter mAdapter;
     private WorkoutDatabase db;
+
+    private EditText mEditName;
+    private EditText mEditDescription;
 
     private List<Exercise> exercises;
 
@@ -55,6 +61,8 @@ public class CreateWorkout extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_workout, container, false);
+        mEditName = (EditText) view.findViewById(R.id.input_name);
+        mEditDescription = (EditText) view.findViewById(R.id.input_description);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
@@ -92,6 +100,32 @@ public class CreateWorkout extends Fragment {
                 }
             }
         }
+    }
+
+    public Workout save() {
+        String name = mEditName.getText().toString();
+        String description = mEditDescription.getText().toString();
+
+        if (name.equals("")) {
+            return null;
+        }
+        long workoutId = db.createWorkout(name);
+        if (workoutId == -1) {
+            return null;
+        }
+        Workout workout = new Workout(workoutId, name);
+
+        for (Exercise e : exercises) {
+            long id = db.addExerciseToWorkout(workoutId, e.getId());
+            if (id != -1) {
+                workout.addExercise(e);
+            } else {
+                String s = String.format(getString(R.string.add_workout_exercise_fail), e.getName());
+                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        return workout;
     }
 
     public class AddExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

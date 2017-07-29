@@ -64,4 +64,6 @@
     </string>
     <string name="rest_between_sets">Rest time between sets</string>
     <string name="create_exercise_fail">Exercise could not be created</string>
+    <string name="create_workout_fail">Workout could not be created</string>
+    <string name="add_workout_exercise_fail">%s could not be added to the workout</string>
 </resources>
