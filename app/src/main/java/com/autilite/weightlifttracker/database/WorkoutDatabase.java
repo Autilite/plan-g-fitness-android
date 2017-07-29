@@ -204,6 +204,7 @@ public class WorkoutDatabase {
      */
     public Cursor getAllExerciseStatForWorkout(long workoutId) {
         String sql = "SELECT " + ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry._ID + ", " +
+                ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry._ID + ", " +
                 ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry.COLUMN_NAME + ", " +
                 ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_SET + ", " +
                 ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_REP + ", " +
@@ -288,14 +289,15 @@ public class WorkoutDatabase {
             // Get list of exercise for workoutId
             Cursor eStat = getAllExerciseStatForWorkout(workoutId);
             while (eStat.moveToNext()) {
-                long exerciseId = eStat.getLong(0);
-                String exerciseName = eStat.getString(1);
-                int set = eStat.getInt(2);
-                int rep = eStat.getInt(3);
-                double weight = eStat.getDouble(4);
-                double autoIncr = eStat.getDouble(5);
-                int restTime = eStat.getInt(6);
-                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
+                long id = eStat.getLong(0);
+                long baseExerciseId = eStat.getLong(1);
+                String exerciseName = eStat.getString(2);
+                int set = eStat.getInt(3);
+                int rep = eStat.getInt(4);
+                double weight = eStat.getDouble(5);
+                double autoIncr = eStat.getDouble(6);
+                int restTime = eStat.getInt(7);
+                Exercise e = new Exercise(id, baseExerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -320,14 +322,15 @@ public class WorkoutDatabase {
             // Get list of exercise for workoutId
             Cursor eStat = getAllExerciseStatForWorkout(workoutId);
             while (eStat.moveToNext()) {
-                long exerciseId = eStat.getLong(0);
-                String exerciseName = eStat.getString(1);
-                int set = eStat.getInt(2);
-                int rep = eStat.getInt(3);
+                long id = eStat.getLong(0);
+                long baseExerciseId = eStat.getLong(1);
+                String exerciseName = eStat.getString(2);
+                int set = eStat.getInt(3);
+                int rep = eStat.getInt(4);
                 double weight = eStat.getDouble(4);
-                double autoIncr = eStat.getDouble(5);
-                int restTime = eStat.getInt(6);
-                Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
+                double autoIncr = eStat.getDouble(6);
+                int restTime = eStat.getInt(7);
+                Exercise e = new Exercise(id, baseExerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -344,14 +347,15 @@ public class WorkoutDatabase {
         // Get list of exercise for workoutId
         Cursor eStat = getAllExerciseStatForWorkout(workoutId);
         while (eStat.moveToNext()) {
-            long exerciseId = eStat.getLong(0);
-            String exerciseName = eStat.getString(1);
-            int set = eStat.getInt(2);
-            int rep = eStat.getInt(3);
+            long id = eStat.getLong(0);
+            long baseExerciseId = eStat.getLong(1);
+            String exerciseName = eStat.getString(2);
+            int set = eStat.getInt(3);
+            int rep = eStat.getInt(4);
             double weight = eStat.getDouble(4);
-            double autoIncr = eStat.getDouble(5);
-            int restTime = eStat.getInt(6);
-            Exercise e = new Exercise(exerciseId, exerciseName, set, rep, weight, autoIncr , restTime);
+            double autoIncr = eStat.getDouble(6);
+            int restTime = eStat.getInt(7);
+            Exercise e = new Exercise(id, baseExerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
             list.add(e);
         }
         eStat.close();

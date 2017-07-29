@@ -211,7 +211,7 @@ public class EditExerciseStat extends CreateForm {
             if (isNewEntry) {
                 long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
                 if (exerciseStatId != -1) {
-                    return new Exercise(exerciseId, exerciseName , wSets, wReps, wWeight, wAutoInc, wRestTime);
+                    return new Exercise(exerciseStatId, exerciseId, exerciseName , wSets, wReps, wWeight, wAutoInc, wRestTime);
                 }
             } else {
                 long exerciseStatId = exercise.getId();
@@ -219,7 +219,7 @@ public class EditExerciseStat extends CreateForm {
                         exerciseStatId, exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
                 if (numRowsUpdate == 1) {
                     // TODO change Exercise model to include both ExerciseStatId and ExerciseId
-                    return new Exercise(exerciseId, exerciseName, wSets, wReps, wWeight, wAutoInc, wRestTime);
+                    return new Exercise(exerciseStatId, exerciseId, exerciseName, wSets, wReps, wWeight, wAutoInc, wRestTime);
                 }
             }
             return null;

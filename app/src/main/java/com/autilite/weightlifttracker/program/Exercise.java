@@ -9,6 +9,7 @@ import android.os.Parcelable;
 
 public class Exercise implements Parcelable {
     private final long id;
+    private long baseExerciseId;
     private String name;
     private int sets;
     private int reps;
@@ -16,18 +17,19 @@ public class Exercise implements Parcelable {
     private double weightIncrement;
     private int restTime;           // In seconds
 
-    public Exercise(long id, String name, int sets, int reps, double weight) {
+    public Exercise(long id, long baseExerciseId, String name, int sets, int reps, double weight) {
         // TODO configurable default values
-        this(id, name, sets, reps, weight, 5);
+        this(id, baseExerciseId, name, sets, reps, weight, 5);
     }
 
-    public Exercise(long id, String name, int sets, int reps, double weight, double weightIncrement) {
+    public Exercise(long id, long baseExerciseId, String name, int sets, int reps, double weight, double weightIncrement) {
         // TODO configurable default values
-        this(id, name, sets, reps, weight, weightIncrement, 90);
+        this(id, baseExerciseId, name, sets, reps, weight, weightIncrement, 90);
     }
 
-    public Exercise(long id, String name, int sets, int reps, double weight, double weightIncrement, int restTime) {
+    public Exercise(long id, long baseExerciseId, String name, int sets, int reps, double weight, double weightIncrement, int restTime) {
         this.id = id;
+        this.baseExerciseId = baseExerciseId;
         this.name = name;
         this.sets = sets;
         this.reps = reps;
@@ -38,6 +40,7 @@ public class Exercise implements Parcelable {
 
     protected Exercise(Parcel in) {
         id = in.readLong();
+        baseExerciseId = in.readLong();
         name = in.readString();
         sets = in.readInt();
         reps = in.readInt();
@@ -49,6 +52,7 @@ public class Exercise implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
+        dest.writeLong(baseExerciseId);
         dest.writeString(name);
         dest.writeInt(sets);
         dest.writeInt(reps);
@@ -76,6 +80,18 @@ public class Exercise implements Parcelable {
 
     public long getId() {
         return id;
+    }
+
+    public long getBaseExerciseId() {
+        return baseExerciseId;
+    }
+
+    public void setBaseExerciseId(long baseExerciseId) {
+        this.baseExerciseId = baseExerciseId;
+    }
+
+    public void setWeightIncrement(double weightIncrement) {
+        this.weightIncrement = weightIncrement;
     }
 
     public String getName() {
