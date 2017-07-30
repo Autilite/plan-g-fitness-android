@@ -2,10 +2,12 @@ package com.autilite.weightlifttracker.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.exception.SQLiteInsertException;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Program;
@@ -448,7 +450,7 @@ public class WorkoutDatabase {
      * @param progId The id used to query the database
      * @return The number of days or -1
      */
-    public int getProgramDays(long progId) {
+    public int getProgramNumDays(long progId) {
         String sql = "SELECT " + ProgramEntry.COLUMN_NUM_DAYS + " FROM " + ProgramEntry.TABLE_NAME +
                 " WHERE " + ProgramEntry._ID + "=" + progId;
         Cursor cursor = db.rawQuery(sql, null);
@@ -473,5 +475,43 @@ public class WorkoutDatabase {
         exist = cursor.getCount() > 0;
         cursor.close();
         return exist;
+    }
+
+    /**
+     * Get the program day for the program with id <code>programId</code>
+     *
+     * @param context
+     * @param programId
+     * @return
+     */
+    public int getProgramDay(Context context, long programId) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(
+                context.getString(R.string.program_preference_file_key), Context.MODE_PRIVATE);
+        // Since this function take the subsequent program day, we set the default return value
+        // to be 0 so it can be incremented to 1
+        int previousDay = sharedPrefs.getInt(getProgramDayPrefKey(context, programId), 0);
+        int numDays = getProgramNumDays(programId);
+
+        // The next day is the current day + 1 unless if the last program day is the last day in the
+        // program. In which case, we look back to day 1
+        return (previousDay % numDays) + 1;
+    }
+
+    /**
+     * Set the program's last completed Program Day to <code>programDay</code>
+     *
+     * @param context
+     * @param programId
+     */
+    public void setPreviousProgDay(Context context, long programId, int programDay) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(
+                context.getString(R.string.program_preference_file_key),
+                Context.MODE_PRIVATE).edit();
+        editor.putInt(getProgramDayPrefKey(context, programId), programDay);
+        editor.apply();
+    }
+
+    private String getProgramDayPrefKey(Context context, long programId) {
+        return context.getString(R.string.last_program_day) + "_" + programId;
     }
 }

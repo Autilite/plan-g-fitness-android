@@ -43,9 +43,11 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
 
     public static String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
     public static String EXTRA_PROGRAM_NAME = "EXTRA_PROGRAM_NAME";
+    public static String EXTRA_PROGRAM_DAY = "EXTRA_PROGRAM_DAY";
 
     private long programId;
     private String programName;
+    private int programDay;
 
     private ViewPager mPager;
     private WorkoutPagerAdapter mAdapter;
@@ -70,6 +72,7 @@ public class WorkoutSessionActivity extends AppCompatActivity implements Workout
         Intent intent = getIntent();
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
+        programDay = intent.getIntExtra(EXTRA_PROGRAM_DAY, -1);
 
         setContentView(R.layout.activity_workout_session);
 

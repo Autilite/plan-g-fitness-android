@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_DAY;
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_ID;
 import static com.autilite.weightlifttracker.activity.WorkoutSessionActivity.EXTRA_PROGRAM_NAME;
 
@@ -92,8 +93,7 @@ public class WorkoutService extends Service {
     private void initializeService(Intent intent) {
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
-        // TODO get the program day from intent. Get the program day from SharedPreferences only as a backup
-        programDay = getProgramDay();
+        programDay = intent.getIntExtra(EXTRA_PROGRAM_DAY, -1);
 
         // null out/cancel existing variables
         currentExercise = null;
@@ -105,33 +105,12 @@ public class WorkoutService extends Service {
         activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
+        activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_DAY, programDay);
 
         initNotificationBuilder();
 
         startForeground(SESSION_NOTIFY_ID, notificationBuilder.build());
         startActivity(activityIntent);
-    }
-
-    private int getProgramDay() {
-        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.program_preference_file_key), Context.MODE_PRIVATE);
-        // Since this function take the subsequent program day, we set the default return value
-        // to be 0 so it can be incremented to 1
-        int previousDay = sharedPrefs.getInt(getProgramDayPrefKey(), 0);
-        int numDays = workoutDb.getProgramDays(programId);
-
-        // The next day is the current day + 1 unless if the last program day is the last day in the
-        // program. In which case, we look back to day 1
-        return (previousDay % numDays) + 1;
-    }
-
-    private void setPreviousProgDay() {
-        SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.program_preference_file_key), Context.MODE_PRIVATE).edit();
-        editor.putInt(getProgramDayPrefKey(), programDay);
-        editor.apply();
-    }
-
-    private String getProgramDayPrefKey() {
-        return getString(R.string.last_program_day) + "_" + programId;
     }
 
     private void initNotificationBuilder() {
@@ -200,7 +179,7 @@ public class WorkoutService extends Service {
         // TODO handle empty session
         long timeEnd = System.currentTimeMillis();
         workoutDb.addSession(programId, 1, startTime, timeEnd, sessions);
-        setPreviousProgDay();
+        workoutDb.setPreviousProgDay(this, programId, programDay);
         // TODO update exercise with any changes from this session
         // e.g., exercise auto increment if the exercise session was successful
     }

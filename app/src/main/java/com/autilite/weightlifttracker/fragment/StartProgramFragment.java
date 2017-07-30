@@ -29,9 +29,12 @@ import java.util.List;
 public class StartProgramFragment extends Fragment {
     private static final String ARG_PROGRAM_ID = "ARG_PROGRAM_ID";
     private static final String ARG_PROGRAM_NAME = "ARG_PROGRAM_NAME";
+    private static final String ARG_PROGRAM_DAY = "ARG_PROGRAM_DAY";
 
     private long programId;
     private String programName;
+    private int programDay;
+
     private WorkoutDatabase workoutDb;
     private List<Workout> workouts;
     private RecyclerView mRecyclerView;
@@ -51,11 +54,12 @@ public class StartProgramFragment extends Fragment {
      * @param programName The program name
      * @return A new instance of fragment StartProgramFragment.
      */
-    public static StartProgramFragment newInstance(long programId, String programName) {
+    public static StartProgramFragment newInstance(long programId, String programName, int programDay) {
         StartProgramFragment fragment = new StartProgramFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_PROGRAM_ID, programId);
         args.putString(ARG_PROGRAM_NAME, programName);
+        args.putInt(ARG_PROGRAM_DAY, programDay);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,6 +70,7 @@ public class StartProgramFragment extends Fragment {
         if (getArguments() != null) {
             programId = getArguments().getLong(ARG_PROGRAM_ID);
             programName = getArguments().getString(ARG_PROGRAM_NAME);
+            programDay = getArguments().getInt(ARG_PROGRAM_DAY);
         }
     }
 
@@ -85,13 +90,13 @@ public class StartProgramFragment extends Fragment {
                 workoutService.setAction(WorkoutService.ACTION_START_NEW_SESSION);
                 workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
                 workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
+                workoutService.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_DAY, programDay);
                 getActivity().startService(workoutService);
             }
         });
 
         workoutDb = new WorkoutDatabase(getActivity());
-        // TODO only get the workouts for the current day
-        workouts = workoutDb.getProgramWorkouts(programId);
+        workouts = workoutDb.getProgramWorkouts(programId, programDay);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         mLayoutManager = new LinearLayoutManager(getContext());

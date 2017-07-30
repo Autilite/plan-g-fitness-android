@@ -157,7 +157,8 @@ public class MainActivity extends AppCompatActivity
                 editor.apply();
 
                 // Start the fragment
-                StartProgramFragment f = StartProgramFragment.newInstance(id, name);
+                StartProgramFragment f
+                        = StartProgramFragment.newInstance(id, name, workoutDb.getProgramDay(MainActivity.this, id));
                 replaceContentFragment(f);
             }
 
@@ -226,7 +227,8 @@ public class MainActivity extends AppCompatActivity
                         editor.apply();
 
                         // Start the fragment
-                        StartProgramFragment f = StartProgramFragment.newInstance(progId, progName);
+                        StartProgramFragment f =
+                                StartProgramFragment.newInstance(progId, progName, workoutDb.getProgramDay(MainActivity.this, progId));
                         replaceContentFragment(f);
                     }
 
