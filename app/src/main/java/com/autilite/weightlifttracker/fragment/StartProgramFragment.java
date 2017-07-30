@@ -1,16 +1,23 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
@@ -34,6 +41,7 @@ public class StartProgramFragment extends Fragment {
     private long programId;
     private String programName;
     private int programDay;
+    private int numDays;
 
     private WorkoutDatabase workoutDb;
     private List<Workout> workouts;
@@ -71,6 +79,7 @@ public class StartProgramFragment extends Fragment {
             programId = getArguments().getLong(ARG_PROGRAM_ID);
             programName = getArguments().getString(ARG_PROGRAM_NAME);
             programDay = getArguments().getInt(ARG_PROGRAM_DAY);
+            setHasOptionsMenu(true);
         }
     }
 
@@ -96,6 +105,7 @@ public class StartProgramFragment extends Fragment {
         });
 
         workoutDb = new WorkoutDatabase(getActivity());
+        numDays = workoutDb.getProgramNumDays(programId);
         workouts = workoutDb.getProgramWorkouts(programId, programDay);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
@@ -105,6 +115,52 @@ public class StartProgramFragment extends Fragment {
         mAdapter = new WorkoutAdapter(getActivity(), workouts);
         mRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_program_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.option_switch_program_day) {
+            LayoutInflater inflater = (LayoutInflater)
+                    getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.number_picker, null);
+
+            final NumberPicker numberPicker = (NumberPicker) view.findViewById(R.id.number_picker);
+            numberPicker.setMinValue(1);
+            numberPicker.setMaxValue(numDays);
+            numberPicker.setValue(programDay);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.action_switch_day)
+                    .setView(view)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            switchDay(numberPicker.getValue());
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+            builder.create().show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void switchDay(int day) {
+        programDay = day;
+        workouts.clear();
+        workouts.addAll(workoutDb.getProgramWorkouts(programId, programDay));
+        mAdapter.notifyDataSetChanged();
     }
 
 }
