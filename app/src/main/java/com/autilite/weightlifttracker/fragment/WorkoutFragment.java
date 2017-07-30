@@ -93,6 +93,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
         TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.entry_create_table);
         EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.heading_create_name_editview);
         String workoutName = nameEditText.getText().toString();
+        String description = "";
 
         // Create workout
         if (workoutName.equals("")) {
@@ -100,14 +101,14 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
             Toast.makeText(getActivity(), "Workout could not be created", Toast.LENGTH_LONG).show();
             return;
         }
-        long workoutId = workoutDb.createWorkout(workoutName);
+        long workoutId = workoutDb.createWorkout(workoutName, description);
         if (workoutId == -1) {
             Toast.makeText(getActivity(), "Workout could not be created", Toast.LENGTH_LONG).show();
             return;
         } else {
             Toast.makeText(getActivity(), "New workout \"" + workoutName + "\" created", Toast.LENGTH_LONG).show();
         }
-        Workout workout = new Workout(workoutId, workoutName);
+        Workout workout = new Workout(workoutId, workoutName, description);
 
         // Ignore first row since that is the headings
         for (int i = 1; i < table.getChildCount(); i++) {

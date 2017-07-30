@@ -119,7 +119,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             Toast.makeText(getActivity(), "Workout " + workoutName + " added to " + programName,
                     Toast.LENGTH_LONG).show();
 
-            Workout workout = new Workout(workoutId, workoutName);
+            Workout workout = new Workout(workoutId, workoutName, "");
             program.addWorkout(workout);
         }
 

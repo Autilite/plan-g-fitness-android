@@ -14,17 +14,20 @@ import java.util.List;
 public class Workout implements Parcelable {
     private final long id;
     private String name;
+    private String description;
     private List<Exercise> exercises;
 
-    public Workout(long id, String name) {
+    public Workout(long id, String name, String description) {
         this.id = id;
         this.name = name;
+        this.description = description;
         exercises = new ArrayList<>(4);
     }
 
     protected Workout(Parcel in) {
         id = in.readLong();
         name = in.readString();
+        description = in.readString();
         exercises = in.createTypedArrayList(Exercise.CREATOR);
     }
 
@@ -32,6 +35,7 @@ public class Workout implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
+        dest.writeString(description);
         dest.writeTypedList(exercises);
     }
 
@@ -66,6 +70,14 @@ public class Workout implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean addExercise(Exercise exercise) {

@@ -52,10 +52,10 @@ public class WorkoutDatabase {
         return db.insert(ProgramEntry.TABLE_NAME, null, cv);
     }
 
-    public long createWorkout(String workoutName) {
+    public long createWorkout(String workoutName, String description) {
         ContentValues cv = new ContentValues();
         cv.put(WorkoutEntry.COLUMN_NAME, workoutName);
-        // TODO cv.put(WorkoutEntry.COLUMN_DESCRIPTION, description);
+        cv.put(WorkoutEntry.COLUMN_DESCRIPTION, description);
         cv.put(WorkoutEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
     }
@@ -264,7 +264,9 @@ public class WorkoutDatabase {
                         ProgramWorkoutContract.ProgramWorkoutEntry.COLUMN_WORKOUT_ID));
                 String workoutName = programWorkouts.getString(programWorkouts.getColumnIndex(
                         WorkoutContract.WorkoutEntry.COLUMN_NAME));
-                Workout w = new Workout(workoutId, workoutName);
+                String workoutDescription = programWorkouts.getString(programWorkouts.getColumnIndex(
+                        WorkoutEntry.COLUMN_DESCRIPTION));
+                Workout w = new Workout(workoutId, workoutName, workoutDescription);
                 p.addWorkout(w);
             }
             listOfPrograms.add(p);
@@ -284,7 +286,8 @@ public class WorkoutDatabase {
         while (workoutCursor.moveToNext()) {
             long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
             String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
-            Workout w = new Workout(workoutId, workoutName);
+            String workoutDescription = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutEntry.COLUMN_DESCRIPTION));
+            Workout w = new Workout(workoutId, workoutName, workoutDescription);
 
             // Get list of exercise for workoutId
             Cursor eStat = getAllExerciseStatForWorkout(workoutId);
@@ -317,7 +320,8 @@ public class WorkoutDatabase {
         while (workoutCursor.moveToNext()) {
             long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
             String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
-            Workout w = new Workout(workoutId, workoutName);
+            String workoutDescription = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutEntry.COLUMN_DESCRIPTION));
+            Workout w = new Workout(workoutId, workoutName, workoutDescription);
 
             // Get list of exercise for workoutId
             Cursor eStat = getAllExerciseStatForWorkout(workoutId);

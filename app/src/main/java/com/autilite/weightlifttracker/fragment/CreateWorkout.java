@@ -109,11 +109,11 @@ public class CreateWorkout extends Fragment {
         if (name.equals("")) {
             return null;
         }
-        long workoutId = db.createWorkout(name);
+        long workoutId = db.createWorkout(name, description);
         if (workoutId == -1) {
             return null;
         }
-        Workout workout = new Workout(workoutId, name);
+        Workout workout = new Workout(workoutId, name, description);
 
         for (Exercise e : exercises) {
             long id = db.addExerciseToWorkout(workoutId, e.getId());
