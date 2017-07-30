@@ -90,6 +90,7 @@ public class StartProgramFragment extends Fragment {
         });
 
         workoutDb = new WorkoutDatabase(getActivity());
+        // TODO only get the workouts for the current day
         workouts = workoutDb.getProgramWorkouts(programId);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 

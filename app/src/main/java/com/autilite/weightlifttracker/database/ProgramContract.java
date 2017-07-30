@@ -14,6 +14,7 @@ public final class ProgramContract {
         public static final String TABLE_NAME = "Programs";
         public static final String COLUMN_NAME = "Name";
         public static final String COLUMN_DESCRIPTION = "Description";
+        public static final String COLUMN_NUM_DAYS = "NumDays";
         public static final String COLUMN_CREATION = "CreationTime";
     }
 }

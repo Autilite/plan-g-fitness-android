@@ -85,7 +85,9 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;
         }
-        long programId = workoutDb.createProgram(programName);
+        // The number of days fixed at 3 is a bug. Since I am going to be re-designing the
+        // CreateProgram form, we will leave this stub here rather than try and fix it
+        long programId = workoutDb.createProgram(programName, 3);
         if (programId == -1) {
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;

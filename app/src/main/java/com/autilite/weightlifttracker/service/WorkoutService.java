@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -60,6 +61,7 @@ public class WorkoutService extends Service {
 
     private long programId;
     private String programName;
+    private int programDay;
     private ExerciseSession currentExercise;
     private List<Workout> workouts;
     private WorkoutDatabase workoutDb;
@@ -90,6 +92,8 @@ public class WorkoutService extends Service {
     private void initializeService(Intent intent) {
         programId = intent.getLongExtra(EXTRA_PROGRAM_ID, -1);
         programName = intent.getStringExtra(EXTRA_PROGRAM_NAME);
+        // TODO get the program day from intent. Get the program day from SharedPreferences only as a backup
+        programDay = getProgramDay();
 
         // null out/cancel existing variables
         currentExercise = null;
@@ -108,6 +112,28 @@ public class WorkoutService extends Service {
         startActivity(activityIntent);
     }
 
+    private int getProgramDay() {
+        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.program_preference_file_key), Context.MODE_PRIVATE);
+        // Since this function take the subsequent program day, we set the default return value
+        // to be 0 so it can be incremented to 1
+        int previousDay = sharedPrefs.getInt(getProgramDayPrefKey(), 0);
+        int numDays = workoutDb.getProgramDays(programId);
+
+        // The next day is the current day + 1 unless if the last program day is the last day in the
+        // program. In which case, we look back to day 1
+        return (previousDay % numDays) + 1;
+    }
+
+    private void setPreviousProgDay() {
+        SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.program_preference_file_key), Context.MODE_PRIVATE).edit();
+        editor.putInt(getProgramDayPrefKey(), programDay);
+        editor.apply();
+    }
+
+    private String getProgramDayPrefKey() {
+        return getString(R.string.last_program_day) + "_" + programId;
+    }
+
     private void initNotificationBuilder() {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -121,7 +147,7 @@ public class WorkoutService extends Service {
 
     private void initSession() {
         startTime = System.currentTimeMillis();
-        workouts = workoutDb.getProgramWorkouts(programId);
+        workouts = workoutDb.getProgramWorkouts(programId, programDay);
         sessions = new HashMap<>();
         for (Workout w : workouts) {
             List<Exercise> exercises = workoutDb.getAllExerciseInfoList(w.getId());
@@ -172,9 +198,9 @@ public class WorkoutService extends Service {
 
     private void saveSession(Intent intent) {
         // TODO handle empty session
-        // TODO handle progDay
         long timeEnd = System.currentTimeMillis();
         workoutDb.addSession(programId, 1, startTime, timeEnd, sessions);
+        setPreviousProgDay();
         // TODO update exercise with any changes from this session
         // e.g., exercise auto increment if the exercise session was successful
     }

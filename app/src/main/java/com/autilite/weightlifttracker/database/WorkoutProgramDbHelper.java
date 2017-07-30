@@ -20,7 +20,7 @@ import static com.autilite.weightlifttracker.database.WorkoutListContract.Workou
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
     private static final String SQL_CREATE_TABLE_EXERCISE_INFO =
@@ -79,6 +79,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ProgramEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     ProgramEntry.COLUMN_NAME + " TEXT NOT NULL," +
                     ProgramEntry.COLUMN_DESCRIPTION + " TEXT," +
+                    ProgramEntry.COLUMN_NUM_DAYS + " INTEGER NOT NULL," +
                     ProgramEntry.COLUMN_CREATION + " INTEGER )";
 
     private static final String SQL_DELETE_TABLE_PROGRAM =

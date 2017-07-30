@@ -59,8 +59,14 @@
     <string name="edit_exercise">Edit Exercise</string>
     <string name="create_exercise">Create Exercise</string>
 
+    <string name="program_preference_file_key">
+        <xliff:g id="preference_key">com.autilite.weightlifttracker.PROGRAM_PREFERENCE_FILE_KEY</xliff:g>
+    </string>
     <string name="last_used_program">
         <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
+    </string>
+    <string name="last_program_day">
+        <xliff:g id="preference_key">com.autilite.weightlifttracker.last_program_day</xliff:g>
     </string>
     <string name="rest_between_sets">Rest time between sets</string>
     <string name="create_exercise_fail">Exercise could not be created</string>
