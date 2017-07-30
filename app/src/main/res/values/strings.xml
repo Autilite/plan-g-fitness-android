@@ -73,4 +73,6 @@
     <string name="create_workout_fail">Workout could not be created</string>
     <string name="add_workout_exercise_fail">%s could not be added to the workout</string>
     <string name="action_switch_day">Switch Day</string>
+    <string name="create_program">Create Program</string>
+    <string name="edit_program">Edit Program</string>
 </resources>
