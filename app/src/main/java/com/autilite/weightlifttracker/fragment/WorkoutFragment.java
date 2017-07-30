@@ -147,7 +147,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
                             " to " + workoutName, Toast.LENGTH_LONG).show();
                     continue;
                 }
-                Exercise e = new Exercise(exerciseStatId, exerciseId, exBtn.getText().toString(), wSets, wReps, wWeight);
+                Exercise e = new Exercise(exerciseStatId, exBtn.getText().toString(), "", exerciseId, wSets, wReps, wWeight, 0, 90);
                 workout.addExercise(e);
             }
         }

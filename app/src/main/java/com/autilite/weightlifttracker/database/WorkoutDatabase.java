@@ -300,7 +300,7 @@ public class WorkoutDatabase {
                 double weight = eStat.getDouble(5);
                 double autoIncr = eStat.getDouble(6);
                 int restTime = eStat.getInt(7);
-                Exercise e = new Exercise(id, baseExerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
+                Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -334,7 +334,7 @@ public class WorkoutDatabase {
                 double weight = eStat.getDouble(4);
                 double autoIncr = eStat.getDouble(6);
                 int restTime = eStat.getInt(7);
-                Exercise e = new Exercise(id, baseExerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
+                Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -359,7 +359,7 @@ public class WorkoutDatabase {
             double weight = eStat.getDouble(4);
             double autoIncr = eStat.getDouble(6);
             int restTime = eStat.getInt(7);
-            Exercise e = new Exercise(id, baseExerciseId, exerciseName, set, rep, weight, autoIncr, restTime);
+            Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
             list.add(e);
         }
         eStat.close();

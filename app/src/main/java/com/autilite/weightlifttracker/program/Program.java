@@ -1,5 +1,7 @@
 package com.autilite.weightlifttracker.program;
 
+import android.os.Parcel;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,38 +10,41 @@ import java.util.List;
  * Created by kelvin on 09/12/16.
  */
 
-public class Program {
-    private final long id;
-    private String name;
-    private String description;
+public class Program extends BaseModel {
     private List<Workout> workouts;
 
     public Program(long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        super(id, name, description);
         workouts = new LinkedList<>();
     }
 
-    public long getId() {
-        return id;
+    protected Program(Parcel in) {
+        super(in);
+        workouts = in.createTypedArrayList(Workout.CREATOR);
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeTypedList(workouts);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getDescription() {
-        return description;
-    }
+    public static final Creator<Program> CREATOR = new Creator<Program>() {
+        @Override
+        public Program createFromParcel(Parcel in) {
+            return new Program(in);
+        }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+        @Override
+        public Program[] newArray(int size) {
+            return new Program[size];
+        }
+    };
 
     public boolean addWorkout(Workout workout) {
         if (workout == null) {
