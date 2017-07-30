@@ -2,10 +2,12 @@ package com.autilite.weightlifttracker.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.exception.SQLiteInsertException;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Program;
@@ -44,10 +46,11 @@ public class WorkoutDatabase {
         workoutDb.close();
     }
 
-    public long createProgram(String programName) {
+    public long createProgram(String programName, int numDays) {
         ContentValues cv = new ContentValues();
         cv.put(ProgramEntry.COLUMN_NAME, programName);
         // TODO cv.put(ProgramEntry.COLUMN_DESCRIPTION, description);
+        cv.put(ProgramEntry.COLUMN_NUM_DAYS, numDays);
         cv.put(ProgramEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(ProgramEntry.TABLE_NAME, null, cv);
     }
@@ -244,6 +247,25 @@ public class WorkoutDatabase {
         return db.rawQuery(sql, null);
     }
 
+    /**
+     * Returns the {@link ProgramWorkoutEntry} table joined with {@link WorkoutEntry} for progId
+     *
+     * @param progId The id to select
+     * @return
+     */
+    public Cursor getProgramWorkoutTableJoinedWithName(long progId, int day) {
+        String sql = "SELECT * FROM " + ProgramWorkoutEntry.TABLE_NAME + " " +
+                "INNER JOIN " + WorkoutEntry.TABLE_NAME + " ON " +
+                ProgramWorkoutEntry.TABLE_NAME + "." + ProgramWorkoutEntry.COLUMN_WORKOUT_ID +
+                " = " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + " " +
+                "WHERE " + ProgramWorkoutEntry.TABLE_NAME + "." + ProgramWorkoutEntry.COLUMN_PROGRAM_ID +
+                " = " + progId + " " +
+                "AND " + ProgramWorkoutEntry.TABLE_NAME +  "." + ProgramWorkoutEntry.COLUMN_NAME_DAY +
+                " = " + day +
+                ";";
+        return db.rawQuery(sql, null);
+    }
+
     public List<Program> getAllProgramsList() {
         List<Program> listOfPrograms = new ArrayList<>();
         // Get Cursor of all program IDs
@@ -301,6 +323,40 @@ public class WorkoutDatabase {
                 double autoIncr = eStat.getDouble(6);
                 int restTime = eStat.getInt(7);
                 Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
+                w.addExercise(e);
+            }
+            workouts.add(w);
+            eStat.close();
+
+        }
+        workoutCursor.close();
+        return workouts;
+    }
+
+    public List<Workout> getProgramWorkouts(long programId, int programDay) {
+        // Get cursor with all workout Ids
+        Cursor workoutCursor = getProgramWorkoutTableJoinedWithName(programId, programDay);
+        List<Workout> workouts = new ArrayList<>();
+
+        // Go through each of the workoutId
+        while (workoutCursor.moveToNext()) {
+            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
+            String workoutName = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_NAME));
+            String workoutDescription = workoutCursor.getString(workoutCursor.getColumnIndex(WorkoutEntry.COLUMN_DESCRIPTION));
+            Workout w = new Workout(workoutId, workoutName, workoutDescription);
+
+            // Get list of exercise for workoutId
+            Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+            while (eStat.moveToNext()) {
+                long id = eStat.getLong(0);
+                long baseExerciseId = eStat.getLong(1);
+                String exerciseName = eStat.getString(2);
+                int set = eStat.getInt(3);
+                int rep = eStat.getInt(4);
+                double weight = eStat.getDouble(5);
+                double autoIncr = eStat.getDouble(6);
+                int restTime = eStat.getInt(7);
+                Exercise e = new Exercise(id, exerciseName, "", baseExerciseId,set, rep, weight, autoIncr, restTime);
                 w.addExercise(e);
             }
             workouts.add(w);
@@ -387,6 +443,28 @@ public class WorkoutDatabase {
         }
     }
 
+    /**
+     * Returns the number of programs day for the program with id <code>progId</code> or -1
+     * if it doesn't exist
+     *
+     * @param progId The id used to query the database
+     * @return The number of days or -1
+     */
+    public int getProgramNumDays(long progId) {
+        String sql = "SELECT " + ProgramEntry.COLUMN_NUM_DAYS + " FROM " + ProgramEntry.TABLE_NAME +
+                " WHERE " + ProgramEntry._ID + "=" + progId;
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return -1;
+        } else {
+            cursor.moveToNext();
+            int numDays = cursor.getInt(0);
+            cursor.close();
+            return numDays;
+        }
+    }
+
     public boolean checkIfWorkoutExist(long workoutId) {
         boolean exist;
         String sql = "SELECT * FROM " + WorkoutEntry.TABLE_NAME +
@@ -397,5 +475,43 @@ public class WorkoutDatabase {
         exist = cursor.getCount() > 0;
         cursor.close();
         return exist;
+    }
+
+    /**
+     * Get the program day for the program with id <code>programId</code>
+     *
+     * @param context
+     * @param programId
+     * @return
+     */
+    public int getProgramDay(Context context, long programId) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(
+                context.getString(R.string.program_preference_file_key), Context.MODE_PRIVATE);
+        // Since this function take the subsequent program day, we set the default return value
+        // to be 0 so it can be incremented to 1
+        int previousDay = sharedPrefs.getInt(getProgramDayPrefKey(context, programId), 0);
+        int numDays = getProgramNumDays(programId);
+
+        // The next day is the current day + 1 unless if the last program day is the last day in the
+        // program. In which case, we look back to day 1
+        return (previousDay % numDays) + 1;
+    }
+
+    /**
+     * Set the program's last completed Program Day to <code>programDay</code>
+     *
+     * @param context
+     * @param programId
+     */
+    public void setPreviousProgDay(Context context, long programId, int programDay) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(
+                context.getString(R.string.program_preference_file_key),
+                Context.MODE_PRIVATE).edit();
+        editor.putInt(getProgramDayPrefKey(context, programId), programDay);
+        editor.apply();
+    }
+
+    private String getProgramDayPrefKey(Context context, long programId) {
+        return context.getString(R.string.last_program_day) + "_" + programId;
     }
 }

@@ -1,5 +1,6 @@
 package com.autilite.weightlifttracker.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -17,10 +18,10 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.activity.EditProgram;
 import com.autilite.weightlifttracker.adapter.ProgramAdapter;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.fragment.dialog.AbstractCreateDialog;
-import com.autilite.weightlifttracker.fragment.dialog.CreateProgramDialog;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -32,6 +33,7 @@ import java.util.List;
  */
 public class ProgramFragment extends Fragment implements AbstractCreateDialog.CreateDialogListener {
 
+    private static final int CREATE_PROGRAM = 1;
     private WorkoutDatabase workoutDb;
     private List<Program> programs;
     private RecyclerView mRecyclerView;
@@ -56,9 +58,11 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateProgramDialog frag = new CreateProgramDialog();
-                frag.setTargetFragment(ProgramFragment.this, 0);
-                frag.show(getActivity().getSupportFragmentManager(), "CreateProgramDialog");
+//                CreateProgramDialog frag = new CreateProgramDialog();
+//                frag.setTargetFragment(ProgramFragment.this, 0);
+//                frag.show(getActivity().getSupportFragmentManager(), "CreateProgramDialog");
+                Intent intent = new Intent(getContext(), EditProgram.class);
+                startActivityForResult(intent, CREATE_PROGRAM);
             }
         });
         workoutDb = new WorkoutDatabase(getActivity());
@@ -75,6 +79,12 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.entry_create_table);
         EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.heading_create_name_editview);
@@ -85,7 +95,9 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;
         }
-        long programId = workoutDb.createProgram(programName);
+        // The number of days fixed at 3 is a bug. Since I am going to be re-designing the
+        // CreateProgram form, we will leave this stub here rather than try and fix it
+        long programId = workoutDb.createProgram(programName, 3);
         if (programId == -1) {
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;
