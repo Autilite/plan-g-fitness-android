@@ -1,5 +1,8 @@
 package com.autilite.weightlifttracker.program;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,7 +11,7 @@ import java.util.List;
  * Created by kelvin on 09/12/16.
  */
 
-public class Workout {
+public class Workout implements Parcelable {
     private final long id;
     private String name;
     private List<Exercise> exercises;
@@ -18,6 +21,36 @@ public class Workout {
         this.name = name;
         exercises = new ArrayList<>(4);
     }
+
+    protected Workout(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        exercises = in.createTypedArrayList(Exercise.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeTypedList(exercises);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Workout> CREATOR = new Creator<Workout>() {
+        @Override
+        public Workout createFromParcel(Parcel in) {
+            return new Workout(in);
+        }
+
+        @Override
+        public Workout[] newArray(int size) {
+            return new Workout[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -55,4 +88,5 @@ public class Workout {
             }
         }
     }
+
 }

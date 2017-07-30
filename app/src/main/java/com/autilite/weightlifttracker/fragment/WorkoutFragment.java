@@ -1,5 +1,6 @@
 package com.autilite.weightlifttracker.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +33,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class WorkoutFragment extends Fragment implements AbstractCreateDialog.CreateDialogListener {
+    private static final int CREATE_WORKOUT = 1;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -60,7 +62,7 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
 //                frag.setTargetFragment(WorkoutFragment.this, 0);
 //                frag.show(getActivity().getSupportFragmentManager(), "CreateWorkoutDialog");
                 Intent createWorkout = new Intent(getActivity(), EditWorkout.class);
-                startActivity(createWorkout);
+                startActivityForResult(createWorkout, CREATE_WORKOUT);
             }
         });
         workoutDb = new WorkoutDatabase(getActivity());
@@ -73,6 +75,17 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
         mAdapter = new WorkoutAdapter(getActivity(), workouts);
         mRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CREATE_WORKOUT) {
+            if (resultCode == Activity.RESULT_OK) {
+                Workout workout = data.getParcelableExtra(EditWorkout.EXTRA_RESULT_WORKOUT);
+                workouts.add(workout);
+                mAdapter.notifyItemInserted(workouts.size() - 1);
+            }
+        }
     }
 
     @Override
