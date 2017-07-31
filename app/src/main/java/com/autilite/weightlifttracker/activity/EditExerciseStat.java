@@ -17,7 +17,8 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.ExerciseInfoContract;
-import com.autilite.weightlifttracker.database.WorkoutDatabase;
+import com.autilite.weightlifttracker.fragment.AbstractFormFragment;
+import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.util.NumberFormat;
 
@@ -48,7 +49,7 @@ public class EditExerciseStat extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        Exercise exercise =  ((EditExerciseStatFragment ) contentFragment).save();
+        Exercise exercise =  (Exercise) ((EditExerciseStatFragment ) contentFragment).save();
         boolean isSuccess = exercise != null;
         if (!isSuccess) {
             Toast.makeText(this, R.string.create_exercise_fail, Toast.LENGTH_SHORT).show();
@@ -61,11 +62,7 @@ public class EditExerciseStat extends CreateForm {
         return isSuccess;
     }
 
-    public static class EditExerciseStatFragment extends Fragment {
-        private static final String ARG_EXERCISE_OBJ = "ARG_EXERCISE_OBJ";
-
-        private static final long EXERCISE_NOT_SELECTED = -1;
-
+    public static class EditExerciseStatFragment extends AbstractFormFragment {
         private TextView mEditName;
         private EditText mEditNote;
         private EditText mEditSets;
@@ -74,13 +71,7 @@ public class EditExerciseStat extends CreateForm {
         private EditText mEditWeight;
         private EditText mEditAutoIncrement;
 
-        private Exercise exercise;
-        private long exerciseId;
-        private String exerciseName;
-
-        private WorkoutDatabase db;
-
-        private boolean isNewEntry;
+        private long baseExerciseId;
 
 
         public EditExerciseStatFragment() {
@@ -89,7 +80,7 @@ public class EditExerciseStat extends CreateForm {
         public static EditExerciseStatFragment newInstance(Exercise exercise) {
 
             Bundle args = new Bundle();
-            args.putParcelable(ARG_EXERCISE_OBJ, exercise);
+            args.putParcelable(ARG_MODEL_OBJ, exercise);
 
             EditExerciseStatFragment fragment = new EditExerciseStatFragment();
             fragment.setArguments(args);
@@ -97,29 +88,11 @@ public class EditExerciseStat extends CreateForm {
         }
 
         @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
+        public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            db = new WorkoutDatabase(getContext());
-            if (getArguments() != null) {
-                exercise = getArguments().getParcelable(ARG_EXERCISE_OBJ);
-                if (exercise != null) {
-                    exerciseId = exercise.getId();
-                    exerciseName = exercise.getName();
-                    isNewEntry = false;
-                } else {
-                    exerciseId = EXERCISE_NOT_SELECTED;
-                    isNewEntry = true;
-                }
-            } else {
-                exerciseId = EXERCISE_NOT_SELECTED;
-                isNewEntry = true;
+            if (model != null) {
+                baseExerciseId = ((Exercise) model).getBaseExerciseId();
             }
-        }
-
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            db.close();
         }
 
         @Nullable
@@ -154,18 +127,19 @@ public class EditExerciseStat extends CreateForm {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             cursor.moveToPosition(i);
-                            exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
-                            exerciseName = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
+                            baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
+                            name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
                             cursor.close();
 
-                            mEditName.setText(exerciseName);
+                            mEditName.setText(name);
                         }
                     }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME).create();
             dialog.show();
         }
 
         private void setViewDefault() {
-            if (exercise != null) {
+            if (model != null) {
+                Exercise exercise = (Exercise) model;
                 int sets = exercise.getSets();
                 int reps = exercise.getReps();
                 int restTime = exercise.getRestTime();
@@ -183,17 +157,8 @@ public class EditExerciseStat extends CreateForm {
             }
         }
 
-        /**
-         * Returns a newly created <code>Exercise</code> object containing the data that was saved.
-         * If the save is unsuccessful, the function will return null.
-         *
-         * @return  The <code>Exercise</code> object if save successful
-         *          <code>null</code> if save failed
-         */
-        private Exercise save() {
-            if (exerciseId == EXERCISE_NOT_SELECTED) {
-                return null;
-            }
+        @Override
+        protected BaseModel insertNewEntry() {
             String sets = mEditSets.getText().toString();
             String reps = mEditReps.getText().toString();
             String weight = mEditWeight.getText().toString();
@@ -209,19 +174,34 @@ public class EditExerciseStat extends CreateForm {
             double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
             int wRestTime = NumberFormat.parseInt(restTime, 90);
 
-            if (isNewEntry) {
-                long exerciseStatId = db.createExerciseStat(exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
-                if (exerciseStatId != -1) {
-                    return new Exercise(exerciseStatId, exerciseName, "", exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
-                }
-            } else {
-                long exerciseStatId = exercise.getId();
-                int numRowsUpdate = db.updateExerciseStat(
-                        exerciseStatId, exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
-                if (numRowsUpdate == 1) {
-                    // TODO change Exercise model to include both ExerciseStatId and ExerciseId
-                    return new Exercise(exerciseStatId, exerciseName, "", exerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
-                }
+            id = db.createExerciseStat(baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+            if (id != -1) {
+                return new Exercise(id, name, "", baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+            }
+            return null;
+        }
+
+        @Override
+        protected BaseModel editEntry() {
+            String sets = mEditSets.getText().toString();
+            String reps = mEditReps.getText().toString();
+            String weight = mEditWeight.getText().toString();
+            String autoIncrement = mEditAutoIncrement.getText().toString();
+            String restTime = mEditRestTime.getText().toString();
+            // TODO place EditText watcher on form views
+            // For now, assume UI correctly sanitizes the input
+
+            // TODO get default values
+            int wSets = NumberFormat.parseInt(sets, 5);
+            int wReps = NumberFormat.parseInt(reps, 5);
+            double wWeight = NumberFormat.parseDouble(weight, 0);
+            double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
+            int wRestTime = NumberFormat.parseInt(restTime, 90);
+
+            int numRowsUpdate = db.updateExerciseStat(
+                    id, baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+            if (numRowsUpdate == 1) {
+                return new Exercise(id, name, "", baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
             }
             return null;
         }

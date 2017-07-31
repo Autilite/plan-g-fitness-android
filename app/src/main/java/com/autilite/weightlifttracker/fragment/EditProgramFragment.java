@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
+import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -21,11 +22,9 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditProgramFragment extends Fragment {
+public class EditProgramFragment extends AbstractFormFragment {
 
     private static final String ARG_PROGRAM_OBJ = "ARG_PROGRAM_OBJ";
-
-    private static final long PROGRAM_NOT_SELECTED = -1;
 
     private RecyclerView mRecyclerView;
     private AddWorkoutAdapter mAdapter;
@@ -35,12 +34,6 @@ public class EditProgramFragment extends Fragment {
     private EditText mEditDescription;
 
     private List<Workout> workouts;
-
-    private Program program;
-    private long programId;
-    private String programName;
-
-    private boolean isNewEntry;
 
     public EditProgramFragment() {
         // Required empty public constructor
@@ -54,32 +47,6 @@ public class EditProgramFragment extends Fragment {
         EditProgramFragment fragment = new EditProgramFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        db = new WorkoutDatabase(getContext());
-        if (getArguments() != null) {
-            program = getArguments().getParcelable(ARG_PROGRAM_OBJ);
-            if (program != null) {
-                programId = program.getId();
-                programName = program.getName();
-                isNewEntry = false;
-            } else {
-                programId = PROGRAM_NOT_SELECTED;
-                isNewEntry = true;
-            }
-        } else {
-            programId = PROGRAM_NOT_SELECTED;
-            isNewEntry = true;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        db.close();
     }
 
     @Override
@@ -102,7 +69,13 @@ public class EditProgramFragment extends Fragment {
         return view;
     }
 
-    public Program save() {
+    @Override
+    protected BaseModel insertNewEntry() {
+        return null;
+    }
+
+    @Override
+    protected BaseModel editEntry() {
         return null;
     }
 
