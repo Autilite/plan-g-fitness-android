@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
@@ -24,11 +23,8 @@ import java.util.List;
  */
 public class EditProgramFragment extends AbstractFormFragment {
 
-    private static final String ARG_PROGRAM_OBJ = "ARG_PROGRAM_OBJ";
-
     private RecyclerView mRecyclerView;
     private AddWorkoutAdapter mAdapter;
-    private WorkoutDatabase db;
 
     private EditText mEditName;
     private EditText mEditDescription;
@@ -42,7 +38,7 @@ public class EditProgramFragment extends AbstractFormFragment {
     public static AbstractFormFragment newInstance(Program program) {
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PROGRAM_OBJ, program);
+        args.putParcelable(ARG_MODEL_OBJ, program);
 
         EditProgramFragment fragment = new EditProgramFragment();
         fragment.setArguments(args);
