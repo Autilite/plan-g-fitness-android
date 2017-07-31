@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.EditExerciseStat;
-import com.autilite.weightlifttracker.database.WorkoutDatabase;
+import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -26,14 +26,13 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateWorkout extends Fragment {
+public class CreateWorkout extends AbstractFormFragment {
 
     private static final int CREATE_EXERCISE = 1;
     private static final int EDIT_EXERCISE = 2;
 
     private RecyclerView mRecyclerView;
     private AddExerciseAdapter mAdapter;
-    private WorkoutDatabase db;
 
     private EditText mEditName;
     private EditText mEditDescription;
@@ -42,18 +41,6 @@ public class CreateWorkout extends Fragment {
 
     public CreateWorkout() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        db = new WorkoutDatabase(getContext());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        db.close();
     }
 
     @Override
@@ -102,22 +89,23 @@ public class CreateWorkout extends Fragment {
         }
     }
 
-    public Workout save() {
-        String name = mEditName.getText().toString();
+    @Override
+    protected BaseModel insertNewEntry() {
+        name = mEditName.getText().toString();
         String description = mEditDescription.getText().toString();
 
         if (name.equals("")) {
             return null;
         }
-        long workoutId = db.createWorkout(name, description);
-        if (workoutId == -1) {
+        id = db.createWorkout(name, description);
+        if (id == -1) {
             return null;
         }
-        Workout workout = new Workout(workoutId, name, description);
+        Workout workout = new Workout(id, name, description);
 
         for (Exercise e : exercises) {
-            long id = db.addExerciseToWorkout(workoutId, e.getId());
-            if (id != -1) {
+            long rowId = db.addExerciseToWorkout(id, e.getId());
+            if (rowId != -1) {
                 workout.addExercise(e);
             } else {
                 String s = String.format(getString(R.string.add_workout_exercise_fail), e.getName());
@@ -126,6 +114,12 @@ public class CreateWorkout extends Fragment {
         }
 
         return workout;
+    }
+
+    @Override
+    protected BaseModel editEntry() {
+        // TODO stub
+        return null;
     }
 
     public class AddExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

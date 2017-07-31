@@ -25,7 +25,7 @@ public class EditWorkout extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        Workout workout = ((CreateWorkout) contentFragment).save();
+        Workout workout = (Workout) ((CreateWorkout) contentFragment).save();
         boolean isSuccess = workout != null;
         if (!isSuccess) {
             Toast.makeText(this, R.string.create_workout_fail, Toast.LENGTH_SHORT).show();

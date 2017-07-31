@@ -16,7 +16,16 @@ public abstract class AbstractFormFragment extends Fragment {
     private static final long MODEL_NOT_SELECTED = -1;
 
     protected BaseModel model;
+
+    /**
+     * The id of the Model instance. If the function of this fragment is to create a new Model
+     * object, then the value of id will be <code>MODEL_NOT_SELECTED</code>.
+     */
     protected long id;
+
+    /**
+     * The name of the Model instance
+     */
     protected String name;
 
     protected WorkoutDatabase db;
