@@ -39,7 +39,7 @@ public class EditProgramFragment extends AbstractFormFragment {
         // Required empty public constructor
     }
 
-    public static Fragment newInstance(Program program) {
+    public static AbstractFormFragment newInstance(Program program) {
 
         Bundle args = new Bundle();
         args.putParcelable(ARG_PROGRAM_OBJ, program);

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +35,7 @@ public class EditExerciseStat extends CreateForm {
     }
 
     @Override
-    protected Fragment createContentFragment() {
+    protected AbstractFormFragment createContentFragment() {
         if (getIntent().getExtras() != null) {
             setTitle(R.string.edit_exercise);
             Exercise e = getIntent().getParcelableExtra(EXTRA_EXERCISE);
@@ -49,14 +48,14 @@ public class EditExerciseStat extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        Exercise exercise =  (Exercise) ((EditExerciseStatFragment ) contentFragment).save();
-        boolean isSuccess = exercise != null;
+        BaseModel model = contentFragment.save();
+        boolean isSuccess = model != null;
         if (!isSuccess) {
             Toast.makeText(this, R.string.create_exercise_fail, Toast.LENGTH_SHORT).show();
         } else {
             Intent result = new Intent(RESULT_ACTION);
             result.setAction(RESULT_ACTION);
-            result.putExtra(EXTRA_RESULT_EXERCISE, exercise);
+            result.putExtra(EXTRA_RESULT_EXERCISE, model);
             setResult(Activity.RESULT_OK, result);
         }
         return isSuccess;

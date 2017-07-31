@@ -3,7 +3,6 @@ package com.autilite.weightlifttracker.activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -13,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.fragment.AbstractFormFragment;
 
 /**
  * Created by Kelvin on Jul 21, 2017.
@@ -20,7 +20,7 @@ import com.autilite.weightlifttracker.R;
 
 public abstract class CreateForm extends AppCompatActivity {
 
-    protected Fragment contentFragment;
+    protected AbstractFormFragment contentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public abstract class CreateForm extends AppCompatActivity {
         DrawableCompat.setTint(drawable, color);
     }
 
-    protected abstract Fragment createContentFragment();
+    protected abstract AbstractFormFragment createContentFragment();
 
     /**
      * Save the form
