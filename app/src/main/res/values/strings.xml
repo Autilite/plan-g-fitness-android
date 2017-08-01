@@ -30,6 +30,7 @@
     <string name="program_name">Program Name</string>
     <string name="programs">Programs</string>
     <string name="choose_workout">Select a workout</string>
+    <string name="choose_workouts">Select Workouts</string>
     <string name="day">Day</string>
     <string name="days">Days</string>
     <string name="day_placeholder">Day %s</string>

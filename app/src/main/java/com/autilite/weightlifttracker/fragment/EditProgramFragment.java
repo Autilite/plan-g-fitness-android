@@ -1,6 +1,8 @@
 package com.autilite.weightlifttracker.fragment;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.weightlifttracker.R;
+import com.autilite.weightlifttracker.activity.ChooseWorkouts;
 import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
@@ -23,6 +26,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class EditProgramFragment extends AbstractFormFragment {
+
+    private static final int CHOOSE_WORKOUT = 1;
 
     private RecyclerView mRecyclerView;
     private AddWorkoutAdapter mAdapter;
@@ -47,6 +52,17 @@ public class EditProgramFragment extends AbstractFormFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (model != null) {
+            // TODO get the list of workouts for each program day
+            listOfWorkouts = new ArrayList<>();
+        } else {
+            listOfWorkouts = new ArrayList<>();
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -59,7 +75,6 @@ public class EditProgramFragment extends AbstractFormFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        listOfWorkouts = new ArrayList<>();
         mAdapter = new AddWorkoutAdapter(listOfWorkouts);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -74,6 +89,16 @@ public class EditProgramFragment extends AbstractFormFragment {
     @Override
     protected BaseModel editEntry() {
         return null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHOOSE_WORKOUT) {
+            if (resultCode == Activity.RESULT_OK) {
+                // TODO
+            }
+        }
     }
 
     public class AddWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -109,10 +134,9 @@ public class EditProgramFragment extends AbstractFormFragment {
                 text.setText(getString(R.string.days));
             } else if (holder.getItemViewType() == CONTENT_VIEW) {
                 DayViewHolder dvh = (DayViewHolder) holder;
-                TextView text = dvh.dayText;
-                String format = String.format(getString(R.string.day_placeholder), String.valueOf(getDay(position)));
-                text.setText(format);
-                dvh.bindWorkoutList(getContentWorkouts(position));
+
+                int day = getDay(position);
+                dvh.setDay(day);
             } else if (holder.getItemViewType() == FOOTER_VIEW) {
                 TextView text = ((DayViewHolder) holder).dayText;
                 text.setText(R.string.add_day);
@@ -178,29 +202,37 @@ public class EditProgramFragment extends AbstractFormFragment {
         public class DayViewHolder extends RecyclerView.ViewHolder {
 
             private TextView dayText;
-            private List<Workout> workouts;
+
+            private int day;
 
             public DayViewHolder(View itemView) {
                 super(itemView);
                 dayText = (TextView) itemView.findViewById(R.id.text1);
 
                 itemView.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View view) {
                         if (getItemViewType() == FOOTER_VIEW) {
-                            // Add new day row
                             listOfWorkouts.add(new ArrayList<Workout>());
                             notifyDayInserted(listOfWorkouts.size() - 1);
                         } else {
-                            // TODO Start dialog to edit the day
+                            Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
+                            intent.putExtra(ChooseWorkouts.EXTRA_PROGRAM_ID, id);
+                            intent.putExtra(ChooseWorkouts.EXTRA_DAY, day);
+                            startActivityForResult(intent, CHOOSE_WORKOUT);
                         }
                     }
                 });
             }
 
-            private void bindWorkoutList(List<Workout> workouts) {
-                this.workouts = workouts;
+            private void setDay(int day) {
+                this.day = day;
+
+                String format = String.format(getString(R.string.day_placeholder), String.valueOf(day));
+                dayText.setText(format);
             }
+
         }
     }
 }
