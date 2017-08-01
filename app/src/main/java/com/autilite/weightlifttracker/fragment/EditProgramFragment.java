@@ -97,6 +97,7 @@ public class EditProgramFragment extends AbstractFormFragment {
         if (requestCode == CHOOSE_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
                 // TODO
+                List<Workout> workouts = data.getParcelableArrayListExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
             }
         }
     }

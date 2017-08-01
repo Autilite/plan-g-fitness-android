@@ -1,5 +1,7 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -25,9 +28,13 @@ public class ChooseWorkouts extends AppCompatActivity {
 
     public static final String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
     public static final String EXTRA_DAY = "EXTRA_PROGRAM_DAY";
+    public static final String EXTRA_RESULT_CHOSEN_WORKOUTS = "EXTRA_RESULT_CHOSEN_WORKOUTS";
+    public static final String RESULT_ACTION = "com.autilite.weightlifttracker.activity.ChooseWorkouts.RESULT_ACTION";
 
     private int day;
     private long programId;
+
+    private ChooseWorkoutsFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,7 @@ public class ChooseWorkouts extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState != null) {
@@ -47,11 +55,37 @@ public class ChooseWorkouts extends AppCompatActivity {
             programId = getIntent().getLongExtra(EXTRA_PROGRAM_ID, -1);
             day = getIntent().getIntExtra(EXTRA_DAY, -1);
 
+            fragment = (ChooseWorkoutsFragment) ChooseWorkoutsFragment.newInstance(programId, day);
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, ChooseWorkoutsFragment.newInstance(programId, day))
+                    .replace(R.id.content_frame, fragment)
                     .commit();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void finish() {
+        setResult();
+        super.finish();
+    }
+
+    private void setResult() {
+        Intent intent = new Intent();
+        intent.setAction(RESULT_ACTION);
+        intent.putExtra(EXTRA_RESULT_CHOSEN_WORKOUTS, fragment.getSelectedWorkouts());
+        setResult(Activity.RESULT_OK, intent);
     }
 
     public static class ChooseWorkoutsFragment extends Fragment {
@@ -68,7 +102,7 @@ public class ChooseWorkouts extends AppCompatActivity {
         private int day;
 
         private List<Workout> workouts;
-        private List<Workout> selectedWorkouts;
+        private ArrayList<Workout> selectedWorkouts;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,6 +155,10 @@ public class ChooseWorkouts extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
 
             return view;
+        }
+
+        public ArrayList<Workout> getSelectedWorkouts() {
+            return selectedWorkouts;
         }
 
         private class WorkoutSelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
