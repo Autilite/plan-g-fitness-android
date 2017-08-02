@@ -161,7 +161,7 @@ public class EditProgramFragment extends AbstractFormFragment {
         }
 
         private List<Workout> getContentWorkouts(int position) {
-            return listOfWorkouts.get(position - HEADER_SIZE);
+            return days.get(position - HEADER_SIZE);
         }
 
         private int getDay(int position) {
@@ -216,8 +216,8 @@ public class EditProgramFragment extends AbstractFormFragment {
                     @Override
                     public void onClick(View view) {
                         if (getItemViewType() == FOOTER_VIEW) {
-                            listOfWorkouts.add(new ArrayList<Workout>());
-                            notifyDayInserted(listOfWorkouts.size() - 1);
+                            days.add(new ArrayList<Workout>());
+                            notifyDayInserted(days.size() - 1);
                         } else {
                             Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
                             intent.putExtra(ChooseWorkouts.EXTRA_DAY, day);
