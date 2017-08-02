@@ -21,9 +21,10 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Workout;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ChooseWorkouts extends AppCompatActivity {
 
@@ -104,7 +105,7 @@ public class ChooseWorkouts extends AppCompatActivity {
         private WorkoutDatabase db;
 
         private List<Workout> workouts;
-        private ArrayList<Long> selectedWorkouts;
+        private Set<Long> selectedWorkouts;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,7 +114,7 @@ public class ChooseWorkouts extends AppCompatActivity {
             db = new WorkoutDatabase(getActivity());
             if (getArguments() != null) {
                 Long[] ids = (Long[]) getArguments().getSerializable(ARG_SELECTED_IDS);
-                selectedWorkouts = new ArrayList<>(Arrays.asList(ids != null ? ids : new Long[0]));
+                selectedWorkouts = new HashSet<>(Arrays.asList(ids != null ? ids : new Long[0]));
             }
         }
 
