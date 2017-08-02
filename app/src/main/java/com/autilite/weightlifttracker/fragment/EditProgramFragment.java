@@ -17,7 +17,6 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.ChooseWorkouts;
 import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Program;
-import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class EditProgramFragment extends AbstractFormFragment {
     private EditText mEditName;
     private EditText mEditDescription;
 
-    private List<List<Workout>> listOfWorkouts;
+    private List<Long[]> listOfWorkouts;
 
     public EditProgramFragment() {
         // Required empty public constructor
@@ -112,9 +111,9 @@ public class EditProgramFragment extends AbstractFormFragment {
         private static final int HEADER_SIZE = 1;
         private static final int FOOTER_SIZE = 1;
 
-        private List<List<Workout>> days;
+        private List<Long[]> days;
 
-        public AddWorkoutAdapter(List<List<Workout>> workouts) {
+        public AddWorkoutAdapter(List<Long[]> workouts) {
             this.days = workouts;
         }
 
@@ -160,7 +159,7 @@ public class EditProgramFragment extends AbstractFormFragment {
             return days.size() + HEADER_SIZE + FOOTER_SIZE;
         }
 
-        private List<Workout> getContentWorkouts(int position) {
+        private Long[] getContentWorkouts(int position) {
             return days.get(position - HEADER_SIZE);
         }
 
@@ -216,7 +215,7 @@ public class EditProgramFragment extends AbstractFormFragment {
                     @Override
                     public void onClick(View view) {
                         if (getItemViewType() == FOOTER_VIEW) {
-                            days.add(new ArrayList<Workout>());
+                            days.add(new Long[0]);
                             notifyDayInserted(days.size() - 1);
                         } else {
                             Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
