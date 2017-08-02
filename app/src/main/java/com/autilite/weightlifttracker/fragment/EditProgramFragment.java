@@ -98,6 +98,12 @@ public class EditProgramFragment extends AbstractFormFragment {
                 // TODO
                 Long[] ids = (Long[]) data.getSerializableExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
                 int day = data.getIntExtra(ChooseWorkouts.EXTRA_RESULT_DAY, -1);
+                int index = day - 1;
+                listOfWorkouts.set(index, ids);
+
+                // At the moment, the adapter does not use the list of IDs for drawing the View
+                // Because of this, we don't need to notify the adapter that the data has changed
+//                mAdapter.notifyDayChanged(day);
             }
         }
     }
@@ -168,6 +174,10 @@ public class EditProgramFragment extends AbstractFormFragment {
             return position - HEADER_SIZE + 1;
         }
 
+        private Long[] getSelected(int day) {
+            return days.get(day - 1);
+        }
+
         /**
          * A helper function to notify any registered observers that the <code>day</code>
          * reflected at <code>position</code> has been newly inserted.
@@ -220,7 +230,7 @@ public class EditProgramFragment extends AbstractFormFragment {
                         } else {
                             Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
                             intent.putExtra(ChooseWorkouts.EXTRA_DAY, day);
-                            intent.putExtra(ChooseWorkouts.EXTRA_SELECTED_IDS, new Long[0]);
+                            intent.putExtra(ChooseWorkouts.EXTRA_SELECTED_IDS, getSelected(day));
                             startActivityForResult(intent, CHOOSE_WORKOUT);
                         }
                     }
