@@ -17,6 +17,7 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.activity.ChooseWorkouts;
 import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Program;
+import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,35 @@ public class EditProgramFragment extends AbstractFormFragment {
 
     @Override
     protected BaseModel insertNewEntry() {
-        return null;
+        name = mEditName.getText().toString();
+        String description = mEditDescription.getText().toString();
+        int numDays = listOfWorkouts.size();
+
+        if (name.equals("")) {
+            return null;
+        }
+
+        long programId = db.createProgram(name, numDays);
+        if (programId == -1)
+            return null;
+
+        Program program = new Program(programId, name, description);
+        for (int i = 0; i < numDays; i++) {
+            Long[] workoutIds = listOfWorkouts.get(i);
+
+            int day = i + 1;
+            for (Long workoutId : workoutIds) {
+                db.addWorkoutToProgram(programId, workoutId, day);
+            }
+        }
+
+        List<Workout> workouts = db.getProgramWorkouts(programId);
+        for (Workout w :
+                workouts) {
+            program.addWorkout(w);
+        }
+
+        return program;
     }
 
     @Override

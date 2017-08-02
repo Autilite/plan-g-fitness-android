@@ -1,8 +1,13 @@
 package com.autilite.weightlifttracker.activity;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.widget.Toast;
+
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.fragment.AbstractFormFragment;
 import com.autilite.weightlifttracker.fragment.EditProgramFragment;
+import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Program;
 
 /**
@@ -11,6 +16,9 @@ import com.autilite.weightlifttracker.program.Program;
 
 public class EditProgram extends CreateForm {
     public static final String EXTRA_PROGRAM = "EXTRA_PROGRAM";
+
+    public static final String RESULT_ACTION = "com.autilite.weightlifttracker.activity.EditProgram.RESULT_ACTION";
+    public static final String EXTRA_RESULT_PROGRAM = "EXTRA_RESULT_PROGRAM";
 
     @Override
     protected AbstractFormFragment createContentFragment() {
@@ -26,6 +34,15 @@ public class EditProgram extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        return false;
+        BaseModel model = contentFragment.save();
+        boolean isSuccess = model != null;
+        if (!isSuccess) {
+            Toast.makeText(this, R.string.create_program_fail, Toast.LENGTH_SHORT).show();
+        } else {
+            Intent result = new Intent(RESULT_ACTION);
+            result.putExtra(EXTRA_RESULT_PROGRAM, model);
+            setResult(Activity.RESULT_OK, result);
+        }
+        return isSuccess;
     }
 }
