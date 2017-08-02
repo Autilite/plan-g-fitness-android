@@ -97,7 +97,8 @@ public class EditProgramFragment extends AbstractFormFragment {
         if (requestCode == CHOOSE_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
                 // TODO
-                List<Workout> workouts = data.getParcelableArrayListExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
+                Long[] ids = (Long[]) data.getSerializableExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
+                int day = data.getIntExtra(ChooseWorkouts.EXTRA_RESULT_DAY, -1);
             }
         }
     }
@@ -219,8 +220,8 @@ public class EditProgramFragment extends AbstractFormFragment {
                             notifyDayInserted(listOfWorkouts.size() - 1);
                         } else {
                             Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
-                            intent.putExtra(ChooseWorkouts.EXTRA_PROGRAM_ID, id);
                             intent.putExtra(ChooseWorkouts.EXTRA_DAY, day);
+                            intent.putExtra(ChooseWorkouts.EXTRA_SELECTED_IDS, new Long[0]);
                             startActivityForResult(intent, CHOOSE_WORKOUT);
                         }
                     }

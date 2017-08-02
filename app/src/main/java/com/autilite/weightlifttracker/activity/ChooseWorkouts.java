@@ -22,17 +22,20 @@ import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.Workout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChooseWorkouts extends AppCompatActivity {
 
-    public static final String EXTRA_PROGRAM_ID = "EXTRA_PROGRAM_ID";
+    public static final String EXTRA_SELECTED_IDS = "EXTRA_SELECTED_IDS";
     public static final String EXTRA_DAY = "EXTRA_PROGRAM_DAY";
+
     public static final String EXTRA_RESULT_CHOSEN_WORKOUTS = "EXTRA_RESULT_CHOSEN_WORKOUTS";
+    public static final String EXTRA_RESULT_DAY = "EXTRA_RESULT_PROGRAM_DAY";
+
     public static final String RESULT_ACTION = "com.autilite.weightlifttracker.activity.ChooseWorkouts.RESULT_ACTION";
 
     private int day;
-    private long programId;
 
     private ChooseWorkoutsFragment fragment;
 
@@ -52,10 +55,12 @@ public class ChooseWorkouts extends AppCompatActivity {
             // the fragment
             return;
         } else if (getIntent().getExtras() != null) {
-            programId = getIntent().getLongExtra(EXTRA_PROGRAM_ID, -1);
+            // Since the program may not have been created let, we let the parent activity
+            // handle the passing the default selected workout IDs
             day = getIntent().getIntExtra(EXTRA_DAY, -1);
+            Long[] selectedIds = (Long[]) getIntent().getSerializableExtra(EXTRA_SELECTED_IDS);
 
-            fragment = (ChooseWorkoutsFragment) ChooseWorkoutsFragment.newInstance(programId, day);
+            fragment = (ChooseWorkoutsFragment) ChooseWorkoutsFragment.newInstance(selectedIds);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -84,13 +89,13 @@ public class ChooseWorkouts extends AppCompatActivity {
     private void setResult() {
         Intent intent = new Intent();
         intent.setAction(RESULT_ACTION);
+        intent.putExtra(EXTRA_RESULT_DAY, day);
         intent.putExtra(EXTRA_RESULT_CHOSEN_WORKOUTS, fragment.getSelectedWorkouts());
         setResult(Activity.RESULT_OK, intent);
     }
 
     public static class ChooseWorkoutsFragment extends Fragment {
-        private static final String ARG_PROG_ID = "ARG_PROG_ID";
-        private static final String ARG_DAY = "ARG_DAY";
+        private static final String ARG_SELECTED_IDS = "ARG_SELECTED_IDS";
 
         private View view;
         private RecyclerView recyclerView;
@@ -98,11 +103,8 @@ public class ChooseWorkouts extends AppCompatActivity {
 
         private WorkoutDatabase db;
 
-        private long programId;
-        private int day;
-
         private List<Workout> workouts;
-        private ArrayList<Workout> selectedWorkouts;
+        private ArrayList<Long> selectedWorkouts;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,8 +112,8 @@ public class ChooseWorkouts extends AppCompatActivity {
 
             db = new WorkoutDatabase(getActivity());
             if (getArguments() != null) {
-                programId = getArguments().getLong(ARG_PROG_ID);
-                day = getArguments().getInt(ARG_DAY);
+                Long[] ids = (Long[]) getArguments().getSerializable(ARG_SELECTED_IDS);
+                selectedWorkouts = new ArrayList<>(Arrays.asList(ids != null ? ids : new Long[0]));
             }
         }
 
@@ -121,10 +123,9 @@ public class ChooseWorkouts extends AppCompatActivity {
             db.close();
         }
 
-        public static Fragment newInstance(long programId, int day) {
+        public static Fragment newInstance(Long[] selectedIds) {
             Bundle args = new Bundle();
-            args.putLong(ARG_PROG_ID, programId);
-            args.putInt(ARG_DAY, day);
+            args.putSerializable(ARG_SELECTED_IDS, selectedIds);
 
             Fragment frag = new ChooseWorkoutsFragment();
             frag.setArguments(args);
@@ -149,16 +150,14 @@ public class ChooseWorkouts extends AppCompatActivity {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
             workouts = db.getAllWorkoutsList();
-            // TODO Get existing workouts for this program/day from the db
-            selectedWorkouts = new ArrayList<>();
             adapter = new WorkoutSelectAdapter(workouts);
             recyclerView.setAdapter(adapter);
 
             return view;
         }
 
-        public ArrayList<Workout> getSelectedWorkouts() {
-            return selectedWorkouts;
+        public Long[] getSelectedWorkouts() {
+            return selectedWorkouts.toArray(new Long[selectedWorkouts.size()]);
         }
 
         private class WorkoutSelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -197,9 +196,9 @@ public class ChooseWorkouts extends AppCompatActivity {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                             if (b) {
-                                selectedWorkouts.add(workout);
+                                selectedWorkouts.add(workout.getId());
                             } else {
-                                selectedWorkouts.remove(workout);
+                                selectedWorkouts.remove(workout.getId());
                             }
                         }
                     });
@@ -209,7 +208,7 @@ public class ChooseWorkouts extends AppCompatActivity {
                     this.workout = workout;
                     checkbox.setText(workout.getName());
                     checkbox.setHint(workout.getDescription());
-                    checkbox.setChecked(selectedWorkouts.contains(workout));
+                    checkbox.setChecked(selectedWorkouts.contains(workout.getId()));
                 }
             }
         }
