@@ -1,5 +1,6 @@
 package com.autilite.weightlifttracker.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -80,8 +81,13 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO
-        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CREATE_PROGRAM) {
+            if (resultCode == Activity.RESULT_OK) {
+                Program program = data.getParcelableExtra(EditProgram.EXTRA_RESULT_PROGRAM);
+                programs.add(program);
+                mAdapter.notifyItemInserted(programs.size() - 1);
+            }
+        }
     }
 
     @Override
