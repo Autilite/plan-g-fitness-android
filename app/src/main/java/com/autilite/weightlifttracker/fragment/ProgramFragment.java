@@ -32,9 +32,11 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProgramFragment extends Fragment implements AbstractCreateDialog.CreateDialogListener {
+public class ProgramFragment extends Fragment implements AbstractCreateDialog.CreateDialogListener, ProgramAdapter.IProgramViewHolderClick {
 
     private static final int CREATE_PROGRAM = 1;
+    private static final int EDIT_PROGRAM = 2;
+
     private WorkoutDatabase workoutDb;
     private List<Program> programs;
     private RecyclerView mRecyclerView;
@@ -74,7 +76,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new ProgramAdapter(getActivity(), programs);
+        mAdapter = new ProgramAdapter(getActivity(), programs, this);
         mRecyclerView.setAdapter(mAdapter);
         return view;
     }
@@ -151,4 +153,11 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
         dialog.getDialog().cancel();
     }
 
+    @Override
+    public void onProgramSelect(Program program) {
+        Intent intent = new Intent(getContext(), EditProgram.class);
+        intent.putExtra(EditProgram.EXTRA_PROGRAM, program);
+        startActivityForResult(intent, EDIT_PROGRAM);
+
+    }
 }

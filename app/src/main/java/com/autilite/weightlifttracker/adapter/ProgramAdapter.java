@@ -22,6 +22,7 @@ import java.util.List;
 
 public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramViewHolder>{
 
+    private final IProgramViewHolderClick listener;
     private Context mContext;
     private List<Program> programs;
 
@@ -37,9 +38,10 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
         }
     }
 
-    public ProgramAdapter(Context mContext, List<Program> programs) {
+    public ProgramAdapter(Context mContext, List<Program> programs, IProgramViewHolderClick listener) {
         this.mContext = mContext;
         this.programs = programs;
+        this.listener = listener;
     }
 
     public ProgramViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -50,7 +52,7 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
 
     @Override
     public void onBindViewHolder(ProgramViewHolder holder, int position) {
-        Program program = programs.get(position);
+        final Program program = programs.get(position);
 
         holder.programName.setText(program.getName());
 
@@ -60,10 +62,20 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
         }
         ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, workout);
         holder.workouts.setAdapter(eAdapter);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onProgramSelect(program);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return programs.size();
+    }
+
+    public interface IProgramViewHolderClick {
+        void onProgramSelect(Program program);
     }
 }
