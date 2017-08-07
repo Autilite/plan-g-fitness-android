@@ -1,7 +1,9 @@
 package com.autilite.weightlifttracker.program;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,22 +13,30 @@ import java.util.List;
  */
 
 public class Program extends BaseModel {
-    private List<Workout> workouts;
+    private int numDays;
+    private List<Day> days;
 
-    public Program(long id, String name, String description) {
+    public Program(long id, String name, String description, int numDays) {
         super(id, name, description);
-        workouts = new LinkedList<>();
+        this.numDays = numDays;
+        days = new ArrayList<>();
+
+        for (int i = 0; i < numDays; i++) {
+            days.add(new Day());
+        }
     }
 
     protected Program(Parcel in) {
         super(in);
-        workouts = in.createTypedArrayList(Workout.CREATOR);
+        numDays = in.readInt();
+        days = in.createTypedArrayList(Day.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeTypedList(workouts);
+        dest.writeInt(numDays);
+        dest.writeTypedList(days);
     }
 
     @Override
@@ -46,28 +56,87 @@ public class Program extends BaseModel {
         }
     };
 
-    public boolean addWorkout(Workout workout) {
-        if (workout == null) {
-            return false;
+    public int getNumDays() {
+        return numDays;
+    }
+
+    public List<Day> getDays() {
+        return days;
+    }
+
+    public boolean addWorkout(int day, Workout workout) {
+        int index = day - 1;
+        return days.get(index).addWorkout(workout);
+    }
+
+    public void removeWorkout(int day, Workout workout) {
+        int index = day - 1;
+        days.get(index).removeWorkout(workout);
+    }
+
+    public void removeWorkout(int day, long id) {
+        int index = day - 1;
+        days.get(index).removeWorkout(id);
+    }
+
+    public static class Day implements Parcelable {
+
+        private List<Workout> workouts;
+
+        public Day() {
+            this.workouts = new ArrayList<>();
         }
-        workouts.add(workout);
-        return true;
-    }
 
-    public List<Workout> getWorkouts() {
-        return workouts;
-    }
-
-    public void removeWorkout(Workout workout) {
-        workouts.remove(workout);
-    }
-
-    public void removeWorkout(String name) {
-        Iterator<Workout> it = workouts.iterator();
-        while (it.hasNext()) {
-            Workout w = it.next();
-            if (w.getName().equals(name))
-                it.remove();
+        protected Day(Parcel in) {
+            workouts = in.createTypedArrayList(Workout.CREATOR);
         }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeTypedList(workouts);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<Day> CREATOR = new Creator<Day>() {
+            @Override
+            public Day createFromParcel(Parcel in) {
+                return new Day(in);
+            }
+
+            @Override
+            public Day[] newArray(int size) {
+                return new Day[size];
+            }
+        };
+
+        public boolean addWorkout(Workout workout) {
+            if (workout == null) {
+                return false;
+            }
+            workouts.add(workout);
+            return true;
+        }
+
+        public List<Workout> getWorkouts() {
+            return workouts;
+        }
+
+        public void removeWorkout(Workout workout) {
+            workouts.remove(workout);
+        }
+
+        public void removeWorkout(long id) {
+            Iterator<Workout> it = workouts.iterator();
+            while (it.hasNext()) {
+                Workout w = it.next();
+                if (w.getId() == id)
+                    it.remove();
+            }
+        }
+
     }
 }

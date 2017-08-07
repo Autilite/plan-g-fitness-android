@@ -95,7 +95,7 @@ public class EditProgramFragment extends AbstractFormFragment {
         if (programId == -1)
             return null;
 
-        Program program = new Program(programId, name, description);
+        Program program = new Program(programId, name, description, numDays);
         for (int i = 0; i < numDays; i++) {
             Long[] workoutIds = listOfWorkouts.get(i);
 
@@ -105,10 +105,11 @@ public class EditProgramFragment extends AbstractFormFragment {
             }
         }
 
-        List<Workout> workouts = db.getProgramWorkouts(programId);
-        for (Workout w :
-                workouts) {
-            program.addWorkout(w);
+        for (int day = 1; day < numDays + 1; day++) {
+            List<Workout> workouts = db.getProgramWorkouts(programId, day);
+            for (Workout w : workouts) {
+                program.addWorkout(day, w);
+            }
         }
 
         return program;

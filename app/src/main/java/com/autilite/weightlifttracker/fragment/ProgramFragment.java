@@ -105,12 +105,13 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
         }
         // The number of days fixed at 3 is a bug. Since I am going to be re-designing the
         // CreateProgram form, we will leave this stub here rather than try and fix it
-        long programId = workoutDb.createProgram(programName, 3);
+        int numDays = 3;
+        long programId = workoutDb.createProgram(programName, numDays);
         if (programId == -1) {
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;
         }
-        Program program = new Program(programId, programName, "");
+        Program program = new Program(programId, programName, "", numDays);
 
         // 2) Retrieve the values from the table
         // Ignore first row because that's the header
@@ -140,7 +141,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
                     Toast.LENGTH_LONG).show();
 
             Workout workout = new Workout(workoutId, workoutName, "");
-            program.addWorkout(workout);
+            program.addWorkout(day, workout);
         }
 
         // Update the UI

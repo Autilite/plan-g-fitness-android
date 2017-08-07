@@ -276,7 +276,8 @@ public class WorkoutDatabase {
             // Get program info
             long progId = programs.getLong(programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
             String progName = programs.getString(programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
-            Program p = new Program(progId, progName, "");
+            int numDays = programs.getInt(programs.getColumnIndex(ProgramEntry.COLUMN_NUM_DAYS));
+            Program p = new Program(progId, progName, "", numDays);
 
             // Grab workouts associated with the program
             Cursor programWorkouts = getProgramWorkoutTableJoinedWithName(progId);
@@ -288,8 +289,10 @@ public class WorkoutDatabase {
                         WorkoutContract.WorkoutEntry.COLUMN_NAME));
                 String workoutDescription = programWorkouts.getString(programWorkouts.getColumnIndex(
                         WorkoutEntry.COLUMN_DESCRIPTION));
+                int day = programWorkouts.getInt(programWorkouts.getColumnIndex(
+                        ProgramWorkoutEntry.COLUMN_NAME_DAY));
                 Workout w = new Workout(workoutId, workoutName, workoutDescription);
-                p.addWorkout(w);
+                p.addWorkout(day, w);
             }
             listOfPrograms.add(p);
             programWorkouts.close();

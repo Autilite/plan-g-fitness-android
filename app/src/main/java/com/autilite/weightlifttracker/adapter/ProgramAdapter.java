@@ -57,8 +57,10 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
         holder.programName.setText(program.getName());
 
         List<String> workout = new ArrayList<>();
-        for (Workout w : program.getWorkouts()) {
-            workout.add(w.getName());
+        for (Program.Day day : program.getDays()) {
+            for (Workout w : day.getWorkouts()) {
+                workout.add(w.getName());
+            }
         }
         ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, workout);
         holder.workouts.setAdapter(eAdapter);
