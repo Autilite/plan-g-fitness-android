@@ -54,12 +54,7 @@ public class EditProgramFragment extends AbstractFormFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (model != null) {
-            // TODO get the list of workouts for each program day
-            listOfWorkouts = new ArrayList<>();
-        } else {
-            listOfWorkouts = new ArrayList<>();
-        }
+        listOfWorkouts = getListOfWorkoutIds();
     }
 
     @Override
@@ -69,6 +64,11 @@ public class EditProgramFragment extends AbstractFormFragment {
         View view = inflater.inflate(R.layout.fragment_create_form, container, false);
         mEditName = (EditText) view.findViewById(R.id.input_name);
         mEditDescription = (EditText) view.findViewById(R.id.input_description);
+
+        if (getFormType() == Type.EDIT) {
+            mEditName.setText(model.getName());
+            mEditDescription.setText(model.getDescription());
+        }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
@@ -125,7 +125,6 @@ public class EditProgramFragment extends AbstractFormFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
-                // TODO
                 Long[] ids = (Long[]) data.getSerializableExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
                 int day = data.getIntExtra(ChooseWorkouts.EXTRA_RESULT_DAY, -1);
                 int index = day - 1;
@@ -135,6 +134,26 @@ public class EditProgramFragment extends AbstractFormFragment {
                 // Because of this, we don't need to notify the adapter that the data has changed
 //                mAdapter.notifyDayChanged(day);
             }
+        }
+    }
+
+    private List<Long[]> getListOfWorkoutIds() {
+        List<Long[]> ids = new ArrayList<>();
+        if (getFormType() == Type.EDIT) {
+            Program program = (Program) model;
+            List<Program.Day> days = program.getDays();
+
+            for (Program.Day day : days) {
+                List<Workout> workouts = day.getWorkouts();
+                ArrayList<Long> myIds = new ArrayList<>();
+                for (Workout w : workouts) {
+                    myIds.add(w.getId());
+                }
+                ids.add(myIds.toArray(new Long[]{}));
+            }
+            return ids;
+        } else {
+            return ids;
         }
     }
 
