@@ -91,7 +91,7 @@ public class EditProgramFragment extends AbstractFormFragment {
             return null;
         }
 
-        long programId = db.createProgram(name, numDays);
+        long programId = db.createProgram(name, description, numDays);
         if (programId == -1)
             return null;
 

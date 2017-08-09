@@ -106,12 +106,13 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
         // The number of days fixed at 3 is a bug. Since I am going to be re-designing the
         // CreateProgram form, we will leave this stub here rather than try and fix it
         int numDays = 3;
-        long programId = workoutDb.createProgram(programName, numDays);
+        String description = "";
+        long programId = workoutDb.createProgram(programName, description, numDays);
         if (programId == -1) {
             Toast.makeText(getActivity(), "Program could not be created", Toast.LENGTH_LONG).show();
             return;
         }
-        Program program = new Program(programId, programName, "", numDays);
+        Program program = new Program(programId, programName, description, numDays);
 
         // 2) Retrieve the values from the table
         // Ignore first row because that's the header

@@ -46,10 +46,10 @@ public class WorkoutDatabase {
         workoutDb.close();
     }
 
-    public long createProgram(String programName, int numDays) {
+    public long createProgram(String programName, String description, int numDays) {
         ContentValues cv = new ContentValues();
         cv.put(ProgramEntry.COLUMN_NAME, programName);
-        // TODO cv.put(ProgramEntry.COLUMN_DESCRIPTION, description);
+        cv.put(ProgramEntry.COLUMN_DESCRIPTION, description);
         cv.put(ProgramEntry.COLUMN_NUM_DAYS, numDays);
         cv.put(ProgramEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(ProgramEntry.TABLE_NAME, null, cv);
@@ -276,8 +276,9 @@ public class WorkoutDatabase {
             // Get program info
             long progId = programs.getLong(programs.getColumnIndex(ProgramContract.ProgramEntry._ID));
             String progName = programs.getString(programs.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_NAME));
+            String progDescription = programs.getString(programs.getColumnIndex(ProgramEntry.COLUMN_DESCRIPTION));
             int numDays = programs.getInt(programs.getColumnIndex(ProgramEntry.COLUMN_NUM_DAYS));
-            Program p = new Program(progId, progName, "", numDays);
+            Program p = new Program(progId, progName, progDescription, numDays);
 
             // Grab workouts associated with the program
             Cursor programWorkouts = getProgramWorkoutTableJoinedWithName(progId);
