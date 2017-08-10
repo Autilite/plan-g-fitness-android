@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteException;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.exception.SQLiteInsertException;
+import com.autilite.weightlifttracker.exception.SQLiteUpdateException;
 import com.autilite.weightlifttracker.program.Exercise;
 import com.autilite.weightlifttracker.program.Program;
 import com.autilite.weightlifttracker.program.Workout;
@@ -125,6 +126,44 @@ public class WorkoutDatabase {
         cv.put(ProgramWorkoutEntry.COLUMN_NAME_DAY, day);
         cv.put(ProgramWorkoutEntry.COLUMN_DATE_ADDED, System.currentTimeMillis());
         return db.insert(ProgramWorkoutEntry.TABLE_NAME, null, cv) != -1;
+    }
+
+    private int deleteAllProgramDays(long programId) {
+        return db.delete(ProgramWorkoutEntry.TABLE_NAME, ProgramWorkoutEntry.COLUMN_PROGRAM_ID + "=" + programId, null);
+    }
+
+    public boolean updateProgram(long id, String name, String description, List<Long[]> days) {
+        try {
+            db.beginTransaction();
+            int numDays = days.size();
+
+            String whereClause = ProgramEntry._ID + "=" + id;
+
+            ContentValues cv = new ContentValues();
+            cv.put(ProgramEntry.COLUMN_NAME, name);
+            cv.put(ProgramEntry.COLUMN_DESCRIPTION, description);
+            cv.put(ProgramEntry.COLUMN_NUM_DAYS, days.size());
+
+            int rows = db.update(ProgramEntry.TABLE_NAME, cv, whereClause, null);
+            if (rows <= 0) {
+                throw new SQLiteUpdateException("The program with id=" + id + " could not be updated.");
+            }
+
+            // Update the days with naive implementation
+            // - Remove all days for the program then reinsert
+            deleteAllProgramDays(id);
+            for (int i = 0; i < numDays; i++) {
+                for (Long workoutId : days.get(i)) {
+                    addWorkoutToProgram(id, workoutId, i + 1);
+                }
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
     }
 
     public boolean addSession(long progId, int progDay, long timeStart, long timeEnd, Map<Workout, ArrayList<? extends ExerciseSession>> session) {

@@ -117,6 +117,15 @@ public class EditProgramFragment extends AbstractFormFragment {
 
     @Override
     protected BaseModel editEntry() {
+        name = mEditName.getText().toString();
+        String description = mEditDescription.getText().toString();
+
+        if (name.equals("")) {
+            return null;
+        }
+
+        db.updateProgram(id, name, description, listOfWorkouts);
+        // TODO return a Program instance
         return null;
     }
 
