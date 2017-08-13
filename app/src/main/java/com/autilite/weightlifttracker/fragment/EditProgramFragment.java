@@ -124,9 +124,13 @@ public class EditProgramFragment extends AbstractFormFragment {
             return null;
         }
 
-        db.updateProgram(id, name, description, programDays);
-        // TODO return a Program instance
-        return null;
+        if (db.updateProgram(id, name, description, programDays)) {
+            Program program = new Program(id, name, description, programDays.size());
+            program.getDays().addAll(programDays);
+            return program;
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -89,6 +89,19 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
                 programs.add(program);
                 mAdapter.notifyItemInserted(programs.size() - 1);
             }
+        } else if (requestCode == EDIT_PROGRAM) {
+            if (resultCode == Activity.RESULT_OK) {
+                Program resultProgram = data.getParcelableExtra(EditProgram.EXTRA_RESULT_PROGRAM);
+
+                for (int i = 0; i < programs.size(); i++) {
+                    Program curProgram = programs.get(i);
+                    if (resultProgram.getId() == curProgram.getId()) {
+                        programs.set(i, resultProgram);
+                        mAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
