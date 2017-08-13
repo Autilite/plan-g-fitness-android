@@ -132,7 +132,7 @@ public class WorkoutDatabase {
         return db.delete(ProgramWorkoutEntry.TABLE_NAME, ProgramWorkoutEntry.COLUMN_PROGRAM_ID + "=" + programId, null);
     }
 
-    public boolean updateProgram(long id, String name, String description, List<Long[]> days) {
+    public boolean updateProgram(long id, String name, String description, List<Program.Day> days) {
         try {
             db.beginTransaction();
             int numDays = days.size();
@@ -153,8 +153,9 @@ public class WorkoutDatabase {
             // - Remove all days for the program then reinsert
             deleteAllProgramDays(id);
             for (int i = 0; i < numDays; i++) {
-                for (Long workoutId : days.get(i)) {
-                    addWorkoutToProgram(id, workoutId, i + 1);
+                Program.Day day = days.get(i);
+                for (Workout w : day.getWorkouts()) {
+                    addWorkoutToProgram(id, w.getId(), i + 1);
                 }
             }
             db.setTransactionSuccessful();
@@ -215,6 +216,28 @@ public class WorkoutDatabase {
         return true;
     }
 
+    public Workout getWorkout(long id) {
+        String sql = "SELECT * FROM " + WorkoutEntry.TABLE_NAME + " WHERE " + WorkoutEntry._ID + " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        Workout workout = null;
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            String workoutName = cursor.getString(cursor.getColumnIndex(WorkoutEntry.COLUMN_NAME));
+            String workoutDescription = cursor.getString(cursor.getColumnIndex(WorkoutEntry.COLUMN_DESCRIPTION));
+
+            workout = new Workout(id, workoutName, workoutDescription);
+
+            List<Exercise> exercises = getAllExerciseInfoList(id);
+            workout.getExercises().addAll(exercises);
+        }
+
+        cursor.close();
+        return workout;
+    }
+
     public Cursor getAllExerciseInfo() {
         String sqlGetAllExerciseInfo = "select * from " + ExerciseInfoEntry.TABLE_NAME;
         return db.rawQuery(sqlGetAllExerciseInfo, null);
@@ -244,7 +267,7 @@ public class WorkoutDatabase {
      * @param workoutId The workout id to query the exercises
      * @return
      */
-    public Cursor getAllExerciseStatForWorkout(long workoutId) {
+    public Cursor getAllExerciseStatForWorkoutAsCursor(long workoutId) {
         String sql = "SELECT " + ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry._ID + ", " +
                 ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry._ID + ", " +
                 ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry.COLUMN_NAME + ", " +
@@ -267,6 +290,27 @@ public class WorkoutDatabase {
                 "WHERE " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + "=" + workoutId +
                 ";";
         return db.rawQuery(sql, null);
+    }
+
+    public List<Exercise> getAllExerciseStatForWorkoutAsModel (long workoutId) {
+        List<Exercise> exercises = new ArrayList<>();
+
+        // Get list of exercise for workoutId
+        Cursor eStat = getAllExerciseStatForWorkoutAsCursor(workoutId);
+        while (eStat.moveToNext()) {
+            long eStatId = eStat.getLong(0);
+            long baseExerciseId = eStat.getLong(1);
+            String exerciseName = eStat.getString(2);
+            int set = eStat.getInt(3);
+            int rep = eStat.getInt(4);
+            double weight = eStat.getDouble(4);
+            double autoIncr = eStat.getDouble(6);
+            int restTime = eStat.getInt(7);
+            Exercise e = new Exercise(eStatId, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
+            exercises.add(e);
+        }
+        eStat.close();
+        return exercises;
     }
 
     /**
@@ -355,7 +399,7 @@ public class WorkoutDatabase {
             Workout w = new Workout(workoutId, workoutName, workoutDescription);
 
             // Get list of exercise for workoutId
-            Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+            Cursor eStat = getAllExerciseStatForWorkoutAsCursor(workoutId);
             while (eStat.moveToNext()) {
                 long id = eStat.getLong(0);
                 long baseExerciseId = eStat.getLong(1);
@@ -389,7 +433,7 @@ public class WorkoutDatabase {
             Workout w = new Workout(workoutId, workoutName, workoutDescription);
 
             // Get list of exercise for workoutId
-            Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+            Cursor eStat = getAllExerciseStatForWorkoutAsCursor(workoutId);
             while (eStat.moveToNext()) {
                 long id = eStat.getLong(0);
                 long baseExerciseId = eStat.getLong(1);
@@ -423,7 +467,7 @@ public class WorkoutDatabase {
             Workout w = new Workout(workoutId, workoutName, workoutDescription);
 
             // Get list of exercise for workoutId
-            Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+            Cursor eStat = getAllExerciseStatForWorkoutAsCursor(workoutId);
             while (eStat.moveToNext()) {
                 long id = eStat.getLong(0);
                 long baseExerciseId = eStat.getLong(1);
@@ -448,7 +492,7 @@ public class WorkoutDatabase {
         List<Exercise> list = new LinkedList<>();
 
         // Get list of exercise for workoutId
-        Cursor eStat = getAllExerciseStatForWorkout(workoutId);
+        Cursor eStat = getAllExerciseStatForWorkoutAsCursor(workoutId);
         while (eStat.moveToNext()) {
             long id = eStat.getLong(0);
             long baseExerciseId = eStat.getLong(1);

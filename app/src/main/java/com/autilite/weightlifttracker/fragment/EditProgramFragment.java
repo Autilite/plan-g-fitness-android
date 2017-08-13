@@ -35,7 +35,7 @@ public class EditProgramFragment extends AbstractFormFragment {
     private EditText mEditName;
     private EditText mEditDescription;
 
-    private List<Long[]> listOfWorkouts;
+    private List<Program.Day> programDays;
 
     public EditProgramFragment() {
         // Required empty public constructor
@@ -54,7 +54,7 @@ public class EditProgramFragment extends AbstractFormFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listOfWorkouts = getListOfWorkoutIds();
+        programDays = getProgramDayList();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EditProgramFragment extends AbstractFormFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        mAdapter = new AddWorkoutAdapter(listOfWorkouts);
+        mAdapter = new AddWorkoutAdapter(programDays);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
@@ -85,7 +85,7 @@ public class EditProgramFragment extends AbstractFormFragment {
     protected BaseModel insertNewEntry() {
         name = mEditName.getText().toString();
         String description = mEditDescription.getText().toString();
-        int numDays = listOfWorkouts.size();
+        int numDays = programDays.size();
 
         if (name.equals("")) {
             return null;
@@ -97,11 +97,11 @@ public class EditProgramFragment extends AbstractFormFragment {
 
         Program program = new Program(programId, name, description, numDays);
         for (int i = 0; i < numDays; i++) {
-            Long[] workoutIds = listOfWorkouts.get(i);
+            Program.Day workoutDay = programDays.get(i);
 
             int day = i + 1;
-            for (Long workoutId : workoutIds) {
-                db.addWorkoutToProgram(programId, workoutId, day);
+            for (Workout w : workoutDay.getWorkouts()) {
+                db.addWorkoutToProgram(programId, w.getId(), day);
             }
         }
 
@@ -124,7 +124,7 @@ public class EditProgramFragment extends AbstractFormFragment {
             return null;
         }
 
-        db.updateProgram(id, name, description, listOfWorkouts);
+        db.updateProgram(id, name, description, programDays);
         // TODO return a Program instance
         return null;
     }
@@ -137,7 +137,7 @@ public class EditProgramFragment extends AbstractFormFragment {
                 Long[] ids = (Long[]) data.getSerializableExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
                 int day = data.getIntExtra(ChooseWorkouts.EXTRA_RESULT_DAY, -1);
                 int index = day - 1;
-                listOfWorkouts.set(index, ids);
+                programDays.set(index, dayFromWorkoutIds(ids));
 
                 // At the moment, the adapter does not use the list of IDs for drawing the View
                 // Because of this, we don't need to notify the adapter that the data has changed
@@ -146,23 +146,13 @@ public class EditProgramFragment extends AbstractFormFragment {
         }
     }
 
-    private List<Long[]> getListOfWorkoutIds() {
-        List<Long[]> ids = new ArrayList<>();
+    private List<Program.Day> getProgramDayList() {
         if (getFormType() == Type.EDIT) {
             Program program = (Program) model;
-            List<Program.Day> days = program.getDays();
+            return program.getDays();
 
-            for (Program.Day day : days) {
-                List<Workout> workouts = day.getWorkouts();
-                ArrayList<Long> myIds = new ArrayList<>();
-                for (Workout w : workouts) {
-                    myIds.add(w.getId());
-                }
-                ids.add(myIds.toArray(new Long[]{}));
-            }
-            return ids;
         } else {
-            return ids;
+            return new ArrayList<>();
         }
     }
 
@@ -175,10 +165,10 @@ public class EditProgramFragment extends AbstractFormFragment {
         private static final int HEADER_SIZE = 1;
         private static final int FOOTER_SIZE = 1;
 
-        private List<Long[]> days;
+        private List<Program.Day> days;
 
-        public AddWorkoutAdapter(List<Long[]> workouts) {
-            this.days = workouts;
+        public AddWorkoutAdapter(List<Program.Day> programDays) {
+            this.days = programDays;
         }
 
         @Override
@@ -223,7 +213,7 @@ public class EditProgramFragment extends AbstractFormFragment {
             return days.size() + HEADER_SIZE + FOOTER_SIZE;
         }
 
-        private Long[] getContentWorkouts(int position) {
+        private Program.Day getContentWorkouts(int position) {
             return days.get(position - HEADER_SIZE);
         }
 
@@ -232,7 +222,7 @@ public class EditProgramFragment extends AbstractFormFragment {
             return position - HEADER_SIZE + 1;
         }
 
-        private Long[] getSelected(int day) {
+        private Program.Day getProgramDay(int day) {
             return days.get(day - 1);
         }
 
@@ -283,12 +273,15 @@ public class EditProgramFragment extends AbstractFormFragment {
                     @Override
                     public void onClick(View view) {
                         if (getItemViewType() == FOOTER_VIEW) {
-                            days.add(new Long[0]);
+                            days.add(new Program.Day());
                             notifyDayInserted(days.size() - 1);
                         } else {
+                            Program.Day programDay = getProgramDay(day);
+                            Long[] ids = workoutIdsFromDay(programDay);
+
                             Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
                             intent.putExtra(ChooseWorkouts.EXTRA_DAY, day);
-                            intent.putExtra(ChooseWorkouts.EXTRA_SELECTED_IDS, getSelected(day));
+                            intent.putExtra(ChooseWorkouts.EXTRA_SELECTED_IDS, ids);
                             startActivityForResult(intent, CHOOSE_WORKOUT);
                         }
                     }
@@ -303,5 +296,23 @@ public class EditProgramFragment extends AbstractFormFragment {
             }
 
         }
+    }
+
+    private Program.Day dayFromWorkoutIds(Long[] ids) {
+        Program.Day day = new Program.Day();
+        for (Long wId : ids) {
+            Workout w = db.getWorkout(wId);
+            day.addWorkout(w);
+        }
+        return day;
+    }
+
+    private Long[] workoutIdsFromDay(Program.Day day) {
+        List<Workout> workouts = day.getWorkouts();
+        Long[] ids = new Long[workouts.size()];
+        for (int i = 0; i < workouts.size(); i++) {
+            ids[i] = workouts.get(i).getId();
+        }
+        return ids;
     }
 }
