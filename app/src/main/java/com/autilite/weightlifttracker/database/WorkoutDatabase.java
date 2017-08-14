@@ -363,24 +363,6 @@ public class WorkoutDatabase {
         return listOfPrograms;
     }
 
-    public List<Workout> getProgramWorkouts(long programId) {
-        // Get cursor with all workout Ids
-        Cursor workoutCursor = getProgramWorkoutJoinedWorkoutTable(programId);
-        List<Workout> workouts = new ArrayList<>();
-
-        // Go through each of the workoutId
-        while (workoutCursor.moveToNext()) {
-            long workoutId = workoutCursor.getLong(workoutCursor.getColumnIndex(WorkoutContract.WorkoutEntry._ID));
-            Workout w = getWorkout(workoutId);
-
-            if (w != null) {
-                workouts.add(w);
-            }
-        }
-        workoutCursor.close();
-        return workouts;
-    }
-
     public List<Workout> getProgramWorkouts(long programId, int programDay) {
         // Get cursor with all workout Ids
         Cursor workoutCursor = getProgramWorkoutJoinedWorkoutTable(programId, programDay);
@@ -479,18 +461,6 @@ public class WorkoutDatabase {
             cursor.close();
             return numDays;
         }
-    }
-
-    public boolean checkIfWorkoutExist(long workoutId) {
-        boolean exist;
-        String sql = "SELECT * FROM " + WorkoutEntry.TABLE_NAME +
-                " WHERE " + WorkoutEntry._ID  + " = " + workoutId;
-        Cursor cursor = db.rawQuery(sql, null);
-
-        // workoutId exist if it can find a result in the Workout table
-        exist = cursor.getCount() > 0;
-        cursor.close();
-        return exist;
     }
 
     /**
