@@ -126,7 +126,7 @@ public class EditProgramFragment extends AbstractFormFragment {
 
         if (db.updateProgram(id, name, description, programDays)) {
             Program program = new Program(id, name, description, programDays.size());
-            program.getDays().addAll(programDays);
+            program.setDays(programDays);
             return program;
         } else {
             return null;

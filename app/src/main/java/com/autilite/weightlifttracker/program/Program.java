@@ -79,6 +79,11 @@ public class Program extends BaseModel {
         days.get(index).removeWorkout(id);
     }
 
+    public void setDays(List<Day> days) {
+        this.days = days;
+        numDays = days.size();
+    }
+
     public static class Day implements Parcelable {
 
         private List<Workout> workouts;
