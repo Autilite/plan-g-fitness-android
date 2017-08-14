@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkoutFragment extends Fragment implements AbstractCreateDialog.CreateDialogListener {
+public class WorkoutFragment extends Fragment {
     private static final int CREATE_WORKOUT = 1;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -58,9 +58,6 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                CreateWorkoutDialog frag = new CreateWorkoutDialog();
-//                frag.setTargetFragment(WorkoutFragment.this, 0);
-//                frag.show(getActivity().getSupportFragmentManager(), "CreateWorkoutDialog");
                 Intent createWorkout = new Intent(getActivity(), EditWorkout.class);
                 startActivityForResult(createWorkout, CREATE_WORKOUT);
             }
@@ -86,79 +83,6 @@ public class WorkoutFragment extends Fragment implements AbstractCreateDialog.Cr
                 mAdapter.notifyItemInserted(workouts.size() - 1);
             }
         }
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        TableLayout table = (TableLayout) dialog.getDialog().findViewById(R.id.entry_create_table);
-        EditText nameEditText = (EditText) dialog.getDialog().findViewById(R.id.heading_create_name_editview);
-        String workoutName = nameEditText.getText().toString();
-        String description = "";
-
-        // Create workout
-        if (workoutName.equals("")) {
-            // TODO prevent UI from closing if empty workout name
-            Toast.makeText(getActivity(), "Workout could not be created", Toast.LENGTH_LONG).show();
-            return;
-        }
-        long workoutId = workoutDb.createWorkout(workoutName, description);
-        if (workoutId == -1) {
-            Toast.makeText(getActivity(), "Workout could not be created", Toast.LENGTH_LONG).show();
-            return;
-        } else {
-            Toast.makeText(getActivity(), "New workout \"" + workoutName + "\" created", Toast.LENGTH_LONG).show();
-        }
-        Workout workout = new Workout(workoutId, workoutName, description);
-
-        // Ignore first row since that is the headings
-        for (int i = 1; i < table.getChildCount(); i++) {
-            View c = table.getChildAt(i);
-            if (c instanceof TableRow) {
-                // Get the exercise stats
-                TableRow row = (TableRow) c;
-                Button exBtn = ((Button) row.findViewById(R.id.workout_create_exercise_chooser));
-                Object exercise = exBtn.getTag();
-                String sets = ((EditText) row.findViewById(R.id.workout_create_sets)).getText().toString();
-                String reps = ((EditText) row.findViewById(R.id.workout_create_reps)).getText().toString();
-                String weight = ((EditText) row.findViewById(R.id.workout_create_weight)).getText().toString();
-
-                if (exercise == null)
-                    continue;
-                long exerciseId = Long.valueOf(String.valueOf(exercise));
-
-                if (sets.equals("") || reps.equals("") || weight.equals("")) {
-                    // TODO set default values
-                    continue;
-                }
-                int wSets = Integer.parseInt(sets);
-                int wReps = Integer.parseInt(reps);
-                float wWeight = Float.parseFloat(weight);
-
-                // Create ExerciseStat
-                long exerciseStatId = workoutDb.createExerciseStat(exerciseId, wSets, wReps, wWeight);
-                if (exerciseStatId == -1) {
-                    Toast.makeText(getActivity(), "Could not create exercise " + exBtn.getText().toString(), Toast.LENGTH_LONG).show();
-                    continue;
-                }
-                long id = workoutDb.addExerciseToWorkout(workoutId, exerciseStatId);
-                System.out.println("the id is " + id);
-                if (id == -1){
-                    Toast.makeText(getActivity(), "Could not add " + exBtn.getText().toString() +
-                            " to " + workoutName, Toast.LENGTH_LONG).show();
-                    continue;
-                }
-                Exercise e = new Exercise(exerciseStatId, exBtn.getText().toString(), "", exerciseId, wSets, wReps, wWeight, 0, 90);
-                workout.addExercise(e);
-            }
-        }
-        workouts.add(workout);
-        mAdapter.notifyDataSetChanged();
-
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        dialog.getDialog().cancel();
     }
 
 }
