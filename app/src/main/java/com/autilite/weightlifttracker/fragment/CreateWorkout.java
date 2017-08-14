@@ -43,6 +43,21 @@ public class CreateWorkout extends AbstractFormFragment {
         // Required empty public constructor
     }
 
+    public static CreateWorkout newInstance(Workout workout) {
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_MODEL_OBJ, workout);
+
+        CreateWorkout fragment = new CreateWorkout();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        exercises = getWorkoutExercises();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,16 +66,29 @@ public class CreateWorkout extends AbstractFormFragment {
         mEditName = (EditText) view.findViewById(R.id.input_name);
         mEditDescription = (EditText) view.findViewById(R.id.input_description);
 
+        if (getFormType() == Type.EDIT) {
+            mEditName.setText(model.getName());
+            mEditDescription.setText(model.getDescription());
+        }
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        exercises = new ArrayList<>();
         mAdapter = new AddExerciseAdapter(exercises);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
+    }
+
+    private List<Exercise> getWorkoutExercises() {
+        if (getFormType() == Type.EDIT) {
+            Workout workout = (Workout) model;
+            return workout.getExercises();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     @Override

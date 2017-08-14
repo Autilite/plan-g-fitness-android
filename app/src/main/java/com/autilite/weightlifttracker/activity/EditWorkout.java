@@ -8,6 +8,7 @@ import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.fragment.AbstractFormFragment;
 import com.autilite.weightlifttracker.fragment.CreateWorkout;
 import com.autilite.weightlifttracker.program.BaseModel;
+import com.autilite.weightlifttracker.program.Workout;
 
 /**
  * Created by Kelvin on Jul 25, 2017.
@@ -21,7 +22,14 @@ public class EditWorkout extends CreateForm {
 
     @Override
     protected AbstractFormFragment createContentFragment() {
-        return new CreateWorkout();
+        if (getIntent().getExtras() != null) {
+            setTitle(R.string.edit_workout_title);
+            Workout workout = getIntent().getParcelableExtra(EXTRA_WORKOUT);
+            return CreateWorkout.newInstance(workout);
+        } else {
+            setTitle(R.string.create_workout_title);
+            return CreateWorkout.newInstance(null);
+        }
     }
 
     @Override

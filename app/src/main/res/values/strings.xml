@@ -80,4 +80,5 @@
     <string name="action_switch_day">Switch Day</string>
     <string name="create_program">Create Program</string>
     <string name="edit_program">Edit Program</string>
+    <string name="edit_workout_title">Edit Workout</string>
 </resources>
