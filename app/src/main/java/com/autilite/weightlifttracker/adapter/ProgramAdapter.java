@@ -35,6 +35,7 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
             super(itemView);
             programName = (TextView) itemView.findViewById(R.id.workout_name);
             workouts = (ExtendableListView) itemView.findViewById(R.id.workout_exercises);
+            workouts.setVisibility(View.GONE);
         }
     }
 
@@ -56,14 +57,14 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
 
         holder.programName.setText(program.getName());
 
-        List<String> workout = new ArrayList<>();
-        for (Program.Day day : program.getDays()) {
-            for (Workout w : day.getWorkouts()) {
-                workout.add(w.getName());
-            }
-        }
-        ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, workout);
-        holder.workouts.setAdapter(eAdapter);
+//        List<String> workout = new ArrayList<>();
+//        for (Program.Day day : program.getDays()) {
+//            for (Workout w : day.getWorkouts()) {
+//                workout.add(w.getName());
+//            }
+//        }
+//        ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, workout);
+//        holder.workouts.setAdapter(eAdapter);
         holder.itemView.setOnClickListener(listener == null ? null : new View.OnClickListener() {
             @Override
             public void onClick(View view) {
