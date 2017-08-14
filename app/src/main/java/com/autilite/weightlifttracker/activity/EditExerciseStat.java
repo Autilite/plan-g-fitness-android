@@ -120,7 +120,7 @@ public class EditExerciseStat extends CreateForm {
         }
 
         private void selectExercise() {
-            final Cursor cursor = db.getAllExerciseInfo();
+            final Cursor cursor = db.getExerciseInfoTable();
             AlertDialog dialog = new AlertDialog.Builder(getContext())
                     .setCursor(cursor, new DialogInterface.OnClickListener() {
                         @Override

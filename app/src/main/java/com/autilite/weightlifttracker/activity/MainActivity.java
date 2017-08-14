@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         // Set Spinner
         String[] from = new String[]{ProgramContract.ProgramEntry.COLUMN_NAME};
         int[] to = new int[]{android.R.id.text1};
-        Cursor programs = workoutDb.getAllPrograms();
+        Cursor programs = workoutDb.getProgramTable();
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 this, android.R.layout.simple_spinner_dropdown_item, programs, from, to, 0);
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity
      * Show an alert dialog to select and switch to the selected program
      */
     private void selectAndSwitchProgram(){
-        final Cursor programs = workoutDb.getAllPrograms();
+        final Cursor programs = workoutDb.getProgramTable();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_program)

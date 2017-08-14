@@ -44,7 +44,7 @@ public class CreateWorkoutDialog extends AbstractCreateDialog {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                final Cursor cursor = db.getAllExerciseInfo();
+                final Cursor cursor = db.getExerciseInfoTable();
                 builder.setTitle(R.string.choose_exercise)
                         .setCursor(cursor, new DialogInterface.OnClickListener() {
                             @Override

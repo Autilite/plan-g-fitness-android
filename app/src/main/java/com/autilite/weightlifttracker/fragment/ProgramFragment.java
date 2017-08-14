@@ -69,7 +69,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
             }
         });
         workoutDb = new WorkoutDatabase(getActivity());
-        programs = workoutDb.getAllProgramsList();
+        programs = workoutDb.getProgramTableList();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
