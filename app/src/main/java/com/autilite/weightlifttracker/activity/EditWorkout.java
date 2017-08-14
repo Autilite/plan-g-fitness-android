@@ -6,7 +6,7 @@ import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
 import com.autilite.weightlifttracker.fragment.AbstractFormFragment;
-import com.autilite.weightlifttracker.fragment.CreateWorkout;
+import com.autilite.weightlifttracker.fragment.EditWorkoutFragment;
 import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Workout;
 
@@ -25,10 +25,10 @@ public class EditWorkout extends CreateForm {
         if (getIntent().getExtras() != null) {
             setTitle(R.string.edit_workout_title);
             Workout workout = getIntent().getParcelableExtra(EXTRA_WORKOUT);
-            return CreateWorkout.newInstance(workout);
+            return EditWorkoutFragment.newInstance(workout);
         } else {
             setTitle(R.string.create_workout_title);
-            return CreateWorkout.newInstance(null);
+            return EditWorkoutFragment.newInstance(null);
         }
     }
 

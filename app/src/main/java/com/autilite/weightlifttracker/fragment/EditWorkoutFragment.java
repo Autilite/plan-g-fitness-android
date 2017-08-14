@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateWorkout extends AbstractFormFragment {
+public class EditWorkoutFragment extends AbstractFormFragment {
 
     private static final int CREATE_EXERCISE = 1;
     private static final int EDIT_EXERCISE = 2;
@@ -39,15 +39,15 @@ public class CreateWorkout extends AbstractFormFragment {
 
     private List<Exercise> exercises;
 
-    public CreateWorkout() {
+    public EditWorkoutFragment() {
         // Required empty public constructor
     }
 
-    public static CreateWorkout newInstance(Workout workout) {
+    public static EditWorkoutFragment newInstance(Workout workout) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_MODEL_OBJ, workout);
 
-        CreateWorkout fragment = new CreateWorkout();
+        EditWorkoutFragment fragment = new EditWorkoutFragment();
         fragment.setArguments(args);
         return fragment;
     }
