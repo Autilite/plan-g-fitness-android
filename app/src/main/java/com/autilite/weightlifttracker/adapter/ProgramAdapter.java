@@ -64,7 +64,7 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramV
         }
         ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, workout);
         holder.workouts.setAdapter(eAdapter);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(listener == null ? null : new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onProgramSelect(program);

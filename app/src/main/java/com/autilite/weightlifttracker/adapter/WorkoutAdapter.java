@@ -64,7 +64,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
         ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, exercises);
         holder.exercises.setAdapter(eAdapter);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(listener == null ? null : new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onWorkoutSelect(workout);
