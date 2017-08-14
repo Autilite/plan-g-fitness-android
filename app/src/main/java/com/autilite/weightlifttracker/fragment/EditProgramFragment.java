@@ -96,6 +96,8 @@ public class EditProgramFragment extends AbstractFormFragment {
             return null;
 
         Program program = new Program(programId, name, description, numDays);
+
+        // Add the workouts to the database and model
         for (int i = 0; i < numDays; i++) {
             Program.Day workoutDay = programDays.get(i);
 
@@ -103,13 +105,8 @@ public class EditProgramFragment extends AbstractFormFragment {
             for (Workout w : workoutDay.getWorkouts()) {
                 db.addWorkoutToProgram(programId, w.getId(), day);
             }
-        }
-
-        for (int day = 1; day < numDays + 1; day++) {
-            List<Workout> workouts = db.getProgramWorkouts(programId, day);
-            for (Workout w : workouts) {
-                program.addWorkout(day, w);
-            }
+            // Since we initialized program to numDays, we need to set the individual day
+            program.getDays().set(i, workoutDay);
         }
 
         return program;

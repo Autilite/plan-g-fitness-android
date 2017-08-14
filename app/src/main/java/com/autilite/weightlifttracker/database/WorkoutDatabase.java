@@ -353,7 +353,7 @@ public class WorkoutDatabase {
 
                 Workout w = getWorkout(workoutId);
                 if (w != null)
-                    p.addWorkout(day, w);
+                    p.getDay(day).addWorkout(w);
             }
             listOfPrograms.add(p);
             programWorkouts.close();

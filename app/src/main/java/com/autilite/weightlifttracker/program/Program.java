@@ -60,19 +60,15 @@ public class Program extends BaseModel {
         return days;
     }
 
-    public boolean addWorkout(int day, Workout workout) {
+    /**
+     * Helper function to get the program day
+     *
+     * @param day The 1-index day
+     * @return
+     */
+    public Day getDay(int day) {
         int index = day - 1;
-        return days.get(index).addWorkout(workout);
-    }
-
-    public void removeWorkout(int day, Workout workout) {
-        int index = day - 1;
-        days.get(index).removeWorkout(workout);
-    }
-
-    public void removeWorkout(int day, long id) {
-        int index = day - 1;
-        days.get(index).removeWorkout(id);
+        return days.get(index);
     }
 
     public void setDays(List<Day> days) {

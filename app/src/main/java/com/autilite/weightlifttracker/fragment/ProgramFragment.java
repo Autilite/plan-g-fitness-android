@@ -155,7 +155,7 @@ public class ProgramFragment extends Fragment implements AbstractCreateDialog.Cr
                     Toast.LENGTH_LONG).show();
 
             Workout workout = new Workout(workoutId, workoutName, "");
-            program.addWorkout(day, workout);
+            program.getDay(day).addWorkout(workout);
         }
 
         // Update the UI
