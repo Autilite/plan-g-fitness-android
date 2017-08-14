@@ -86,9 +86,23 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkout
             }
         } else if (requestCode == EDIT_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
-                // TODO
+                Workout resultWorkout = data.getParcelableExtra(EditWorkout.EXTRA_RESULT_WORKOUT);
+
+                updateWorkout(resultWorkout);
             }
         }
+    }
+
+    private boolean updateWorkout(Workout workout) {
+        for (int i = 0; i < workouts.size(); i++) {
+            Workout checkWorkout = workouts.get(i);
+            if (workout.getId() == checkWorkout.getId()) {
+                workouts.set(i, workout);
+                mAdapter.notifyItemChanged(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

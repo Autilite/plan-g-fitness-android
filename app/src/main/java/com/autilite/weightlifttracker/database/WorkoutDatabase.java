@@ -128,6 +128,40 @@ public class WorkoutDatabase {
         return db.insert(ProgramWorkoutEntry.TABLE_NAME, null, cv) != -1;
     }
 
+    private int deleteAllWorkoutExercises(long workoutId) {
+        return db.delete(WorkoutListEntry.TABLE_NAME, WorkoutListEntry.COLUMN_WORKOUT_ID + "=" + workoutId, null);
+    }
+
+    public boolean updateWorkout(long id, String name, String description, List<Exercise> exercises) {
+        try {
+            db.beginTransaction();
+
+            String whereClause = WorkoutEntry._ID + "=" + id;
+
+            // Update the workout
+            ContentValues cv = new ContentValues();
+            cv.put(WorkoutEntry.COLUMN_NAME, name);
+            cv.put(WorkoutEntry.COLUMN_DESCRIPTION, description);
+
+            int rows = db.update(WorkoutEntry.TABLE_NAME, cv, whereClause, null);
+            if (rows <= 0) {
+                throw new SQLiteUpdateException("The workout with id=" + id + " could not be updated.");
+            }
+
+            // Update the exercises that belong to the workout
+            deleteAllWorkoutExercises(id);
+            for (Exercise e : exercises) {
+                addExerciseToWorkout(id, e.getId());
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
     private int deleteAllProgramDays(long programId) {
         return db.delete(ProgramWorkoutEntry.TABLE_NAME, ProgramWorkoutEntry.COLUMN_PROGRAM_ID + "=" + programId, null);
     }

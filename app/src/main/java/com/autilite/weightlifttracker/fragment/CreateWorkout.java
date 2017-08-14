@@ -146,8 +146,20 @@ public class CreateWorkout extends AbstractFormFragment {
 
     @Override
     protected BaseModel editEntry() {
-        // TODO stub
-        return null;
+        name = mEditName.getText().toString();
+        String description = mEditDescription.getText().toString();
+
+        if (name.equals("")) {
+            return null;
+        }
+
+        if (db.updateWorkout(id, name, description, exercises)) {
+            Workout workout = new Workout(id, name, description);
+            workout.getExercises().addAll(exercises);
+            return workout;
+        } else {
+            return null;
+        }
     }
 
     public class AddExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
