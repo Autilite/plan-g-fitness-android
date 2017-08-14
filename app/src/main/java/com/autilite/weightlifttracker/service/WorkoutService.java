@@ -46,14 +46,11 @@ public class WorkoutService extends Service {
     public final static String EXTRA_SET_REP = "rep";
     public final static String EXTRA_SET_WEIGHT = "weight";
 
-
     private final static int SESSION_NOTIFY_ID = 100;
 
     private final IBinder mBinder = new LocalBinder();
     private LocalBroadcastManager mLocalBroadcastManager;
-    private NotificationManager mNotificationManager;
-    private NotificationCompat.Builder notificationBuilder;
-    private Intent activityIntent;
+    private WorkoutNotificationManager wnm;
 
     private CountDownTimer timer;
     private boolean isTimerRunning = false;
@@ -102,26 +99,15 @@ public class WorkoutService extends Service {
         // initializeService the service
         initSession();
 
-        activityIntent = new Intent(this, WorkoutSessionActivity.class);
+        Intent activityIntent = new Intent(this, WorkoutSessionActivity.class);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_DAY, programDay);
 
-        initNotificationBuilder();
+        wnm = new WorkoutNotificationManager(this, SESSION_NOTIFY_ID, activityIntent);
 
-        startForeground(SESSION_NOTIFY_ID, notificationBuilder.build());
+        startForeground(SESSION_NOTIFY_ID, wnm.getNotification());
         startActivity(activityIntent);
-    }
-
-    private void initNotificationBuilder() {
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, activityIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Set notification info
-        notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentText(getString(R.string.choose_exercise))
-                .setContentIntent(pendingIntent);
     }
 
     private void initSession() {
@@ -158,12 +144,9 @@ public class WorkoutService extends Service {
 
             startTimer(exercise.getRestTime() * 1000);
         }
-        // TODO Clean up notification
-        // The purpose of re-initializing the notification is to remove the
-        // complete and fail actions
+
         if (currentExercise.isSessionDone()) {
-            initNotificationBuilder();
-            mNotificationManager.notify(SESSION_NOTIFY_ID, notificationBuilder.build());
+            wnm.notifyExerciseComplete();
         }
     }
 
@@ -189,8 +172,6 @@ public class WorkoutService extends Service {
         super.onCreate();
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
-        mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         workoutDb = new WorkoutDatabase(this);
     }
 
@@ -200,7 +181,7 @@ public class WorkoutService extends Service {
 
         stopTimer();
         mLocalBroadcastManager = null;
-        mNotificationManager.cancel(SESSION_NOTIFY_ID);
+        wnm.cancel();
 
         workoutDb.close();
     }
@@ -228,9 +209,8 @@ public class WorkoutService extends Service {
 
             @Override
             public void onFinish() {
-                // TODO ping the user
                 isTimerRunning = false;
-                finishSetNotification();
+                wnm.notifySetComplete();
             }
         };
         timer.start();
@@ -254,48 +234,25 @@ public class WorkoutService extends Service {
     public void setSelectedExercise(ExerciseSession es) {
         currentExercise = es;
         if (!currentExercise.isSessionDone()) {
-            // Reinitialize notification builder
-            initNotificationBuilder();
-
             // Add complete/fail actions to notification
             Intent completeSetIntent = new Intent(this, WorkoutService.class);
             completeSetIntent.setAction(ACTION_COMPLETE_SET);
             PendingIntent pCompleteSetIntent = PendingIntent.getService(this, 0, completeSetIntent, 0);
 
-            NotificationCompat.Action completeAction = new NotificationCompat.Action.Builder(
-                    R.drawable.ic_check_black_24dp,
-                    getString(R.string.notification_complete_set),
-                    pCompleteSetIntent)
-                    .build();
-
             Intent failSetIntent = new Intent(this, WorkoutService.class);
             failSetIntent.setAction(ACTION_FAIL_SET);
             PendingIntent pFailSetIntent = PendingIntent.getService(this, 0, failSetIntent, 0);
 
-            NotificationCompat.Action failAction = new NotificationCompat.Action.Builder(
-                    R.drawable.ic_fail_black_24dp,
-                    getString(R.string.notification_fail_set),
-                    pFailSetIntent)
-                    .build();
-
-            notificationBuilder.addAction(completeAction)
-                    .addAction(failAction);
+            wnm.setOnGoingExercise(pCompleteSetIntent, pFailSetIntent);
         }
 
         if (!isTimerRunning) {
-            updateNotificationContent(getString(R.string.start_set));
+            wnm.notifyStartSet(currentExercise.getExercise().getName());
         }
     }
 
-    private void finishSetNotification() {
-        notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
-        updateNotificationContent(getString(R.string.start_set));
-
-        // Reset the notification defaults to none
-        notificationBuilder.setDefaults(0);
-    }
-
     private void updateNotificationContent(String content) {
+        String title = "";
         if (currentExercise != null) {
             Exercise e = currentExercise.getExercise();
             int currentSet = currentExercise.getCurrentSet();
@@ -303,14 +260,10 @@ public class WorkoutService extends Service {
             String setString = currentSet + "/" + e.getSets();
             String completeSet = getResources().getString(R.string.exercise_complete);
             String s = currentExercise.isSessionDone() ? completeSet : setString;
-            notificationBuilder
-                    .setContentTitle(e.getName() + " " + s);
-        } else {
-            notificationBuilder
-                    .setContentTitle("");
+
+            title = e.getName() + " " + s;
         }
-        notificationBuilder.setContentText(content);
-        mNotificationManager.notify(SESSION_NOTIFY_ID, notificationBuilder.build());
+        wnm.updateNotificationContent(title, content);
     }
 
     public List<Workout> getWorkouts() {
