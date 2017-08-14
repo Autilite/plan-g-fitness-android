@@ -112,7 +112,7 @@ public class StartProgramFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new WorkoutAdapter(getActivity(), workouts);
+        mAdapter = new WorkoutAdapter(getActivity(), workouts, null);
         mRecyclerView.setAdapter(mAdapter);
         return view;
     }

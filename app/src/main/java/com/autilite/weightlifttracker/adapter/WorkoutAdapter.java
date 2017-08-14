@@ -22,6 +22,7 @@ import java.util.List;
 
 public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutViewHolder> {
 
+    private final IWorkoutViewHolderClick listener;
     private Context mContext;
     private List<Workout> workouts;
 
@@ -36,9 +37,10 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
         }
     }
 
-    public WorkoutAdapter(Context context, List<Workout> workouts) {
+    public WorkoutAdapter(Context context, List<Workout> workouts, IWorkoutViewHolderClick listener) {
         mContext = context;
         this.workouts = workouts;
+        this.listener = listener;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     @Override
     public void onBindViewHolder(WorkoutViewHolder holder, int position) {
-        Workout workout = workouts.get(position);
+        final Workout workout = workouts.get(position);
 
         // Add workout name
         holder.workoutName.setText(workout.getName());
@@ -61,6 +63,13 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
         }
         ArrayAdapter<String> eAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, exercises);
         holder.exercises.setAdapter(eAdapter);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onWorkoutSelect(workout);
+            }
+        });
     }
 
     @Override
@@ -68,4 +77,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
         return workouts.size();
     }
 
+    public interface IWorkoutViewHolderClick {
+        void onWorkoutSelect(Workout workout);
+    }
 }

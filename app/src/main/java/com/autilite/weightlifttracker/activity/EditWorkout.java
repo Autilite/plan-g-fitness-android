@@ -14,8 +14,9 @@ import com.autilite.weightlifttracker.program.BaseModel;
  */
 
 public class EditWorkout extends CreateForm {
-    private static final String RESULT_ACTION = "com.autilite.weightlifttracker.activity.EditWorkout.RESULT_ACTION";
+    public static final String EXTRA_WORKOUT = "EXTRA_WORKOUT";
 
+    public static final String RESULT_ACTION = "com.autilite.weightlifttracker.activity.EditWorkout.RESULT_ACTION";
     public static final String EXTRA_RESULT_WORKOUT = "RESULT_WORKOUT";
 
     @Override

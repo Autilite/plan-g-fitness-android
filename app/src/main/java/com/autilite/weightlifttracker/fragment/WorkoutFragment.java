@@ -32,8 +32,10 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WorkoutFragment extends Fragment {
+public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkoutViewHolderClick {
     private static final int CREATE_WORKOUT = 1;
+    private static final int EDIT_WORKOUT = 2;
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -69,7 +71,7 @@ public class WorkoutFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new WorkoutAdapter(getActivity(), workouts);
+        mAdapter = new WorkoutAdapter(getActivity(), workouts, this);
         mRecyclerView.setAdapter(mAdapter);
         return view;
     }
@@ -82,7 +84,17 @@ public class WorkoutFragment extends Fragment {
                 workouts.add(workout);
                 mAdapter.notifyItemInserted(workouts.size() - 1);
             }
+        } else if (requestCode == EDIT_WORKOUT) {
+            if (resultCode == Activity.RESULT_OK) {
+                // TODO
+            }
         }
     }
 
+    @Override
+    public void onWorkoutSelect(Workout workout) {
+        Intent intent = new Intent(getContext(), EditWorkout.class);
+        intent.putExtra(EditWorkout.EXTRA_WORKOUT, workout);
+        startActivityForResult(intent, EDIT_WORKOUT);
+    }
 }
