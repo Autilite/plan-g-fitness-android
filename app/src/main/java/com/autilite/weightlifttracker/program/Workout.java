@@ -50,6 +50,10 @@ public class Workout extends BaseModel {
         return exercises;
     }
 
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
+    }
+
     public boolean addExercise(Exercise exercise) {
         if (exercise == null)
             return false;

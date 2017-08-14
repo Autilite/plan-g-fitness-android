@@ -155,7 +155,7 @@ public class CreateWorkout extends AbstractFormFragment {
 
         if (db.updateWorkout(id, name, description, exercises)) {
             Workout workout = new Workout(id, name, description);
-            workout.getExercises().addAll(exercises);
+            workout.setExercises(exercises);
             return workout;
         } else {
             return null;
