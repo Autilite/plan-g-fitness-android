@@ -141,7 +141,8 @@ public class MainActivity extends AppCompatActivity
         Cursor programs = workoutDb.getProgramTable();
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                this, android.R.layout.simple_spinner_dropdown_item, programs, from, to, 0);
+                this, R.layout.spinner_dropdown_title, programs, from, to, 0);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_list);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
