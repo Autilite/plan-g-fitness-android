@@ -13,12 +13,10 @@ import java.util.List;
  */
 
 public class Program extends BaseModel {
-    private int numDays;
     private List<Day> days;
 
     public Program(long id, String name, String description, int numDays) {
         super(id, name, description);
-        this.numDays = numDays;
         days = new ArrayList<>();
 
         for (int i = 0; i < numDays; i++) {
@@ -28,14 +26,12 @@ public class Program extends BaseModel {
 
     protected Program(Parcel in) {
         super(in);
-        numDays = in.readInt();
         days = in.createTypedArrayList(Day.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeInt(numDays);
         dest.writeTypedList(days);
     }
 
@@ -57,7 +53,7 @@ public class Program extends BaseModel {
     };
 
     public int getNumDays() {
-        return numDays;
+        return days.size();
     }
 
     public List<Day> getDays() {
@@ -81,7 +77,6 @@ public class Program extends BaseModel {
 
     public void setDays(List<Day> days) {
         this.days = days;
-        numDays = days.size();
     }
 
     public static class Day implements Parcelable {
