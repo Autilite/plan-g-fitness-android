@@ -54,11 +54,12 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        workoutDb = new WorkoutDatabase(this);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_workout);
-
-        workoutDb = new WorkoutDatabase(this);
+        MenuItem item = navigationView.getMenu().getItem(0).setChecked(true);
+        onNavigationItemSelected(item);
     }
 
     @Override
