@@ -1,11 +1,11 @@
 package com.autilite.weightlifttracker.service;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -230,7 +230,7 @@ public class WorkoutService extends Service {
             public void onFinish() {
                 // TODO ping the user
                 isTimerRunning = false;
-                updateNotificationContent(getString(R.string.start_set));
+                finishSetNotification();
             }
         };
         timer.start();
@@ -285,6 +285,14 @@ public class WorkoutService extends Service {
         if (!isTimerRunning) {
             updateNotificationContent(getString(R.string.start_set));
         }
+    }
+
+    private void finishSetNotification() {
+        notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+        updateNotificationContent(getString(R.string.start_set));
+
+        // Reset the notification defaults to none
+        notificationBuilder.setDefaults(0);
     }
 
     private void updateNotificationContent(String content) {
