@@ -115,7 +115,7 @@ public class WorkoutService extends Service {
         workouts = workoutDb.getProgramWorkouts(programId, programDay);
         sessions = new HashMap<>();
         for (Workout w : workouts) {
-            List<Exercise> exercises = workoutDb.getAllExerciseInfoList(w.getId());
+            List<Exercise> exercises = workoutDb.getAllExerciseList(w.getId());
             ArrayList<ExerciseSession> session = new ArrayList<>();
             for (Exercise e: exercises) {
                 ExerciseSession es = new ExerciseSession(e);

@@ -18,7 +18,7 @@ public final class ExerciseContract {
 
     public static class ExerciseEntry implements BaseColumns {
         public static final String TABLE_NAME = "Exercise";
-        public static final String COLUMN_EXERCISE_ID = "BaseExerciseId";
+        public static final String COLUMN_BASE_EXERCISE_ID = "BaseExerciseId";
         public static final String COLUMN_SET = "Sets";
         public static final String COLUMN_REP = "Reps";
         public static final String COLUMN_WEIGHT = "Weight";

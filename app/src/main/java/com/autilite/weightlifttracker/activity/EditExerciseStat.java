@@ -120,7 +120,7 @@ public class EditExerciseStat extends CreateForm {
         }
 
         private void selectExercise() {
-            final Cursor cursor = db.getExerciseInfoTable();
+            final Cursor cursor = db.getBaseExerciseTable();
             AlertDialog dialog = new AlertDialog.Builder(getContext())
                     .setCursor(cursor, new DialogInterface.OnClickListener() {
                         @Override
@@ -173,7 +173,7 @@ public class EditExerciseStat extends CreateForm {
             double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
             int wRestTime = NumberFormat.parseInt(restTime, 90);
 
-            id = db.createExerciseStat(baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+            id = db.createExercise(baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
             if (id != -1) {
                 return new Exercise(id, name, "", baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
             }
@@ -197,7 +197,7 @@ public class EditExerciseStat extends CreateForm {
             double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
             int wRestTime = NumberFormat.parseInt(restTime, 90);
 
-            int numRowsUpdate = db.updateExerciseStat(
+            int numRowsUpdate = db.updateExercise(
                     id, baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
             if (numRowsUpdate == 1) {
                 return new Exercise(id, name, "", baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);

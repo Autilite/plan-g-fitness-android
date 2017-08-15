@@ -64,9 +64,9 @@ public class WorkoutDatabase {
         return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc, int restTime) {
+    public long createExercise(long baseExerciseId, int sets, int reps, double weight, double autoInc, int restTime) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
         cv.put(ExerciseEntry.COLUMN_SET, sets);
         cv.put(ExerciseEntry.COLUMN_REP, reps);
         cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
@@ -76,9 +76,9 @@ public class WorkoutDatabase {
         return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc) {
+    public long createExercise(long baseExerciseId, int sets, int reps, double weight, double autoInc) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
         cv.put(ExerciseEntry.COLUMN_SET, sets);
         cv.put(ExerciseEntry.COLUMN_REP, reps);
         cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
@@ -87,9 +87,9 @@ public class WorkoutDatabase {
         return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExerciseStat(long exerciseId, int sets, int reps, double weight) {
+    public long createExercise(long baseExerciseId, int sets, int reps, double weight) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
         cv.put(ExerciseEntry.COLUMN_SET, sets);
         cv.put(ExerciseEntry.COLUMN_REP, reps);
         cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
@@ -97,24 +97,24 @@ public class WorkoutDatabase {
         return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
-    public int updateExerciseStat(long exerciseStatId, long exerciseId,  int sets, int reps, double weight, double autoInc, int restTime) {
+    public int updateExercise(long id, long baseExerciseId, int sets, int reps, double weight, double autoInc, int restTime) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseEntry._ID, exerciseStatId);
-        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry._ID, id);
+        cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
         cv.put(ExerciseEntry.COLUMN_SET, sets);
         cv.put(ExerciseEntry.COLUMN_REP, reps);
         cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
         cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
         cv.put(ExerciseEntry.COLUMN_REST_TIME, restTime);
         cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
-        String whereClause = ExerciseEntry._ID + "=" + exerciseStatId;
+        String whereClause = ExerciseEntry._ID + "=" + id;
         return db.update(ExerciseEntry.TABLE_NAME, cv, whereClause, null);
     }
 
-    public long addExerciseToWorkout(long workoutId, long exerciseStatId) {
+    public long addExerciseToWorkout(long workoutId, long exerciseId) {
         ContentValues cv = new ContentValues();
         cv.put(WorkoutListEntry.COLUMN_WORKOUT_ID, workoutId);
-        cv.put(WorkoutListEntry.COLUMN_EXERCISE_ID, exerciseStatId);
+        cv.put(WorkoutListEntry.COLUMN_EXERCISE_ID, exerciseId);
         cv.put(WorkoutListEntry.COLUMN_DATE_ADDED, System.currentTimeMillis());
         return db.insert(WorkoutListEntry.TABLE_NAME, null, cv);
     }
@@ -265,7 +265,7 @@ public class WorkoutDatabase {
 
             workout = new Workout(id, workoutName, workoutDescription);
 
-            List<Exercise> exercises = getAllExerciseInfoList(id);
+            List<Exercise> exercises = getAllExerciseList(id);
             workout.getExercises().addAll(exercises);
         }
 
@@ -273,7 +273,7 @@ public class WorkoutDatabase {
         return workout;
     }
 
-    public Cursor getExerciseInfoTable() {
+    public Cursor getBaseExerciseTable() {
         String sqlGetAllExerciseInfo = "select * from " + BaseExerciseEntry.TABLE_NAME;
         return db.rawQuery(sqlGetAllExerciseInfo, null);
     }
@@ -302,7 +302,7 @@ public class WorkoutDatabase {
      * @param workoutId The workout id to query the exercises
      * @return
      */
-    public Cursor getAllExerciseStatForWorkoutAsCursor(long workoutId) {
+    public Cursor getAllExerciseForWorkoutAsCursor(long workoutId) {
         String sql = "SELECT " + ExerciseEntry.TABLE_NAME + "." + ExerciseEntry._ID + ", " +
                 BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry._ID + ", " +
                 BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry.COLUMN_NAME + ", " +
@@ -320,7 +320,7 @@ public class WorkoutDatabase {
                 WorkoutListEntry.TABLE_NAME+ "." + WorkoutListEntry.COLUMN_EXERCISE_ID +
                 " = " + ExerciseEntry.TABLE_NAME + "." + ExerciseEntry._ID + " " +
                 "INNER JOIN " + BaseExerciseEntry.TABLE_NAME + " ON " +
-                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_EXERCISE_ID +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_BASE_EXERCISE_ID +
                 " = " + BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry._ID + " " +
                 "WHERE " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + "=" + workoutId +
                 ";";
@@ -433,11 +433,11 @@ public class WorkoutDatabase {
         return workouts;
     }
 
-    public List<Exercise> getAllExerciseInfoList (long workoutId) {
+    public List<Exercise> getAllExerciseList(long workoutId) {
         List<Exercise> list = new LinkedList<>();
 
         // Get list of exercise for workoutId
-        Cursor eStat = getAllExerciseStatForWorkoutAsCursor(workoutId);
+        Cursor eStat = getAllExerciseForWorkoutAsCursor(workoutId);
         while (eStat.moveToNext()) {
             long id = eStat.getLong(0);
             long baseExerciseId = eStat.getLong(1);

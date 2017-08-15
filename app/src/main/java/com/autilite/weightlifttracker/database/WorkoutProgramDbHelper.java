@@ -35,14 +35,14 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TABLE_EXERCISE =
             "CREATE TABLE " + ExerciseEntry.TABLE_NAME + " (" +
                     ExerciseEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    ExerciseEntry.COLUMN_EXERCISE_ID + " INTEGER NOT NULL," +
+                    ExerciseEntry.COLUMN_BASE_EXERCISE_ID + " INTEGER NOT NULL," +
                     ExerciseEntry.COLUMN_SET + " INTEGER," +
                     ExerciseEntry.COLUMN_REP + " INTEGER," +
                     ExerciseEntry.COLUMN_WEIGHT + " REAL," +
                     ExerciseEntry.COLUMN_AUTOINC + " REAL," +
                     ExerciseEntry.COLUMN_REST_TIME + " INTEGER," +
                     ExerciseEntry.COLUMN_CREATION + " INTEGER," +
-                    "FOREIGN KEY (" + ExerciseEntry.COLUMN_EXERCISE_ID + ") " +
+                    "FOREIGN KEY (" + ExerciseEntry.COLUMN_BASE_EXERCISE_ID + ") " +
                     "REFERENCES " + BaseExerciseEntry.TABLE_NAME + " (" + BaseExerciseEntry._ID + ") " +
                     "ON DELETE RESTRICT ON UPDATE CASCADE)";
 
