@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.autilite.weightlifttracker.database.ExerciseContract.BaseExerciseEntry;
-import static com.autilite.weightlifttracker.database.ExerciseSessionContract.ExerciseSessionEntry;
 import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseEntry;
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;
+import static com.autilite.weightlifttracker.database.ProgramSessionContract.ExerciseSessionEntry;
 import static com.autilite.weightlifttracker.database.ProgramSessionContract.ProgramSessionEntry;
 import static com.autilite.weightlifttracker.database.ProgramWorkoutContract.ProgramWorkoutEntry;
 import static com.autilite.weightlifttracker.database.WorkoutContract.WorkoutEntry;
@@ -143,7 +143,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     "ON DELETE CASCADE ON UPDATE CASCADE)";
 
     private static final String SQL_DELETE_TABLE_EXERCISE_SESSION =
-            "DROP TABLE IF EXISTS " + ExerciseSessionContract.ExerciseSessionEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + ExerciseSessionEntry.TABLE_NAME;
 
     public WorkoutProgramDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

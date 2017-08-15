@@ -28,7 +28,7 @@ import static com.autilite.weightlifttracker.database.WorkoutListContract.Workou
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;
 import static com.autilite.weightlifttracker.database.ProgramWorkoutContract.ProgramWorkoutEntry;
 import static com.autilite.weightlifttracker.database.ProgramSessionContract.ProgramSessionEntry;
-import static com.autilite.weightlifttracker.database.ExerciseSessionContract.ExerciseSessionEntry;
+import static com.autilite.weightlifttracker.database.ProgramSessionContract.ExerciseSessionEntry;
 
 /**
  * Created by Kelvin on Jul 19, 2017.
