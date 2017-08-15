@@ -2,6 +2,7 @@ package com.autilite.weightlifttracker.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.WindowManager;
 
 import com.autilite.weightlifttracker.database.WorkoutDatabase;
 import com.autilite.weightlifttracker.program.BaseModel;
@@ -50,6 +51,9 @@ public abstract class AbstractFormFragment extends Fragment {
                 id = model.getId();
                 name = model.getName();
                 formType = Type.EDIT;
+
+                // Set keyboard to not auto-open when editing an existing form
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             } else {
                 id = MODEL_NOT_SELECTED;
                 formType = Type.CREATE;
