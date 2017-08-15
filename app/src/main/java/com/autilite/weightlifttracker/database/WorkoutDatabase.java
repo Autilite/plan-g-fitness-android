@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseInfoEntry;
-import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseStatEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.BaseExerciseEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseEntry;
 import static com.autilite.weightlifttracker.database.WorkoutContract.WorkoutEntry;
 import static com.autilite.weightlifttracker.database.WorkoutListContract.WorkoutListEntry;
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;
@@ -66,49 +66,49 @@ public class WorkoutDatabase {
 
     public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc, int restTime) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
-        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
-        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
-        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
-        cv.put(ExerciseStatEntry.COLUMN_REST_TIME, restTime);
-        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
-        return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
+        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_SET, sets);
+        cv.put(ExerciseEntry.COLUMN_REP, reps);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseEntry.COLUMN_REST_TIME, restTime);
+        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
+        return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
     public long createExerciseStat(long exerciseId,  int sets, int reps, double weight, double autoInc) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
-        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
-        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
-        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
-        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
-        return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
+        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_SET, sets);
+        cv.put(ExerciseEntry.COLUMN_REP, reps);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
+        return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
     public long createExerciseStat(long exerciseId, int sets, int reps, double weight) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
-        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
-        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
-        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
-        return db.insert(ExerciseStatEntry.TABLE_NAME, null, cv);
+        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_SET, sets);
+        cv.put(ExerciseEntry.COLUMN_REP, reps);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
+        return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
     public int updateExerciseStat(long exerciseStatId, long exerciseId,  int sets, int reps, double weight, double autoInc, int restTime) {
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseStatEntry._ID, exerciseStatId);
-        cv.put(ExerciseStatEntry.COLUMN_EXERCISE_ID, exerciseId);
-        cv.put(ExerciseStatEntry.COLUMN_SET, sets);
-        cv.put(ExerciseStatEntry.COLUMN_REP, reps);
-        cv.put(ExerciseStatEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseStatEntry.COLUMN_AUTOINC, autoInc);
-        cv.put(ExerciseStatEntry.COLUMN_REST_TIME, restTime);
-        cv.put(ExerciseStatEntry.COLUMN_CREATION, System.currentTimeMillis());
-        String whereClause = ExerciseStatEntry._ID + "=" + exerciseStatId;
-        return db.update(ExerciseStatEntry.TABLE_NAME, cv, whereClause, null);
+        cv.put(ExerciseEntry._ID, exerciseStatId);
+        cv.put(ExerciseEntry.COLUMN_EXERCISE_ID, exerciseId);
+        cv.put(ExerciseEntry.COLUMN_SET, sets);
+        cv.put(ExerciseEntry.COLUMN_REP, reps);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseEntry.COLUMN_REST_TIME, restTime);
+        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
+        String whereClause = ExerciseEntry._ID + "=" + exerciseStatId;
+        return db.update(ExerciseEntry.TABLE_NAME, cv, whereClause, null);
     }
 
     public long addExerciseToWorkout(long workoutId, long exerciseStatId) {
@@ -274,7 +274,7 @@ public class WorkoutDatabase {
     }
 
     public Cursor getExerciseInfoTable() {
-        String sqlGetAllExerciseInfo = "select * from " + ExerciseInfoEntry.TABLE_NAME;
+        String sqlGetAllExerciseInfo = "select * from " + BaseExerciseEntry.TABLE_NAME;
         return db.rawQuery(sqlGetAllExerciseInfo, null);
     }
 
@@ -303,25 +303,25 @@ public class WorkoutDatabase {
      * @return
      */
     public Cursor getAllExerciseStatForWorkoutAsCursor(long workoutId) {
-        String sql = "SELECT " + ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry._ID + ", " +
-                ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry._ID + ", " +
-                ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry.COLUMN_NAME + ", " +
-                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_SET + ", " +
-                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_REP + ", " +
-                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_WEIGHT + ", " +
-                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_AUTOINC + ", " +
-                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_REST_TIME + ", " +
+        String sql = "SELECT " + ExerciseEntry.TABLE_NAME + "." + ExerciseEntry._ID + ", " +
+                BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry._ID + ", " +
+                BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry.COLUMN_NAME + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_SET + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REP + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_WEIGHT + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_AUTOINC + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REST_TIME + ", " +
                 WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + " " +
                 "FROM " + WorkoutEntry.TABLE_NAME + " " +
                 "INNER JOIN  " + WorkoutListEntry.TABLE_NAME + " ON " +
                 WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID +
                 " = " + WorkoutListEntry.TABLE_NAME + "." + WorkoutListEntry.COLUMN_WORKOUT_ID + " " +
-                "INNER JOIN " + ExerciseStatEntry.TABLE_NAME + " ON " +
+                "INNER JOIN " + ExerciseEntry.TABLE_NAME + " ON " +
                 WorkoutListEntry.TABLE_NAME+ "." + WorkoutListEntry.COLUMN_EXERCISE_ID +
-                " = " + ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry._ID + " " +
-                "INNER JOIN " + ExerciseInfoEntry.TABLE_NAME + " ON " +
-                ExerciseStatEntry.TABLE_NAME + "." + ExerciseStatEntry.COLUMN_EXERCISE_ID +
-                " = " + ExerciseInfoEntry.TABLE_NAME + "." + ExerciseInfoEntry._ID + " " +
+                " = " + ExerciseEntry.TABLE_NAME + "." + ExerciseEntry._ID + " " +
+                "INNER JOIN " + BaseExerciseEntry.TABLE_NAME + " ON " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_EXERCISE_ID +
+                " = " + BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry._ID + " " +
                 "WHERE " + WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + "=" + workoutId +
                 ";";
         return db.rawQuery(sql, null);

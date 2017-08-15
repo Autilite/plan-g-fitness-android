@@ -10,15 +10,15 @@ public final class ExerciseContract {
     private ExerciseContract() {
     }
 
-    public static class ExerciseInfoEntry implements BaseColumns {
-        public static final String TABLE_NAME = "ExerciseInfo";
+    public static class BaseExerciseEntry implements BaseColumns {
+        public static final String TABLE_NAME = "BaseExercise";
         public static final String COLUMN_NAME = "Name";
         public static final String COLUMN_DESCRIPTION = "Description";
     }
 
-    public static class ExerciseStatEntry implements BaseColumns {
-        public static final String TABLE_NAME = "ExerciseStat";
-        public static final String COLUMN_EXERCISE_ID = "ExerciseId";
+    public static class ExerciseEntry implements BaseColumns {
+        public static final String TABLE_NAME = "Exercise";
+        public static final String COLUMN_EXERCISE_ID = "BaseExerciseId";
         public static final String COLUMN_SET = "Sets";
         public static final String COLUMN_REP = "Reps";
         public static final String COLUMN_WEIGHT = "Weight";

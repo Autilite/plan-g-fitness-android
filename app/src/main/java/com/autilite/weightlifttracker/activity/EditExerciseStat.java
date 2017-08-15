@@ -126,13 +126,13 @@ public class EditExerciseStat extends CreateForm {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             cursor.moveToPosition(i);
-                            baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry._ID));
-                            name = cursor.getString(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry.COLUMN_NAME));
+                            baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry._ID));
+                            name = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_NAME));
                             cursor.close();
 
                             mEditName.setText(name);
                         }
-                    }, ExerciseContract.ExerciseInfoEntry.COLUMN_NAME).create();
+                    }, ExerciseContract.BaseExerciseEntry.COLUMN_NAME).create();
             dialog.show();
         }
 

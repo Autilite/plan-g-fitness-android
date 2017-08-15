@@ -52,13 +52,13 @@ public class CreateWorkoutDialog extends AbstractCreateDialog {
                                 // Set button text to the chosen exercise
                                 // and store the exerciseId in the button tag
                                 cursor.moveToPosition(i);
-                                long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry._ID));
-                                String name = cursor.getString(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry.COLUMN_NAME));
+                                long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry._ID));
+                                String name = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_NAME));
                                 exerciseChooser.setText(name);
                                 exerciseChooser.setTag(exerciseId);
                                 cursor.close();
                             }
-                        }, ExerciseContract.ExerciseInfoEntry.COLUMN_NAME);
+                        }, ExerciseContract.BaseExerciseEntry.COLUMN_NAME);
                 builder.show();
             }
         });

@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseInfoEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.BaseExerciseEntry;
 import static com.autilite.weightlifttracker.database.ExerciseSessionContract.ExerciseSessionEntry;
-import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseStatEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseEntry;
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;
 import static com.autilite.weightlifttracker.database.ProgramSessionContract.ProgramSessionEntry;
 import static com.autilite.weightlifttracker.database.ProgramWorkoutContract.ProgramWorkoutEntry;
@@ -20,34 +20,34 @@ import static com.autilite.weightlifttracker.database.WorkoutListContract.Workou
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
-    private static final String SQL_CREATE_TABLE_EXERCISE_INFO =
-            "CREATE TABLE " + ExerciseInfoEntry.TABLE_NAME + " (" +
-                    ExerciseInfoEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    ExerciseInfoEntry.COLUMN_NAME + " TEXT NOT NULL," +
-                    ExerciseInfoEntry.COLUMN_DESCRIPTION + " TEXT)";
+    private static final String SQL_CREATE_TABLE_BASE_EXERCISE =
+            "CREATE TABLE " + BaseExerciseEntry.TABLE_NAME + " (" +
+                    BaseExerciseEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    BaseExerciseEntry.COLUMN_NAME + " TEXT NOT NULL," +
+                    BaseExerciseEntry.COLUMN_DESCRIPTION + " TEXT)";
 
-    private static final String SQL_DELETE_TABLE_EXERCISE_INFO =
-            "DROP TABLE IF EXISTS " + ExerciseInfoEntry.TABLE_NAME;
+    private static final String SQL_DELETE_TABLE_BASE_EXERCISE =
+            "DROP TABLE IF EXISTS " + BaseExerciseEntry.TABLE_NAME;
 
-    private static final String SQL_CREATE_TABLE_EXERCISE_STATS =
-            "CREATE TABLE " + ExerciseStatEntry.TABLE_NAME + " (" +
-                    ExerciseStatEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    ExerciseStatEntry.COLUMN_EXERCISE_ID + " INTEGER NOT NULL," +
-                    ExerciseStatEntry.COLUMN_SET + " INTEGER," +
-                    ExerciseStatEntry.COLUMN_REP + " INTEGER," +
-                    ExerciseStatEntry.COLUMN_WEIGHT + " REAL," +
-                    ExerciseStatEntry.COLUMN_AUTOINC + " REAL," +
-                    ExerciseStatEntry.COLUMN_REST_TIME + " INTEGER," +
-                    ExerciseStatEntry.COLUMN_CREATION + " INTEGER," +
-                    "FOREIGN KEY (" + ExerciseStatEntry.COLUMN_EXERCISE_ID + ") " +
-                    "REFERENCES " + ExerciseInfoEntry.TABLE_NAME + " (" + ExerciseInfoEntry._ID + ") " +
+    private static final String SQL_CREATE_TABLE_EXERCISE =
+            "CREATE TABLE " + ExerciseEntry.TABLE_NAME + " (" +
+                    ExerciseEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    ExerciseEntry.COLUMN_EXERCISE_ID + " INTEGER NOT NULL," +
+                    ExerciseEntry.COLUMN_SET + " INTEGER," +
+                    ExerciseEntry.COLUMN_REP + " INTEGER," +
+                    ExerciseEntry.COLUMN_WEIGHT + " REAL," +
+                    ExerciseEntry.COLUMN_AUTOINC + " REAL," +
+                    ExerciseEntry.COLUMN_REST_TIME + " INTEGER," +
+                    ExerciseEntry.COLUMN_CREATION + " INTEGER," +
+                    "FOREIGN KEY (" + ExerciseEntry.COLUMN_EXERCISE_ID + ") " +
+                    "REFERENCES " + BaseExerciseEntry.TABLE_NAME + " (" + BaseExerciseEntry._ID + ") " +
                     "ON DELETE RESTRICT ON UPDATE CASCADE)";
 
-    private static final String SQL_DELETE_TABLE_EXERCISE_STATS =
-            "DROP TABLE IF EXISTS " + ExerciseStatEntry.TABLE_NAME;
+    private static final String SQL_DELETE_TABLE_EXERCISE =
+            "DROP TABLE IF EXISTS " + ExerciseEntry.TABLE_NAME;
 
     private static final String SQL_CREATE_TABLE_WORKOUT =
             "CREATE TABLE " + WorkoutEntry.TABLE_NAME + " (" +
@@ -68,7 +68,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     "REFERENCES " + WorkoutEntry.TABLE_NAME + "(" + WorkoutEntry._ID + ") " +
                     "ON DELETE CASCADE ON UPDATE CASCADE," +
                     "FOREIGN KEY (" + WorkoutListEntry.COLUMN_EXERCISE_ID + ") " +
-                    "REFERENCES " + ExerciseStatEntry.TABLE_NAME + "(" + ExerciseStatEntry._ID + ") " +
+                    "REFERENCES " + ExerciseEntry.TABLE_NAME + "(" + ExerciseEntry._ID + ") " +
                     "ON DELETE CASCADE ON UPDATE CASCADE)";
 
     private static final String SQL_DELETE_TABLE_WORKOUT_LIST =
@@ -151,9 +151,9 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_EXERCISE_INFO);
+        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_BASE_EXERCISE);
         insertDefaultExercises(sqLiteDatabase);
-        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_EXERCISE_STATS);
+        sqLiteDatabase.execSQL(SQL_CREATE_TABLE_EXERCISE);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_WORKOUT);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_WORKOUT_LIST);
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_PROGRAM);
@@ -164,8 +164,8 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_EXERCISE_INFO);
-        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_EXERCISE_STATS);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_BASE_EXERCISE);
+        sqLiteDatabase.execSQL(SQL_DELETE_TABLE_EXERCISE);
         sqLiteDatabase.execSQL(SQL_DELETE_TABLE_WORKOUT);
         sqLiteDatabase.execSQL(SQL_DELETE_TABLE_WORKOUT_LIST);
         sqLiteDatabase.execSQL(SQL_DELETE_TABLE_PROGRAM);
@@ -177,12 +177,12 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
 
     private void insertDefaultExercises(SQLiteDatabase db){
         ContentValues cv = new ContentValues();
-        cv.put(ExerciseInfoEntry.COLUMN_NAME, "Squats");
-        db.insert(ExerciseInfoEntry.TABLE_NAME, null, cv);
-        cv.put(ExerciseInfoEntry.COLUMN_NAME, "Deadlift");
-        db.insert(ExerciseInfoEntry.TABLE_NAME, null, cv);
-        cv.put(ExerciseInfoEntry.COLUMN_NAME, "Overhead Press");
-        db.insert(ExerciseInfoEntry.TABLE_NAME, null, cv);
+        cv.put(BaseExerciseEntry.COLUMN_NAME, "Squats");
+        db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
+        cv.put(BaseExerciseEntry.COLUMN_NAME, "Deadlift");
+        db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
+        cv.put(BaseExerciseEntry.COLUMN_NAME, "Overhead Press");
+        db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
     }
 
 }
