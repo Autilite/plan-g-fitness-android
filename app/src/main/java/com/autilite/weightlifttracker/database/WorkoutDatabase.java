@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.autilite.weightlifttracker.database.ExerciseInfoContract.ExerciseInfoEntry;
-import static com.autilite.weightlifttracker.database.ExerciseStatContract.ExerciseStatEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseInfoEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseStatEntry;
 import static com.autilite.weightlifttracker.database.WorkoutContract.WorkoutEntry;
 import static com.autilite.weightlifttracker.database.WorkoutListContract.WorkoutListEntry;
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;

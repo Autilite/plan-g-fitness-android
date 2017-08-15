@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.autilite.weightlifttracker.database.ExerciseInfoContract.ExerciseInfoEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseInfoEntry;
 import static com.autilite.weightlifttracker.database.ExerciseSessionContract.ExerciseSessionEntry;
-import static com.autilite.weightlifttracker.database.ExerciseStatContract.ExerciseStatEntry;
+import static com.autilite.weightlifttracker.database.ExerciseContract.ExerciseStatEntry;
 import static com.autilite.weightlifttracker.database.ProgramContract.ProgramEntry;
 import static com.autilite.weightlifttracker.database.ProgramSessionContract.ProgramSessionEntry;
 import static com.autilite.weightlifttracker.database.ProgramWorkoutContract.ProgramWorkoutEntry;

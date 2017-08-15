@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.database.ExerciseInfoContract;
+import com.autilite.weightlifttracker.database.ExerciseContract;
 import com.autilite.weightlifttracker.fragment.AbstractFormFragment;
 import com.autilite.weightlifttracker.program.BaseModel;
 import com.autilite.weightlifttracker.program.Exercise;
@@ -126,13 +126,13 @@ public class EditExerciseStat extends CreateForm {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             cursor.moveToPosition(i);
-                            baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
-                            name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
+                            baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry._ID));
+                            name = cursor.getString(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry.COLUMN_NAME));
                             cursor.close();
 
                             mEditName.setText(name);
                         }
-                    }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME).create();
+                    }, ExerciseContract.ExerciseInfoEntry.COLUMN_NAME).create();
             dialog.show();
         }
 

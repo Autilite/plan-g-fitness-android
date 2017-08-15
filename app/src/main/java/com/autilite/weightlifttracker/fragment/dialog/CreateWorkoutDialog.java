@@ -10,7 +10,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.autilite.weightlifttracker.R;
-import com.autilite.weightlifttracker.database.ExerciseInfoContract;
+import com.autilite.weightlifttracker.database.ExerciseContract;
 
 /**
  * Created by Kelvin on Jun 9, 2017.
@@ -52,13 +52,13 @@ public class CreateWorkoutDialog extends AbstractCreateDialog {
                                 // Set button text to the chosen exercise
                                 // and store the exerciseId in the button tag
                                 cursor.moveToPosition(i);
-                                long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry._ID));
-                                String name = cursor.getString(cursor.getColumnIndex(ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME));
+                                long exerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry._ID));
+                                String name = cursor.getString(cursor.getColumnIndex(ExerciseContract.ExerciseInfoEntry.COLUMN_NAME));
                                 exerciseChooser.setText(name);
                                 exerciseChooser.setTag(exerciseId);
                                 cursor.close();
                             }
-                        }, ExerciseInfoContract.ExerciseInfoEntry.COLUMN_NAME);
+                        }, ExerciseContract.ExerciseInfoEntry.COLUMN_NAME);
                 builder.show();
             }
         });
