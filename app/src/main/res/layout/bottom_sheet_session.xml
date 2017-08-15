@@ -4,10 +4,10 @@
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="120dp"
+    android:minHeight="@dimen/bottom_sheet_min_height"
     android:background="@color/colorWhite"
     android:padding="@dimen/bottom_sheet_padding"
-    app:behavior_peekHeight="60dp"
+    app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <TextView

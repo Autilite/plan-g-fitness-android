@@ -14,4 +14,6 @@
     <dimen name="list_item_padding">8dp</dimen>
     <dimen name="form_vertical_padding">24dp</dimen>
     <dimen name="form_horitzonal_padding">32dp</dimen>
+    <dimen name="bottom_sheet_peek_height">60dp</dimen>
+    <dimen name="bottom_sheet_min_height">120dp</dimen>
 </resources>
