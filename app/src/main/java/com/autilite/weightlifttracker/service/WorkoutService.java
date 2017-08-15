@@ -161,7 +161,7 @@ public class WorkoutService extends Service {
     private void saveSession(Intent intent) {
         // TODO handle empty session
         long timeEnd = System.currentTimeMillis();
-        workoutDb.addSession(programId, 1, startTime, timeEnd, sessions);
+        workoutDb.addSession(programId, programDay, startTime, timeEnd, sessions);
         workoutDb.setPreviousProgDay(this, programId, programDay);
         // TODO update exercise with any changes from this session
         // e.g., exercise auto increment if the exercise session was successful
