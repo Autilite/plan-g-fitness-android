@@ -21,8 +21,6 @@
     <string name="sets">Sets</string>
     <string name="reps">Reps</string>
     <string name="weight">Weight</string>
-    <string name="ok">ok</string>
-    <string name="cancel">cancel</string>
     <string name="workout_name">Workout Name</string>
 
     <string name="create_program_title">Create a program</string>
