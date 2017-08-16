@@ -65,6 +65,13 @@ public class WorkoutDatabase {
         return db.insert(WorkoutEntry.TABLE_NAME, null, cv);
     }
 
+    public long createBaseExercise(String name, String description) {
+        ContentValues cv = new ContentValues();
+        cv.put(BaseExerciseEntry.COLUMN_NAME, name);
+        cv.put(BaseExerciseEntry.COLUMN_DESCRIPTION, description);
+        return db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
+    }
+
     public long createExercise(long baseExerciseId, int sets, int reps, double weight, double autoInc, int restTime) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
@@ -379,6 +386,25 @@ public class WorkoutDatabase {
         cursor.close();
 
         return exercises;
+    }
+
+    public BaseExercise getBaseExercise(long id) {
+        String sql = "SELECT * FROM " + BaseExerciseEntry.TABLE_NAME + " WHERE " + BaseExerciseEntry._ID + " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        BaseExercise exercise = null;
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            String name = cursor.getString(cursor.getColumnIndex(BaseExerciseEntry.COLUMN_NAME));
+            String description = cursor.getString(cursor.getColumnIndex(BaseExerciseEntry.COLUMN_DESCRIPTION));
+
+            exercise = new BaseExercise(id, name, description);
+        }
+
+        cursor.close();
+        return exercise;
     }
 
     public List<Program> getProgramTableList() {

@@ -1,14 +1,17 @@
 package com.autilite.plan_g.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.plan_g.R;
@@ -40,7 +43,7 @@ public class BaseExerciseFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recycle_view, container, false);
@@ -49,11 +52,30 @@ public class BaseExerciseFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            // TODO
+                View inputView = inflater.inflate(R.layout.input_dialog_2, null);
+
+                final EditText nameEditText = (EditText) inputView.findViewById(R.id.edit1);
+                nameEditText.setHint(R.string.name);
+
+                final EditText descEditText = (EditText) inputView.findViewById(R.id.edit2);
+                descEditText.setHint(R.string.description);
+
+                AlertDialog.Builder createDialog = new AlertDialog.Builder(getContext())
+                        .setTitle(getString(R.string.create_exercise))
+                        .setView(inputView)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String name = nameEditText.getText().toString();
+                                String description = descEditText.getText().toString();
+                                createBaseExercise(name, description);
+                            }
+                        });
+                createDialog.create().show();
             }
         });
         db = new WorkoutDatabase(getActivity());
-        
+
         exercises = db.getBaseExerciseList();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -64,6 +86,15 @@ public class BaseExerciseFragment extends Fragment {
         mAdapter = new BaseExerciseAdapter(getContext(), exercises);
         mRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+
+    private void createBaseExercise(String name, String description) {
+        long id = db.createBaseExercise(name, description);
+        BaseExercise e = db.getBaseExercise(id);
+        if (e != null) {
+            exercises.add(e);
+            mAdapter.notifyItemInserted(exercises.size() - 1);
+        }
     }
 
     private class BaseExerciseAdapter extends RecyclerView.Adapter {

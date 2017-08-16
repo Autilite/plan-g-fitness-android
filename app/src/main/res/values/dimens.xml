@@ -16,4 +16,5 @@
     <dimen name="form_horitzonal_padding">32dp</dimen>
     <dimen name="bottom_sheet_peek_height">60dp</dimen>
     <dimen name="bottom_sheet_min_height">120dp</dimen>
+    <dimen name="input_dialog_padding">16dp</dimen>
 </resources>
