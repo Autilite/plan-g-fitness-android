@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.autilite.weightlifttracker.activity.WorkoutSessionActivity">
+    tools:context="com.autilite.plan_g.activity.WorkoutSessionActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

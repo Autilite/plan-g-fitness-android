@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Weight Lift Tracker</string>
+    <string name="app_name">Plan G: Fitness</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -64,13 +64,13 @@
     <string name="create_exercise">Create Exercise</string>
 
     <string name="program_preference_file_key">
-        <xliff:g id="preference_key">com.autilite.weightlifttracker.PROGRAM_PREFERENCE_FILE_KEY</xliff:g>
+        <xliff:g id="preference_key">com.autilite.plan_g.PROGRAM_PREFERENCE_FILE_KEY</xliff:g>
     </string>
     <string name="last_used_program">
-        <xliff:g id="preference_key">com.autilite.weightlifttracker.last_used_program</xliff:g>
+        <xliff:g id="preference_key">com.autilite.plan_g.last_used_program</xliff:g>
     </string>
     <string name="last_program_day">
-        <xliff:g id="preference_key">com.autilite.weightlifttracker.last_program_day</xliff:g>
+        <xliff:g id="preference_key">com.autilite.plan_g.last_program_day</xliff:g>
     </string>
     <string name="rest_between_sets">Rest time between sets</string>
     <string name="create_exercise_fail">Exercise could not be created</string>

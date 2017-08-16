@@ -60,12 +60,12 @@
                 android:layout_alignParentEnd="true"
                 android:contentDescription="@string/expand_exercise_details" />
 
-            <com.autilite.weightlifttracker.widget.ExtendableListView
+            <com.autilite.plan_g.widget.ExtendableListView
                 android:id="@+id/exercise_details"
                 android:layout_below="@+id/expand_exercises"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-            </com.autilite.weightlifttracker.widget.ExtendableListView>
+            </com.autilite.plan_g.widget.ExtendableListView>
 
         </RelativeLayout>
 
