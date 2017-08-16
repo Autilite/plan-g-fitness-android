@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteException;
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.exception.SQLiteInsertException;
 import com.autilite.plan_g.exception.SQLiteUpdateException;
+import com.autilite.plan_g.program.BaseExercise;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Program;
 import com.autilite.plan_g.program.Workout;
@@ -361,6 +362,23 @@ public class WorkoutDatabase {
                 " = " + day +
                 ";";
         return db.rawQuery(sql, null);
+    }
+
+    public List<BaseExercise> getBaseExerciseList() {
+        List<BaseExercise> exercises = new ArrayList<>();
+
+        Cursor cursor = getBaseExerciseTable();
+        while(cursor.moveToNext()) {
+            long id = cursor.getLong(cursor.getColumnIndex(BaseExerciseEntry._ID));
+            String name = cursor.getString(cursor.getColumnIndex(BaseExerciseEntry.COLUMN_NAME));
+            String description = cursor.getString(cursor.getColumnIndex(BaseExerciseEntry.COLUMN_DESCRIPTION));
+
+            BaseExercise exercise = new BaseExercise(id, name, description);
+            exercises.add(exercise);
+        }
+        cursor.close();
+
+        return exercises;
     }
 
     public List<Program> getProgramTableList() {

@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.database.ProgramContract;
 import com.autilite.plan_g.database.WorkoutDatabase;
+import com.autilite.plan_g.fragment.BaseExerciseFragment;
 import com.autilite.plan_g.fragment.ProgramFragment;
 import com.autilite.plan_g.fragment.StartProgramFragment;
 import com.autilite.plan_g.fragment.WorkoutFragment;
@@ -107,8 +108,9 @@ public class MainActivity extends AppCompatActivity
         // change R.id.content_main
         // change toolbar
         // ->set title
-        if (id == R.id.nav_profile) {
-            mTitle = getString(R.string.nav_profile);
+        if (id == R.id.nav_exercises) {
+            mTitle = getString(R.string.nav_exercises);
+            onExerciseSelected();
         } else if (id == R.id.nav_start_session) {
             mTitle =  getString(R.string.start_session);
             if (getSupportActionBar() != null){
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity
             }
             onStartSessionSelected();
         } else if (id == R.id.nav_workout) {
-            mTitle = getString(R.string.nav_workout);
+            mTitle = getString(R.string.nav_workouts);
             onWorkoutSelected();
         } else if (id == R.id.nav_programs) {
             mTitle = getString(R.string.nav_programs);
@@ -243,6 +245,10 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, frag)
                 .commit();
+    }
+
+    private void onExerciseSelected() {
+        replaceContentFragment(new BaseExerciseFragment());
     }
 
     private void onProgramSelected() {
