@@ -2,6 +2,8 @@ package com.autilite.plan_g.service;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.CountDownTimer;
@@ -15,6 +17,9 @@ import com.autilite.plan_g.database.WorkoutDatabase;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Workout;
 import com.autilite.plan_g.program.session.ExerciseSession;
+import com.autilite.plan_g.util.PebbleConstants;
+import com.getpebble.android.kit.PebbleKit;
+import com.getpebble.android.kit.util.PebbleDictionary;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,6 +109,8 @@ public class WorkoutService extends Service {
 
         startForeground(SESSION_NOTIFY_ID, wnm.getNotification());
         startActivity(activityIntent);
+
+        PebbleKit.startAppOnPebble(this, PebbleConstants.WATCH_APP_UUID);
     }
 
     private void initSession() {
@@ -138,6 +145,9 @@ public class WorkoutService extends Service {
             Intent updatedSessionIntent = new Intent(BROADCAST_UPDATED_SESSION);
             mLocalBroadcastManager.sendBroadcast(updatedSessionIntent);
 
+            // Alert pebble the exercise changed
+            sendExerciseDataToPebble(currentExercise);
+
             startTimer(exercise.getRestTime() * 1000);
         }
 
@@ -169,7 +179,49 @@ public class WorkoutService extends Service {
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         workoutDb = new WorkoutDatabase(this);
+
+        PebbleKit.registerPebbleConnectedReceiver(this, pebbleConnectedHandler);
+        PebbleKit.registerPebbleDisconnectedReceiver(this, pebbleDisconnectedHandler);
+        PebbleKit.registerReceivedDataHandler(this, pebbleReceiverDataHandler);
     }
+
+    private BroadcastReceiver pebbleConnectedHandler = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PebbleKit.startAppOnPebble(WorkoutService.this, PebbleConstants.WATCH_APP_UUID);
+            sendExerciseDataToPebble(currentExercise);
+        }
+    };
+
+    private BroadcastReceiver pebbleDisconnectedHandler = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+        }
+    };
+
+    private PebbleKit.PebbleDataReceiver pebbleReceiverDataHandler =
+            new PebbleKit.PebbleDataReceiver(PebbleConstants.WATCH_APP_UUID) {
+                @Override
+                public void receiveData(Context context, int transactionId, PebbleDictionary data) {
+                    // Always send ack
+                    PebbleKit.sendAckToPebble(context, transactionId);
+
+                    Long value = data.getInteger(PebbleConstants.APP_KEY_REQUEST_DATA);
+                    if (value != null) {
+                        sendExerciseDataToPebble(currentExercise);
+                    } else {
+                        Long idBox = data.getUnsignedIntegerAsLong(PebbleConstants.APP_KEY_EXERCISE_ID);
+                        Long setBox = data.getInteger(PebbleConstants.APP_KEY_EXERCISE_SET);
+                        Long repBox = data.getInteger(PebbleConstants.APP_KEY_EXERCISE_REPS);
+                        Long weightBox = data.getInteger(PebbleConstants.APP_KEY_EXERCISE_WEIGHT);
+                        int set = setBox.intValue();
+                        int rep = repBox.intValue();
+                        double weight = weightBox.intValue() / 10;
+
+                        completeSet(rep, weight);
+                    }
+                }
+    };
 
     @Override
     public void onDestroy() {
@@ -180,6 +232,10 @@ public class WorkoutService extends Service {
         wnm.cancel();
 
         workoutDb.close();
+        PebbleKit.closeAppOnPebble(this, PebbleConstants.WATCH_APP_UUID);
+        unregisterReceiver(pebbleConnectedHandler);
+        unregisterReceiver(pebbleDisconnectedHandler);
+        unregisterReceiver(pebbleReceiverDataHandler);
     }
 
     @Nullable
@@ -228,7 +284,10 @@ public class WorkoutService extends Service {
     }
 
     public void setSelectedExercise(ExerciseSession es) {
+        // Update the current exercise
         currentExercise = es;
+
+        // Update the notification
         if (!currentExercise.isSessionDone()) {
             // Add complete/fail actions to notification
             Intent completeSetIntent = new Intent(this, WorkoutService.class);
@@ -241,9 +300,29 @@ public class WorkoutService extends Service {
 
             wnm.setOnGoingExercise(pCompleteSetIntent, pFailSetIntent);
         }
-
         if (!isTimerRunning) {
             wnm.notifyStartSet(currentExercise.getExercise().getName());
+        }
+
+        // Update the pebble watch app
+        sendExerciseDataToPebble(es);
+    }
+
+    /**
+     * Sends the Exercise Session to the pebble watch. If the watch isn't connected or if the
+     * <code>ExerciseSession</code> is null, then nothing is sent
+     * @param es
+     */
+    private void sendExerciseDataToPebble(ExerciseSession es) {
+        if (PebbleKit.isWatchConnected(this) && es != null) {
+            PebbleDictionary dictionary = new PebbleDictionary();
+            dictionary.addUint32(PebbleConstants.APP_KEY_EXERCISE_ID, (int) es.getExercise().getId());
+            dictionary.addString(PebbleConstants.APP_KEY_EXERCISE_NAME, es.getExercise().getName());
+            dictionary.addInt32(PebbleConstants.APP_KEY_EXERCISE_SET, es.getCurrentSet());
+            dictionary.addInt32(PebbleConstants.APP_KEY_EXERCISE_REPS, es.getCurrentRep());
+            int sentWeight = (int)  (es.getCurrentWeight() * 10);
+            dictionary.addInt32(PebbleConstants.APP_KEY_EXERCISE_WEIGHT, sentWeight);
+            PebbleKit.sendDataToPebble(this, PebbleConstants.WATCH_APP_UUID, dictionary);
         }
     }
 
