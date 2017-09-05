@@ -148,7 +148,9 @@ public class WorkoutService extends Service {
             // Alert pebble the exercise changed
             sendExerciseDataToPebble(currentExercise);
 
-            startTimer(exercise.getRestTime() * 1000);
+            long restTime = exercise.getRestTime() * 1000;
+            sendTimerDataToPebble(restTime);
+            startTimer(restTime);
         }
 
         if (currentExercise.isSessionDone()) {
@@ -322,6 +324,14 @@ public class WorkoutService extends Service {
             dictionary.addInt32(PebbleConstants.APP_KEY_EXERCISE_REPS, es.getCurrentRep());
             int sentWeight = (int)  (es.getCurrentWeight() * 10);
             dictionary.addInt32(PebbleConstants.APP_KEY_EXERCISE_WEIGHT, sentWeight);
+            PebbleKit.sendDataToPebble(this, PebbleConstants.WATCH_APP_UUID, dictionary);
+        }
+    }
+
+    private void sendTimerDataToPebble(long milliseconds) {
+        if (PebbleKit.isWatchConnected(this)){
+            PebbleDictionary dictionary = new PebbleDictionary();
+            dictionary.addUint32(PebbleConstants.APP_KEY_EXERCISE_REST_TIMER, (int) milliseconds);
             PebbleKit.sendDataToPebble(this, PebbleConstants.WATCH_APP_UUID, dictionary);
         }
     }
