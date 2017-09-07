@@ -488,7 +488,7 @@ public class WorkoutDatabase {
             String exerciseName = eStat.getString(2);
             int set = eStat.getInt(3);
             int rep = eStat.getInt(4);
-            double weight = eStat.getDouble(4);
+            double weight = eStat.getDouble(5);
             double autoIncr = eStat.getDouble(6);
             int restTime = eStat.getInt(7);
             Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
