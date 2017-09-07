@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.activity.WorkoutSessionActivity;
@@ -20,6 +21,7 @@ import com.autilite.plan_g.program.session.ExerciseSession;
 import com.autilite.plan_g.util.PebbleConstants;
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
+import com.getpebble.android.kit.util.PebbleTuple;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ import static com.autilite.plan_g.activity.WorkoutSessionActivity.EXTRA_PROGRAM_
  */
 
 public class WorkoutService extends Service {
+    private final static String TAG = WorkoutService.class.getName();
+
     public final static String BROADCAST_COUNTDOWN = "com.autilite.plan_g.service.WorkoutService.broadcast.COUNTDOWN";
     public final static String BROADCAST_UPDATED_SESSION = "com.autilite.plan_g.service.WorkoutService.broadcast.UPDATED_SESSION";
     public final static String EXTRA_BROADCAST_COUNTDOWN = "countdown";
@@ -208,10 +212,19 @@ public class WorkoutService extends Service {
                     // Always send ack
                     PebbleKit.sendAckToPebble(context, transactionId);
 
-                    Long value = data.getInteger(PebbleConstants.APP_KEY_REQUEST_DATA);
-                    if (value != null) {
+                    if (data.contains(PebbleConstants.APP_KEY_REQUEST_DATA)) {
+                        Log.i(TAG, "Received exercise data request from pebble");
                         sendExerciseDataToPebble(currentExercise);
-                    } else {
+                    } else if (data.contains(PebbleConstants.APP_KEY_REQUEST_CHANGE_PREVIOUS_EXERCISE)) {
+                        Log.i(TAG, "Received request to change to the previous exercise from pebble");
+                        setSelectedExercisePrevious();
+                    } else if (data.contains(PebbleConstants.APP_KEY_REQUEST_CHANGE_NEXT_EXERCISE)) {
+                        Log.i(TAG, "Received request to change to the next exercise from pebble");
+                        setSelectedExerciseNext();
+                    } else if (data.contains(PebbleConstants.APP_KEY_EXERCISE_ID)
+                            && data.contains(PebbleConstants.APP_KEY_EXERCISE_SET)
+                            && data.contains(PebbleConstants.APP_KEY_EXERCISE_REPS)
+                            && data.contains(PebbleConstants.APP_KEY_EXERCISE_WEIGHT)){
                         Long idBox = data.getUnsignedIntegerAsLong(PebbleConstants.APP_KEY_EXERCISE_ID);
                         Long setBox = data.getInteger(PebbleConstants.APP_KEY_EXERCISE_SET);
                         Long repBox = data.getInteger(PebbleConstants.APP_KEY_EXERCISE_REPS);
@@ -221,6 +234,12 @@ public class WorkoutService extends Service {
                         double weight = weightBox.intValue() / 10;
 
                         completeSet(rep, weight);
+                    } else {
+                        StringBuilder builder = new StringBuilder("Received unhandled key(s): ");
+                        for (PebbleTuple t : data) {
+                            builder.append(t.key).append(" ");
+                        }
+                        Log.w(TAG, builder.toString());
                     }
                 }
     };
@@ -308,6 +327,48 @@ public class WorkoutService extends Service {
 
         // Update the pebble watch app
         sendExerciseDataToPebble(es);
+    }
+
+    public void setSelectedExercisePrevious() {
+        // Search through the Session map and check each ExerciseSession list
+        for (Map.Entry<Workout, ArrayList<? extends ExerciseSession>> entry : sessions.entrySet()) {
+            ArrayList<? extends  ExerciseSession> esList = entry.getValue();
+
+            for (int i = 0; i < esList.size(); i++) {
+                if (esList.get(i).equals(currentExercise)) {
+                    // Get the previous exercise and set it to the current selection
+                    try {
+                        setSelectedExercise(esList.get(i-1));
+                        return;
+                    } catch (IndexOutOfBoundsException e){
+                        // currentExercise is the first entry of this workout
+                        // We can either do nothing or select the last exercise of the previous workout
+                        // At the moment, we will simply do nothing.
+                    }
+                }
+            }
+        }
+    }
+
+    public void setSelectedExerciseNext() {
+        // Search through the Session map and check each ExerciseSession list
+        for (Map.Entry<Workout, ArrayList<? extends ExerciseSession>> entry : sessions.entrySet()) {
+            ArrayList<? extends  ExerciseSession> esList = entry.getValue();
+
+            for (int i = 0; i < esList.size(); i++) {
+                if (esList.get(i).equals(currentExercise)) {
+                    // Get the next exercise and set it to the current selection
+                    try {
+                        setSelectedExercise(esList.get(i+1));
+                        return;
+                    } catch (IndexOutOfBoundsException e){
+                        // currentExercise is the last entry of this workout
+                        // We can either do nothing or select the first exercise of the next workout
+                        // At the moment, we will simply do nothing.
+                    }
+                }
+            }
+        }
     }
 
     /**

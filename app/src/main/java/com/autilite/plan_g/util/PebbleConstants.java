@@ -16,6 +16,8 @@ public final class PebbleConstants {
     public static final int APP_KEY_EXERCISE_WEIGHT = 10004;
     public static final int APP_KEY_EXERCISE_REST_TIMER = 10005;
     public static final int APP_KEY_REQUEST_DATA = 10006;
+    public static final int APP_KEY_REQUEST_CHANGE_PREVIOUS_EXERCISE = 10007;
+    public static final int APP_KEY_REQUEST_CHANGE_NEXT_EXERCISE = 10008;
 
 }
 
