@@ -390,7 +390,7 @@ public class WorkoutService extends Service {
     }
 
     private void sendTimerDataToPebble(long milliseconds) {
-        if (PebbleKit.isWatchConnected(this)){
+        if (PebbleKit.isWatchConnected(this) && milliseconds > 0) {
             PebbleDictionary dictionary = new PebbleDictionary();
             dictionary.addUint32(PebbleConstants.APP_KEY_EXERCISE_REST_TIMER, (int) milliseconds);
             PebbleKit.sendDataToPebble(this, PebbleConstants.WATCH_APP_UUID, dictionary);
