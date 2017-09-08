@@ -51,7 +51,10 @@
     <string name="time_until_next_set">Time until next set</string>
     <string name="start_set">Start your next set</string>
 
+    <string name="form_delete">Delete the entry?</string>
+    <string name="form_delete_failed">Unable to delete the entry</string>
     <string name="action_create">Create</string>
+    <string name="action_delete">Delete</string>
     <string name="name">Name</string>
     <string name="description">Description</string>
 

@@ -33,6 +33,11 @@ public class EditWorkout extends CreateForm {
     }
 
     @Override
+    protected boolean onDeleteEntryCallback() {
+        return false;
+    }
+
+    @Override
     protected boolean saveForm() {
         BaseModel model = contentFragment.save();
         boolean isSuccess = model != null;
