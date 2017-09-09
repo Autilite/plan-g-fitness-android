@@ -36,6 +36,8 @@ public class ChooseWorkouts extends AppCompatActivity {
 
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.ChooseWorkouts.RESULT_ACTION";
 
+    private static final String INSTANCE_KEY_FRAGMENT = "INSTANCE_KEY_FRAGMENT";
+
     private int day;
 
     private ChooseWorkoutsFragment fragment;
@@ -54,7 +56,7 @@ public class ChooseWorkouts extends AppCompatActivity {
         if (savedInstanceState != null) {
             // We are being restored from a previous state so we don't need to re-initialize
             // the fragment
-            return;
+            fragment = (ChooseWorkoutsFragment) getSupportFragmentManager().getFragment(savedInstanceState, INSTANCE_KEY_FRAGMENT);
         } else if (getIntent().getExtras() != null) {
             // Since the program may not have been created let, we let the parent activity
             // handle the passing the default selected workout IDs
@@ -68,6 +70,12 @@ public class ChooseWorkouts extends AppCompatActivity {
                     .replace(R.id.content_frame, fragment)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, INSTANCE_KEY_FRAGMENT, fragment);
     }
 
     @Override
