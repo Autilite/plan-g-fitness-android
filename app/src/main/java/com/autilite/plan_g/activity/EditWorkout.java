@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
-import com.autilite.plan_g.database.WorkoutDatabase;
 import com.autilite.plan_g.fragment.EditWorkoutFragment;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Workout;
@@ -25,27 +24,11 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.EditWorkout.RESULT_ACTION";
     public static final String EXTRA_RESULT_WORKOUT = "RESULT_WORKOUT";
 
-    private WorkoutDatabase db;
-
-    private Type formType;
     private Workout workout;
-    private boolean saveSuccessful;
-
-    private enum Type {
-        CREATE,
-        EDIT
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new WorkoutDatabase(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        db.close();
     }
 
     @Override

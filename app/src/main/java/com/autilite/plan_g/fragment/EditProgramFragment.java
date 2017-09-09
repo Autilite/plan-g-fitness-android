@@ -2,6 +2,7 @@ package com.autilite.plan_g.fragment;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,7 @@ import android.widget.TextView;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.activity.ChooseWorkouts;
-import com.autilite.plan_g.program.BaseModel;
+import com.autilite.plan_g.database.WorkoutDatabase;
 import com.autilite.plan_g.program.Program;
 import com.autilite.plan_g.program.Workout;
 
@@ -25,7 +26,10 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditProgramFragment extends AbstractFormFragment {
+public class EditProgramFragment extends Fragment {
+    private static final String ARG_PROGRAM = "ARG_PROGRAM";
+
+    private OnFragmentInteractionListener mListener;
 
     private static final int CHOOSE_WORKOUT = 1;
 
@@ -36,15 +40,18 @@ public class EditProgramFragment extends AbstractFormFragment {
     private EditText mEditDescription;
 
     private List<Program.Day> programDays;
+    private Program model;
+
+    private WorkoutDatabase db;
 
     public EditProgramFragment() {
         // Required empty public constructor
     }
 
-    public static AbstractFormFragment newInstance(Program program) {
+    public static Fragment newInstance(Program program) {
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_MODEL_OBJ, program);
+        args.putParcelable(ARG_PROGRAM, program);
 
         EditProgramFragment fragment = new EditProgramFragment();
         fragment.setArguments(args);
@@ -54,7 +61,17 @@ public class EditProgramFragment extends AbstractFormFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = new WorkoutDatabase(getContext());
+        if (getArguments() != null) {
+            model = getArguments().getParcelable(ARG_PROGRAM);
+        }
         programDays = getProgramDayList();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
     @Override
@@ -65,7 +82,7 @@ public class EditProgramFragment extends AbstractFormFragment {
         mEditName = (EditText) view.findViewById(R.id.input_name);
         mEditDescription = (EditText) view.findViewById(R.id.input_description);
 
-        if (getFormType() == Type.EDIT) {
+        if (model != null) {
             mEditName.setText(model.getName());
             mEditDescription.setText(model.getDescription());
         }
@@ -79,55 +96,6 @@ public class EditProgramFragment extends AbstractFormFragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
-    }
-
-    @Override
-    protected BaseModel insertNewEntry() {
-        name = mEditName.getText().toString();
-        String description = mEditDescription.getText().toString();
-        int numDays = programDays.size();
-
-        if (name.equals("")) {
-            return null;
-        }
-
-        long programId = db.createProgram(name, description, numDays);
-        if (programId == -1)
-            return null;
-
-        Program program = new Program(programId, name, description, numDays);
-
-        // Add the workouts to the database and model
-        for (int i = 0; i < numDays; i++) {
-            Program.Day workoutDay = programDays.get(i);
-
-            int day = i + 1;
-            for (Workout w : workoutDay.getWorkouts()) {
-                db.addWorkoutToProgram(programId, w.getId(), day);
-            }
-            // Since we initialized program to numDays, we need to set the individual day
-            program.getDays().set(i, workoutDay);
-        }
-
-        return program;
-    }
-
-    @Override
-    protected BaseModel editEntry() {
-        name = mEditName.getText().toString();
-        String description = mEditDescription.getText().toString();
-
-        if (name.equals("")) {
-            return null;
-        }
-
-        if (db.updateProgram(id, name, description, programDays)) {
-            Program program = new Program(id, name, description, programDays.size());
-            program.setDays(programDays);
-            return program;
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -148,13 +116,50 @@ public class EditProgramFragment extends AbstractFormFragment {
     }
 
     private List<Program.Day> getProgramDayList() {
-        if (getFormType() == Type.EDIT) {
+        if (model != null) {
             Program program = (Program) model;
             return program.getDays();
 
         } else {
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public void passData() {
+        if (mListener != null) {
+            mListener.onProgramSave(mEditName.getText().toString(), mEditDescription.getText().toString(), programDays);
+        }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        boolean onProgramSave(String name, String description, List<Program.Day> programDays);
     }
 
     public class AddWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

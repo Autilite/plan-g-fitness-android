@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.database.WorkoutDatabase;
 
 /**
  * Created by Kelvin on Jul 21, 2017.
@@ -25,10 +26,22 @@ public abstract class CreateForm extends AppCompatActivity {
 
     protected Fragment contentFragment;
 
+    protected WorkoutDatabase db;
+
+    protected boolean saveSuccessful;
+    protected Type formType;
+
+    protected enum Type {
+        CREATE,
+        EDIT
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_form);
+
+        db = new WorkoutDatabase(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,6 +58,12 @@ public abstract class CreateForm extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, contentFragment)
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
     @Override
