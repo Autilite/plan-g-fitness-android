@@ -87,6 +87,7 @@ public abstract class CreateForm extends AppCompatActivity {
                 return true;
             case R.id.delete_form:
                 showDeleteFormDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
