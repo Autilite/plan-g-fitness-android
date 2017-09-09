@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.database.ExerciseContract;
-import com.autilite.plan_g.database.WorkoutDatabase;
 import com.autilite.plan_g.program.BaseExercise;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.util.NumberFormat;
@@ -24,9 +22,7 @@ import com.autilite.plan_g.util.NumberFormat;
  * Created by Kelvin on Sep 8, 2017.
  */
 
-public class EditExerciseStatFragment extends Fragment {
-    private static final String ARG_MODEL_OBJ = "ARG_MODEL_OBJ";
-
+public class EditExerciseStatFragment extends AbstractBaseModelFragment {
     private OnFragmentInteractionListener mListener;
 
     private TextView mEditName;
@@ -38,10 +34,6 @@ public class EditExerciseStatFragment extends Fragment {
     private EditText mEditAutoIncrement;
 
     private BaseExercise baseExercise;
-
-    private Exercise model;
-    private WorkoutDatabase db;
-
 
     public EditExerciseStatFragment() {
     }
@@ -59,20 +51,10 @@ public class EditExerciseStatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new WorkoutDatabase(getContext());
-        if (getArguments() != null) {
-            model = getArguments().getParcelable(ARG_MODEL_OBJ);
-            if (model != null) {
-                long baseExerciseId = model.getBaseExerciseId();
-                baseExercise = db.getBaseExercise(baseExerciseId);
-            }
+        if (model != null) {
+            long baseExerciseId = ((Exercise) model).getBaseExerciseId();
+            baseExercise = db.getBaseExercise(baseExerciseId);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        db.close();
     }
 
     @Nullable

@@ -26,9 +26,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditProgramFragment extends Fragment {
-    private static final String ARG_PROGRAM = "ARG_PROGRAM";
-
+public class EditProgramFragment extends AbstractBaseModelFragment {
     private OnFragmentInteractionListener mListener;
 
     private static final int CHOOSE_WORKOUT = 1;
@@ -40,9 +38,6 @@ public class EditProgramFragment extends Fragment {
     private EditText mEditDescription;
 
     private List<Program.Day> programDays;
-    private Program model;
-
-    private WorkoutDatabase db;
 
     public EditProgramFragment() {
         // Required empty public constructor
@@ -51,7 +46,7 @@ public class EditProgramFragment extends Fragment {
     public static Fragment newInstance(Program program) {
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PROGRAM, program);
+        args.putParcelable(ARG_MODEL_OBJ, program);
 
         EditProgramFragment fragment = new EditProgramFragment();
         fragment.setArguments(args);
@@ -61,17 +56,7 @@ public class EditProgramFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new WorkoutDatabase(getContext());
-        if (getArguments() != null) {
-            model = getArguments().getParcelable(ARG_PROGRAM);
-        }
         programDays = getProgramDayList();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        db.close();
     }
 
     @Override

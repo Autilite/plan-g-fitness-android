@@ -27,9 +27,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditWorkoutFragment extends Fragment {
-    private static final String ARG_WORKOUT = "ARG_WORKOUT";
-
+public class EditWorkoutFragment extends AbstractBaseModelFragment {
     private static final int CREATE_EXERCISE = 1;
     private static final int EDIT_EXERCISE = 2;
 
@@ -37,8 +35,6 @@ public class EditWorkoutFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private AddExerciseAdapter mAdapter;
-
-    private Workout workout;
 
     private EditText mEditName;
     private EditText mEditDescription;
@@ -51,7 +47,7 @@ public class EditWorkoutFragment extends Fragment {
 
     public static EditWorkoutFragment newInstance(Workout workout) {
         Bundle args = new Bundle();
-        args.putParcelable(ARG_WORKOUT, workout);
+        args.putParcelable(ARG_MODEL_OBJ, workout);
 
         EditWorkoutFragment fragment = new EditWorkoutFragment();
         fragment.setArguments(args);
@@ -61,9 +57,6 @@ public class EditWorkoutFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            workout = getArguments().getParcelable(ARG_WORKOUT);
-        }
         exercises = getWorkoutExercises();
     }
 
@@ -75,9 +68,9 @@ public class EditWorkoutFragment extends Fragment {
         mEditName = (EditText) view.findViewById(R.id.input_name);
         mEditDescription = (EditText) view.findViewById(R.id.input_description);
 
-        if (workout != null) {
-            mEditName.setText(workout.getName());
-            mEditDescription.setText(workout.getDescription());
+        if (model != null) {
+            mEditName.setText(model.getName());
+            mEditDescription.setText(model.getDescription());
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -92,8 +85,8 @@ public class EditWorkoutFragment extends Fragment {
     }
 
     private List<Exercise> getWorkoutExercises() {
-        if (workout != null) {
-            return workout.getExercises();
+        if (model != null) {
+            return ((Workout) model).getExercises();
         } else {
             return new ArrayList<>();
         }
