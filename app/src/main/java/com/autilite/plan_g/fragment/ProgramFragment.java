@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.activity.CreateForm;
 import com.autilite.plan_g.activity.EditProgram;
 import com.autilite.plan_g.adapter.ProgramAdapter;
 import com.autilite.plan_g.database.WorkoutDatabase;
@@ -73,13 +74,13 @@ public class ProgramFragment extends Fragment implements ProgramAdapter.IProgram
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_PROGRAM) {
             if (resultCode == Activity.RESULT_OK) {
-                Program program = data.getParcelableExtra(EditProgram.EXTRA_RESULT_PROGRAM);
+                Program program = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
                 programs.add(program);
                 mAdapter.notifyItemInserted(programs.size() - 1);
             }
         } else if (requestCode == EDIT_PROGRAM) {
             if (resultCode == Activity.RESULT_OK) {
-                Program resultProgram = data.getParcelableExtra(EditProgram.EXTRA_RESULT_PROGRAM);
+                Program resultProgram = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
 
                 for (int i = 0; i < programs.size(); i++) {
                     Program curProgram = programs.get(i);

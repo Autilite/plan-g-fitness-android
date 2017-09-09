@@ -1,14 +1,12 @@
 package com.autilite.plan_g.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 import com.autilite.plan_g.fragment.EditExerciseStatFragment;
 import com.autilite.plan_g.program.BaseExercise;
+import com.autilite.plan_g.program.BaseModel;
 import com.autilite.plan_g.program.Exercise;
 
 /**
@@ -16,10 +14,7 @@ import com.autilite.plan_g.program.Exercise;
  */
 
 public class EditExerciseStat extends CreateForm implements EditExerciseStatFragment.OnFragmentInteractionListener {
-
     public static final String EXTRA_EXERCISE = "EXTRA_EXERCISE";
-    public static final String RESULT_ACTION = "com.autilite.plan_g.activity.EditExerciseStat.RESULT_ACTION";
-    public static final String EXTRA_RESULT_EXERCISE = "RESULT_EXERCISE";
 
     private Exercise exercise;
 
@@ -46,7 +41,7 @@ public class EditExerciseStat extends CreateForm implements EditExerciseStatFrag
     }
 
     @Override
-    public boolean onSave(Bundle fields) {
+    public BaseModel onSave(Bundle fields) {
         BaseExercise baseExercise = fields.getParcelable(EditExerciseStatFragment.FIELD_KEY_BASE_EXERCISE);
         String name = fields.getString(EditExerciseStatFragment.FIELD_KEY_NAME);
         String note = fields.getString(EditExerciseStatFragment.FIELD_KEY_DESCRIPTION);
@@ -61,17 +56,7 @@ public class EditExerciseStat extends CreateForm implements EditExerciseStatFrag
         } else {
             exercise = editEntry(baseExercise, sets, reps, weight, autoIncr, restTime);
         }
-        saveSuccessful = exercise != null;
-
-        if (!saveSuccessful) {
-            Toast.makeText(this, R.string.create_exercise_fail, Toast.LENGTH_SHORT).show();
-        } else {
-            Intent result = new Intent(RESULT_ACTION);
-            result.setAction(RESULT_ACTION);
-            result.putExtra(EXTRA_RESULT_EXERCISE, exercise);
-            setResult(Activity.RESULT_OK, result);
-        }
-        return saveSuccessful;
+        return exercise;
     }
 
     private Exercise insertNewEntry(BaseExercise baseExercise, int sets, int reps, double weight, double autoIncr, int restTime) {

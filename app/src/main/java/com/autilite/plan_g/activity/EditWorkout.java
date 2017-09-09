@@ -1,7 +1,5 @@
 package com.autilite.plan_g.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -9,6 +7,7 @@ import android.widget.Toast;
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 import com.autilite.plan_g.fragment.EditWorkoutFragment;
+import com.autilite.plan_g.program.BaseModel;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Workout;
 
@@ -20,9 +19,6 @@ import java.util.List;
 
 public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFragmentInteractionListener {
     public static final String EXTRA_WORKOUT = "EXTRA_WORKOUT";
-
-    public static final String RESULT_ACTION = "com.autilite.plan_g.activity.EditWorkout.RESULT_ACTION";
-    public static final String EXTRA_RESULT_WORKOUT = "RESULT_WORKOUT";
 
     private Workout workout;
 
@@ -51,7 +47,7 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
     }
 
     @Override
-    public boolean onSave(Bundle fields) {
+    public BaseModel onSave(Bundle fields) {
         String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
         String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
         List<Exercise> exercises = fields.getParcelableArrayList(EditWorkoutFragment.FIELD_KEY_EXERCISES);
@@ -61,17 +57,7 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
         } else {
             workout = editEntry(workout.getId(), name, description, exercises);
         }
-        saveSuccessful = workout != null;
-
-        if (!saveSuccessful) {
-            Toast.makeText(this, R.string.create_workout_fail, Toast.LENGTH_SHORT).show();
-        } else {
-            Intent result = new Intent(RESULT_ACTION);
-            result.setAction(RESULT_ACTION);
-            result.putExtra(EXTRA_RESULT_WORKOUT, workout);
-            setResult(Activity.RESULT_OK, result);
-        }
-        return saveSuccessful;
+        return workout;
     }
 
     private Workout insertNewEntry(String name, String description, List<Exercise> exercises) {

@@ -1,6 +1,8 @@
 package com.autilite.plan_g.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.database.WorkoutDatabase;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
+import com.autilite.plan_g.program.BaseModel;
 
 /**
  * Created by Kelvin on Jul 21, 2017.
@@ -24,11 +27,13 @@ import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 
 public abstract class CreateForm extends AppCompatActivity implements AbstractBaseModelFragment.OnFragmentInteractionListener {
 
+    public static final String RESULT_ACTION = "com.autilite.plan_g.activity.CreateForm.RESULT_ACTION";
+    public static final String EXTRA_RESULT_MODEL = "EXTRA_RESULT_MODEL";
+
     protected AbstractBaseModelFragment contentFragment;
 
     protected WorkoutDatabase db;
 
-    protected boolean saveSuccessful;
     protected Type formType;
 
     protected enum Type {
@@ -123,15 +128,24 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
     }
 
     /**
-     * Request the <code>AbstractBaseModelFragment</code> to pass its form data to its observers.
-     * When this is called, any extending activity to this class should have a mechanism to save
-     * the received data.
+     * Retrieve the form data from <code>AbstractBaseModelFragment</code> and set it as the
+     * Activity result
      *
      * @return  true if the save was successful.
      *          false otherwise
      */
     protected boolean onSavePressed() {
-        contentFragment.passData();
+        BaseModel model = contentFragment.getSavedModel();
+
+        boolean saveSuccessful = model != null;
+
+        if (!saveSuccessful) {
+            Toast.makeText(this, R.string.create_form_fail, Toast.LENGTH_SHORT).show();
+        } else {
+            Intent result = new Intent(RESULT_ACTION);
+            result.putExtra(EXTRA_RESULT_MODEL, model);
+            setResult(Activity.RESULT_OK, result);
+        }
         return saveSuccessful;
     }
 

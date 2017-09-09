@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.activity.CreateForm;
 import com.autilite.plan_g.activity.EditWorkout;
 import com.autilite.plan_g.adapter.WorkoutAdapter;
 import com.autilite.plan_g.database.WorkoutDatabase;
@@ -71,13 +72,13 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkout
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
-                Workout workout = data.getParcelableExtra(EditWorkout.EXTRA_RESULT_WORKOUT);
+                Workout workout = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
                 workouts.add(workout);
                 mAdapter.notifyItemInserted(workouts.size() - 1);
             }
         } else if (requestCode == EDIT_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
-                Workout resultWorkout = data.getParcelableExtra(EditWorkout.EXTRA_RESULT_WORKOUT);
+                Workout resultWorkout = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
 
                 updateWorkout(resultWorkout);
             }

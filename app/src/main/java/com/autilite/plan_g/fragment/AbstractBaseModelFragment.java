@@ -48,11 +48,12 @@ public abstract class AbstractBaseModelFragment extends Fragment {
     /**
      * This method is called to send the model data to any observers
      */
-    public void passData(){
+    public BaseModel getSavedModel(){
         fields = saveData();
         if (mListener != null && fields != null) {
-            mListener.onSave(fields);
+            return mListener.onSave(fields);
         }
+        return null;
     }
 
     /**
@@ -81,7 +82,7 @@ public abstract class AbstractBaseModelFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        boolean onSave(Bundle fields);
+        BaseModel onSave(Bundle fields);
     }
 
 }

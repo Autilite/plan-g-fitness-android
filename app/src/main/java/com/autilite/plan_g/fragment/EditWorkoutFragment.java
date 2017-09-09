@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.activity.CreateForm;
 import com.autilite.plan_g.activity.EditExerciseStat;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Workout;
@@ -93,13 +94,13 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_EXERCISE) {
             if (resultCode == Activity.RESULT_OK) {
-                Exercise e = data.getParcelableExtra(EditExerciseStat.EXTRA_RESULT_EXERCISE);
+                Exercise e = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
                 exercises.add(e);
                 mAdapter.notifyExerciseInserted(exercises.size() - 1);
             }
         } else if (requestCode == EDIT_EXERCISE) {
             if (resultCode == Activity.RESULT_OK) {
-                Exercise e = data.getParcelableExtra(EditExerciseStat.EXTRA_RESULT_EXERCISE);
+                Exercise e = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
                 // Traversing through the entire exercise list is okay because the usual
                 // length of a single workout should not be very high
                 // As such, we don't need to worry about performance
