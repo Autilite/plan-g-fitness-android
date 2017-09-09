@@ -2,6 +2,7 @@ package com.autilite.plan_g.fragment;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,13 +27,18 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditWorkoutFragment extends AbstractFormFragment {
+public class EditWorkoutFragment extends Fragment {
+    private static final String ARG_WORKOUT = "ARG_WORKOUT";
 
     private static final int CREATE_EXERCISE = 1;
     private static final int EDIT_EXERCISE = 2;
 
+    private OnFragmentInteractionListener mListener;
+
     private RecyclerView mRecyclerView;
     private AddExerciseAdapter mAdapter;
+
+    private Workout workout;
 
     private EditText mEditName;
     private EditText mEditDescription;
@@ -45,7 +51,7 @@ public class EditWorkoutFragment extends AbstractFormFragment {
 
     public static EditWorkoutFragment newInstance(Workout workout) {
         Bundle args = new Bundle();
-        args.putParcelable(ARG_MODEL_OBJ, workout);
+        args.putParcelable(ARG_WORKOUT, workout);
 
         EditWorkoutFragment fragment = new EditWorkoutFragment();
         fragment.setArguments(args);
@@ -55,6 +61,9 @@ public class EditWorkoutFragment extends AbstractFormFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            workout = getArguments().getParcelable(ARG_WORKOUT);
+        }
         exercises = getWorkoutExercises();
     }
 
@@ -66,9 +75,9 @@ public class EditWorkoutFragment extends AbstractFormFragment {
         mEditName = (EditText) view.findViewById(R.id.input_name);
         mEditDescription = (EditText) view.findViewById(R.id.input_description);
 
-        if (getFormType() == Type.EDIT) {
-            mEditName.setText(model.getName());
-            mEditDescription.setText(model.getDescription());
+        if (workout != null) {
+            mEditName.setText(workout.getName());
+            mEditDescription.setText(workout.getDescription());
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -83,8 +92,7 @@ public class EditWorkoutFragment extends AbstractFormFragment {
     }
 
     private List<Exercise> getWorkoutExercises() {
-        if (getFormType() == Type.EDIT) {
-            Workout workout = (Workout) model;
+        if (workout != null) {
             return workout.getExercises();
         } else {
             return new ArrayList<>();
@@ -118,48 +126,40 @@ public class EditWorkoutFragment extends AbstractFormFragment {
     }
 
     @Override
-    protected BaseModel insertNewEntry() {
-        name = mEditName.getText().toString();
-        String description = mEditDescription.getText().toString();
-
-        if (name.equals("")) {
-            return null;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
-        id = db.createWorkout(name, description);
-        if (id == -1) {
-            return null;
-        }
-        Workout workout = new Workout(id, name, description);
-
-        for (Exercise e : exercises) {
-            long rowId = db.addExerciseToWorkout(id, e.getId());
-            if (rowId != -1) {
-                workout.addExercise(e);
-            } else {
-                String s = String.format(getString(R.string.add_workout_exercise_fail), e.getName());
-                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        return workout;
     }
 
     @Override
-    protected BaseModel editEntry() {
-        name = mEditName.getText().toString();
-        String description = mEditDescription.getText().toString();
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
-        if (name.equals("")) {
-            return null;
+    public void passData() {
+        if (mListener != null) {
+            mListener.onWorkoutSave(mEditName.getText().toString(), mEditDescription.getText().toString(), exercises);
         }
+    }
 
-        if (db.updateWorkout(id, name, description, exercises)) {
-            Workout workout = new Workout(id, name, description);
-            workout.setExercises(exercises);
-            return workout;
-        } else {
-            return null;
-        }
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        boolean onWorkoutSave(String name, String description, List<Exercise> exercises);
     }
 
     public class AddExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

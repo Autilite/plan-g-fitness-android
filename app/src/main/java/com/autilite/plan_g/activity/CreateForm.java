@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -15,7 +16,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
-import com.autilite.plan_g.fragment.AbstractFormFragment;
 
 /**
  * Created by Kelvin on Jul 21, 2017.
@@ -23,7 +23,7 @@ import com.autilite.plan_g.fragment.AbstractFormFragment;
 
 public abstract class CreateForm extends AppCompatActivity {
 
-    protected AbstractFormFragment contentFragment;
+    protected Fragment contentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public abstract class CreateForm extends AppCompatActivity {
         DrawableCompat.setTint(drawable, color);
     }
 
-    protected abstract AbstractFormFragment createContentFragment();
+    protected abstract Fragment createContentFragment();
 
     protected void showDeleteFormDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

@@ -53,7 +53,7 @@ public class EditExerciseStat extends CreateForm {
 
     @Override
     protected boolean saveForm() {
-        BaseModel model = contentFragment.save();
+        BaseModel model = ((AbstractFormFragment) contentFragment).save();
         boolean isSuccess = model != null;
         if (!isSuccess) {
             Toast.makeText(this, R.string.create_exercise_fail, Toast.LENGTH_SHORT).show();
