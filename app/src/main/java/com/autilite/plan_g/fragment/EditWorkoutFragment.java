@@ -112,6 +112,8 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
                         break;
                     }
                 }
+            } else if (resultCode == CreateForm.RESULT_DELETED) {
+                // TODO
             }
         }
     }

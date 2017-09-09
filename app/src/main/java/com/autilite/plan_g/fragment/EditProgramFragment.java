@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.activity.ChooseWorkouts;
+import com.autilite.plan_g.activity.CreateForm;
 import com.autilite.plan_g.program.Program;
 import com.autilite.plan_g.program.Workout;
 
@@ -94,6 +95,8 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
                 // At the moment, the adapter does not use the list of IDs for drawing the View
                 // Because of this, we don't need to notify the adapter that the data has changed
 //                mAdapter.notifyDayChanged(day);
+            } else if (resultCode == CreateForm.RESULT_DELETED) {
+                // TODO
             }
         }
     }

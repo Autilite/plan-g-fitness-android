@@ -81,6 +81,8 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkout
                 Workout resultWorkout = data.getParcelableExtra(CreateForm.EXTRA_RESULT_MODEL);
 
                 updateWorkout(resultWorkout);
+            } else if (resultCode == CreateForm.RESULT_DELETED) {
+                // TODO
             }
         }
     }

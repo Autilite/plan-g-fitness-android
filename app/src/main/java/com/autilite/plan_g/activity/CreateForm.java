@@ -35,6 +35,8 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.CreateForm.RESULT_ACTION";
     public static final String EXTRA_RESULT_MODEL = "EXTRA_RESULT_MODEL";
 
+    public static final int RESULT_DELETED = -2;
+
     protected AbstractBaseModelFragment contentFragment;
 
     protected WorkoutDatabase db;
@@ -103,7 +105,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.create_form:
-                if (onSavePressed()) {
+                if (onSave()) {
                     finish();
                 }
                 return true;
@@ -126,7 +128,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (onDeleteEntryCallback()) {
+                        if (onDelete()) {
                             finish();
                         } else {
                             Toast.makeText(CreateForm.this, R.string.form_delete_failed, Toast.LENGTH_LONG).show();
@@ -149,7 +151,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
      * @return  true if the save was successful.
      *          false otherwise
      */
-    protected boolean onSavePressed() {
+    protected boolean onSave() {
         BaseModel model = contentFragment.getBaseModel();
 
         boolean saveSuccessful = model != null;
@@ -162,6 +164,42 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
             setResult(Activity.RESULT_OK, result);
         }
         return saveSuccessful;
+    }
+
+    /**
+     * Delete the entry
+     *
+     * @return  true if the entry content is deleted successfully
+     *          false otherwise
+     */
+    protected boolean onDelete() {
+        if (formType == Type.CREATE) {
+            // Since the form has yet to be saved, we can just return true and finish the activity
+            return true;
+        } else if (formType == Type.EDIT) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null && extras.containsKey(EXTRA_BASE_MODEL)) {
+                BaseModel model = getIntent().getParcelableExtra(EXTRA_BASE_MODEL);
+
+                boolean deleteSuccess = onDeleteEntry(model);
+                if (deleteSuccess) {
+                    setDeletedResult();
+                }
+                return deleteSuccess;
+            } else {
+                Log.w(TAG, "There is no model to delete");
+                return false;
+            }
+        } else {
+            Log.w(TAG, "Unknown form type");
+            // Return false so the activity does not close on fail
+            return false;
+        }
+    }
+
+    private void setDeletedResult() {
+        Intent result = new Intent(RESULT_ACTION);
+        setResult(RESULT_DELETED, result);
     }
 
     @Override
@@ -184,11 +222,6 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
 
     protected abstract BaseModel editEntry(Bundle fields);
 
-    /**
-     * The function called to for deleting the entry for the form
-     *
-     * @return  true if the entry content is deleted successfully
-     *          false otherwise
-     */
-    protected abstract boolean onDeleteEntryCallback();
+    protected abstract boolean onDeleteEntry(@NonNull BaseModel model);
+
 }

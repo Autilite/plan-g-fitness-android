@@ -40,7 +40,7 @@ public class EditWorkout extends CreateForm {
     }
 
     @Override
-    protected boolean onDeleteEntryCallback() {
+    protected boolean onDeleteEntry(@NonNull BaseModel model) {
         return false;
     }
 
