@@ -46,23 +46,23 @@ public abstract class AbstractBaseModelFragment extends Fragment {
     }
 
     /**
-     * This method is called to send the model data to any observers
+     * Call this method to send the model to the context
      */
-    public BaseModel getSavedModel(){
-        fields = saveData();
+    public BaseModel getBaseModel(){
+        fields = getBundledFormData();
         if (mListener != null && fields != null) {
-            return mListener.onSave(fields);
+            return mListener.onRetrieveFormData(fields);
         }
         return null;
     }
 
     /**
-     * The function called to save the form data
+     * The function called to get the form data
      *
      * @return  bundle with all the form parameters
      *          null if not all fields are prepared
      */
-    protected abstract Bundle saveData();
+    protected abstract Bundle getBundledFormData();
 
     @Override
     public void onAttach(Context context) {
@@ -82,7 +82,7 @@ public abstract class AbstractBaseModelFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        BaseModel onSave(Bundle fields);
+        BaseModel onRetrieveFormData(Bundle fields);
     }
 
 }

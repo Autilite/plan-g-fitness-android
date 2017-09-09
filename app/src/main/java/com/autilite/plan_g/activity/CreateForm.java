@@ -150,7 +150,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
      *          false otherwise
      */
     protected boolean onSavePressed() {
-        BaseModel model = contentFragment.getSavedModel();
+        BaseModel model = contentFragment.getBaseModel();
 
         boolean saveSuccessful = model != null;
 
@@ -165,7 +165,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
     }
 
     @Override
-    public BaseModel onSave(Bundle fields) {
+    public BaseModel onRetrieveFormData(Bundle fields) {
         if (formType == Type.CREATE) {
             return insertNewEntry(fields);
         } else if (formType == Type.EDIT) {

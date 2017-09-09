@@ -127,7 +127,7 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
     }
 
     @Override
-    protected Bundle saveData() {
+    protected Bundle getBundledFormData() {
         if (baseExercise == null) {
             return null;
         }

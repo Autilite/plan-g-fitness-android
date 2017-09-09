@@ -109,7 +109,7 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
     }
 
     @Override
-    protected Bundle saveData() {
+    protected Bundle getBundledFormData() {
         Bundle bundle = new Bundle();
         bundle.putString(FIELD_KEY_NAME, mEditName.getText().toString());
         bundle.putString(FIELD_KEY_DESCRIPTION, mEditDescription.getText().toString());
