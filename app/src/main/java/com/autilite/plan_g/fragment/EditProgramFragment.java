@@ -2,7 +2,6 @@ package com.autilite.plan_g.fragment;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,7 +25,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class EditProgramFragment extends AbstractBaseModelFragment {
-    private OnFragmentInteractionListener mListener;
+    public static final String FIELD_KEY_PROGRAM_DAYS = "FIELD_KEY_PROGRAM_DAYS";
 
     private static final int CHOOSE_WORKOUT = 1;
 
@@ -110,41 +109,12 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void passData() {
-        if (mListener != null) {
-            mListener.onProgramSave(mEditName.getText().toString(), mEditDescription.getText().toString(), programDays);
-        }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        boolean onProgramSave(String name, String description, List<Program.Day> programDays);
+    protected Bundle saveData() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FIELD_KEY_NAME, mEditName.getText().toString());
+        bundle.putString(FIELD_KEY_DESCRIPTION, mEditDescription.getText().toString());
+        bundle.putParcelableArrayList(FIELD_KEY_PROGRAM_DAYS, new ArrayList<>(programDays));
+        return bundle;
     }
 
     public class AddWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

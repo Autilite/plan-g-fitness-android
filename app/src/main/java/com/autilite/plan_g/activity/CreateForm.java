@@ -22,7 +22,7 @@ import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
  * Created by Kelvin on Jul 21, 2017.
  */
 
-public abstract class CreateForm extends AppCompatActivity {
+public abstract class CreateForm extends AppCompatActivity implements AbstractBaseModelFragment.OnFragmentInteractionListener {
 
     protected AbstractBaseModelFragment contentFragment;
 

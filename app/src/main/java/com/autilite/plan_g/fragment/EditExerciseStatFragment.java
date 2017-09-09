@@ -1,6 +1,5 @@
 package com.autilite.plan_g.fragment;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -23,7 +22,12 @@ import com.autilite.plan_g.util.NumberFormat;
  */
 
 public class EditExerciseStatFragment extends AbstractBaseModelFragment {
-    private OnFragmentInteractionListener mListener;
+    public static final String FIELD_KEY_BASE_EXERCISE = "FIELD_KEY_BASE_EXERCISE";
+    public static final String FIELD_KEY_SETS = "FIELD_KEY_SETS";
+    public static final String FIELD_KEY_REPS = "FIELD_KEY_REPS";
+    public static final String FIELD_KEY_WEIGHT = "FIELD_KEY_WEIGHT";
+    public static final String FIELD_KEY_AUTO_INCR = "FIELD_KEY_AUTO_INCR";
+    public static final String FIELD_KEY_REST_TIMER = "FIELD_KEY_REST_TIMER";
 
     private TextView mEditName;
     private EditText mEditNote;
@@ -123,45 +127,36 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    protected Bundle saveData() {
+        if (baseExercise == null) {
+            return null;
         }
-    }
+        String note = mEditNote.getText().toString();
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+        String sSets = mEditSets.getText().toString();
+        String sReps = mEditReps.getText().toString();
+        String sWeight = mEditWeight.getText().toString();
+        String sAutoIncr = mEditAutoIncrement.getText().toString();
+        String sRestTime = mEditRestTime.getText().toString();
+        // TODO place EditText watcher on form views
+        // For now, assume UI correctly sanitizes the input
 
-    @Override
-    public void passData() {
-        if (mListener != null) {
-            String sets = mEditSets.getText().toString();
-            String reps = mEditReps.getText().toString();
-            String weight = mEditWeight.getText().toString();
-            String autoIncrement = mEditAutoIncrement.getText().toString();
-            String restTime = mEditRestTime.getText().toString();
-            // TODO place EditText watcher on form views
-            // For now, assume UI correctly sanitizes the input
+        // TODO get default values
+        int sets = NumberFormat.parseInt(sSets, 5);
+        int reps = NumberFormat.parseInt(sReps, 5);
+        double weight = NumberFormat.parseDouble(sWeight, 0);
+        double autoIncr = NumberFormat.parseDouble(sAutoIncr, 0);
+        int restTime = NumberFormat.parseInt(sRestTime, 90);
 
-            // TODO get default values
-            int wSets = NumberFormat.parseInt(sets, 5);
-            int wReps = NumberFormat.parseInt(reps, 5);
-            double wWeight = NumberFormat.parseDouble(weight, 0);
-            double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
-            int wRestTime = NumberFormat.parseInt(restTime, 90);
-
-            mListener.onExerciseSave(baseExercise, "", wSets, wReps, wWeight, wAutoInc, wRestTime);
-        }
-    }
-
-    public interface OnFragmentInteractionListener {
-        boolean onExerciseSave(BaseExercise baseExercise, String note, int sets, int reps, double weight, double autoIncr, int restTime);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(FIELD_KEY_BASE_EXERCISE, baseExercise);
+        bundle.putString(FIELD_KEY_NAME, baseExercise.getName());
+        bundle.putString(FIELD_KEY_DESCRIPTION, note);
+        bundle.putInt(FIELD_KEY_SETS, sets);
+        bundle.putInt(FIELD_KEY_REPS, reps);
+        bundle.putDouble(FIELD_KEY_WEIGHT, weight);
+        bundle.putDouble(FIELD_KEY_AUTO_INCR, autoIncr);
+        bundle.putInt(FIELD_KEY_REST_TIMER, restTime);
+        return bundle;
     }
 }

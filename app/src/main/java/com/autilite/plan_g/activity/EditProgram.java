@@ -2,6 +2,7 @@ package com.autilite.plan_g.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
@@ -16,7 +17,7 @@ import java.util.List;
  * Created by Kelvin on Jul 25, 2017.
  */
 
-public class EditProgram extends CreateForm implements EditProgramFragment.OnFragmentInteractionListener {
+public class EditProgram extends CreateForm {
     public static final String EXTRA_PROGRAM = "EXTRA_PROGRAM";
 
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.EditProgram.RESULT_ACTION";
@@ -44,7 +45,11 @@ public class EditProgram extends CreateForm implements EditProgramFragment.OnFra
     }
 
     @Override
-    public boolean onProgramSave(String name, String description, List<Program.Day> programDays) {
+    public boolean onSave(Bundle fields) {
+        String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
+        String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
+        List<Program.Day> programDays = fields.getParcelableArrayList(EditProgramFragment.FIELD_KEY_PROGRAM_DAYS);
+
         if (formType == Type.CREATE) {
             program = insertNewEntry(name, description, programDays);
         } else {

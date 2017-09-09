@@ -2,6 +2,7 @@ package com.autilite.plan_g.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
@@ -45,7 +46,16 @@ public class EditExerciseStat extends CreateForm implements EditExerciseStatFrag
     }
 
     @Override
-    public boolean onExerciseSave(BaseExercise baseExercise, String note, int sets, int reps, double weight, double autoIncr, int restTime) {
+    public boolean onSave(Bundle fields) {
+        BaseExercise baseExercise = fields.getParcelable(EditExerciseStatFragment.FIELD_KEY_BASE_EXERCISE);
+        String name = fields.getString(EditExerciseStatFragment.FIELD_KEY_NAME);
+        String note = fields.getString(EditExerciseStatFragment.FIELD_KEY_DESCRIPTION);
+        int sets = fields.getInt(EditExerciseStatFragment.FIELD_KEY_SETS);
+        int reps = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS);
+        double weight = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_WEIGHT);
+        double autoIncr = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_AUTO_INCR);
+        int restTime = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REST_TIMER);
+
         if (formType == Type.CREATE) {
             exercise = insertNewEntry(baseExercise, sets, reps, weight, autoIncr, restTime);
         } else {
@@ -63,7 +73,6 @@ public class EditExerciseStat extends CreateForm implements EditExerciseStatFrag
         }
         return saveSuccessful;
     }
-
 
     private Exercise insertNewEntry(BaseExercise baseExercise, int sets, int reps, double weight, double autoIncr, int restTime) {
         long id = db.createExercise(baseExercise.getId(), sets, reps, weight, autoIncr, restTime);

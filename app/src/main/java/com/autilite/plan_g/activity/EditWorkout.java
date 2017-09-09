@@ -51,7 +51,11 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
     }
 
     @Override
-    public boolean onWorkoutSave(String name, String description, List<Exercise> exercises) {
+    public boolean onSave(Bundle fields) {
+        String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
+        String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
+        List<Exercise> exercises = fields.getParcelableArrayList(EditWorkoutFragment.FIELD_KEY_EXERCISES);
+
         if (formType == Type.CREATE) {
             workout = insertNewEntry(name, description, exercises);
         } else {
