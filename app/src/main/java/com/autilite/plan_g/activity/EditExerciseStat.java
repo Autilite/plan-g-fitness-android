@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.database.ExerciseContract;
 import com.autilite.plan_g.fragment.AbstractFormFragment;
+import com.autilite.plan_g.program.BaseExercise;
 import com.autilite.plan_g.program.BaseModel;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.util.NumberFormat;
@@ -75,7 +76,7 @@ public class EditExerciseStat extends CreateForm {
         private EditText mEditWeight;
         private EditText mEditAutoIncrement;
 
-        private long baseExerciseId;
+        private BaseExercise baseExercise;
 
 
         public EditExerciseStatFragment() {
@@ -95,7 +96,8 @@ public class EditExerciseStat extends CreateForm {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             if (model != null) {
-                baseExerciseId = ((Exercise) model).getBaseExerciseId();
+                long baseExerciseId = ((Exercise) model).getBaseExerciseId();
+                baseExercise = db.getBaseExercise(baseExerciseId);
             }
         }
 
@@ -131,9 +133,12 @@ public class EditExerciseStat extends CreateForm {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             cursor.moveToPosition(i);
-                            baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry._ID));
-                            name = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_NAME));
+                            long baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry._ID));
+                            String name = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_NAME));
+                            String description = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_DESCRIPTION));
                             cursor.close();
+
+                            baseExercise = new BaseExercise(baseExerciseId, name, description);
 
                             mEditName.setText(name);
                         }
@@ -178,9 +183,9 @@ public class EditExerciseStat extends CreateForm {
             double wAutoInc = NumberFormat.parseDouble(autoIncrement, 0);
             int wRestTime = NumberFormat.parseInt(restTime, 90);
 
-            id = db.createExercise(baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+            id = db.createExercise(baseExercise.getId(), wSets, wReps, wWeight, wAutoInc, wRestTime);
             if (id != -1) {
-                return new Exercise(id, name, "", baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+                return new Exercise(id, baseExercise.getName(), "", baseExercise.getId(), wSets, wReps, wWeight, wAutoInc, wRestTime);
             }
             return null;
         }
@@ -203,9 +208,9 @@ public class EditExerciseStat extends CreateForm {
             int wRestTime = NumberFormat.parseInt(restTime, 90);
 
             int numRowsUpdate = db.updateExercise(
-                    id, baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+                    id, baseExercise.getId(), wSets, wReps, wWeight, wAutoInc, wRestTime);
             if (numRowsUpdate == 1) {
-                return new Exercise(id, name, "", baseExerciseId, wSets, wReps, wWeight, wAutoInc, wRestTime);
+                return new Exercise(id, baseExercise.getName(), "", baseExercise.getId(), wSets, wReps, wWeight, wAutoInc, wRestTime);
             }
             return null;
         }
