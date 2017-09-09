@@ -119,8 +119,8 @@ public class ChooseWorkouts extends AppCompatActivity {
         }
 
         @Override
-        public void onDestroyView() {
-            super.onDestroyView();
+        public void onDestroy() {
+            super.onDestroy();
             db.close();
         }
 
