@@ -100,7 +100,7 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkout
     @Override
     public void onWorkoutSelect(Workout workout) {
         Intent intent = new Intent(getContext(), EditWorkout.class);
-        intent.putExtra(EditWorkout.EXTRA_WORKOUT, workout);
+        intent.putExtra(EditWorkout.EXTRA_BASE_MODEL, workout);
         startActivityForResult(intent, EDIT_WORKOUT);
     }
 }

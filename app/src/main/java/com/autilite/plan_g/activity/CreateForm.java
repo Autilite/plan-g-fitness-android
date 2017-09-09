@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -28,6 +29,8 @@ import com.autilite.plan_g.program.BaseModel;
 
 public abstract class CreateForm extends AppCompatActivity implements AbstractBaseModelFragment.OnFragmentInteractionListener {
     private static final String TAG = CreateForm.class.getName();
+
+    public static final String EXTRA_BASE_MODEL = "EXTRA_BASE_MODEL";
 
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.CreateForm.RESULT_ACTION";
     public static final String EXTRA_RESULT_MODEL = "EXTRA_RESULT_MODEL";
@@ -73,6 +76,18 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
         db.close();
     }
 
+    protected AbstractBaseModelFragment createContentFragment(){
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey(EXTRA_BASE_MODEL)) {
+            formType = Type.EDIT;
+            BaseModel model = getIntent().getParcelableExtra(EXTRA_BASE_MODEL);
+            return getEditModelInstance(model);
+        } else {
+            formType = Type.CREATE;
+            return getCreateModelInstance();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_create_form, menu);
@@ -104,8 +119,6 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
         int color = ContextCompat.getColor(this, colorResId);
         DrawableCompat.setTint(drawable, color);
     }
-
-    protected abstract AbstractBaseModelFragment createContentFragment();
 
     protected void showDeleteFormDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -162,6 +175,10 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
             return null;
         }
     }
+
+    protected abstract AbstractBaseModelFragment getCreateModelInstance();
+
+    protected abstract AbstractBaseModelFragment getEditModelInstance(@NonNull BaseModel model);
 
     protected abstract BaseModel insertNewEntry(Bundle fields);
 

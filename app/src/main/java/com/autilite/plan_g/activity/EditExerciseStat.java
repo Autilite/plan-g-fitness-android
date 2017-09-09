@@ -1,6 +1,7 @@
 package com.autilite.plan_g.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
@@ -14,25 +15,22 @@ import com.autilite.plan_g.program.Exercise;
  */
 
 public class EditExerciseStat extends CreateForm {
-    public static final String EXTRA_EXERCISE = "EXTRA_EXERCISE";
-
     private Exercise exercise;
 
     public EditExerciseStat() {
     }
 
     @Override
-    protected AbstractBaseModelFragment createContentFragment() {
-        if (getIntent().getExtras() != null) {
-            setTitle(R.string.edit_exercise);
-            formType = Type.EDIT;
-            exercise = getIntent().getParcelableExtra(EXTRA_EXERCISE);
-            return EditExerciseStatFragment.newInstance(exercise);
-        } else {
-            setTitle(R.string.create_exercise);
-            formType = Type.CREATE;
-            return EditExerciseStatFragment.newInstance(null);
-        }
+    protected AbstractBaseModelFragment getCreateModelInstance() {
+        setTitle(R.string.create_exercise);
+        return EditExerciseStatFragment.newInstance(null);
+    }
+
+    @Override
+    protected AbstractBaseModelFragment getEditModelInstance(@NonNull BaseModel model) {
+        setTitle(R.string.edit_exercise);
+        exercise = (Exercise) model;
+        return EditExerciseStatFragment.newInstance(exercise);
     }
 
     @Override

@@ -238,7 +238,7 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
                         } else {
                             // Start activity to edit the existing exercise
                             Intent intent = new Intent(getActivity(), EditExerciseStat.class);
-                            intent.putExtra(EditExerciseStat.EXTRA_EXERCISE, exercise);
+                            intent.putExtra(EditExerciseStat.EXTRA_BASE_MODEL, exercise);
                             startActivityForResult(intent, EDIT_EXERCISE);
                         }
                     }

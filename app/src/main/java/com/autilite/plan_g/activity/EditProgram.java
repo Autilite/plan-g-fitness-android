@@ -1,6 +1,7 @@
 package com.autilite.plan_g.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
@@ -16,22 +17,19 @@ import java.util.List;
  */
 
 public class EditProgram extends CreateForm {
-    public static final String EXTRA_PROGRAM = "EXTRA_PROGRAM";
-
     private Program program;
 
     @Override
-    protected AbstractBaseModelFragment createContentFragment() {
-        if (getIntent().getExtras() != null) {
-            setTitle(R.string.edit_program);
-            formType = Type.EDIT;
-            program = getIntent().getParcelableExtra(EXTRA_PROGRAM);
-            return EditProgramFragment.newInstance(program);
-        } else {
-            setTitle(R.string.create_program);
-            formType = Type.CREATE;
-            return EditProgramFragment.newInstance(null);
-        }
+    protected AbstractBaseModelFragment getCreateModelInstance() {
+        setTitle(R.string.create_program);
+        return EditProgramFragment.newInstance(null);
+    }
+
+    @Override
+    protected AbstractBaseModelFragment getEditModelInstance(@NonNull BaseModel model) {
+        setTitle(R.string.edit_program);
+        program = (Program) model;
+        return EditProgramFragment.newInstance(program);
     }
 
     @Override

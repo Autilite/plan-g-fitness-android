@@ -97,7 +97,7 @@ public class ProgramFragment extends Fragment implements ProgramAdapter.IProgram
     @Override
     public void onProgramSelect(Program program) {
         Intent intent = new Intent(getContext(), EditProgram.class);
-        intent.putExtra(EditProgram.EXTRA_PROGRAM, program);
+        intent.putExtra(EditProgram.EXTRA_BASE_MODEL, program);
         startActivityForResult(intent, EDIT_PROGRAM);
 
     }

@@ -1,6 +1,7 @@
 package com.autilite.plan_g.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
@@ -18,8 +19,6 @@ import java.util.List;
  */
 
 public class EditWorkout extends CreateForm {
-    public static final String EXTRA_WORKOUT = "EXTRA_WORKOUT";
-
     private Workout workout;
 
     @Override
@@ -28,17 +27,16 @@ public class EditWorkout extends CreateForm {
     }
 
     @Override
-    protected AbstractBaseModelFragment createContentFragment() {
-        if (getIntent().getExtras() != null) {
-            setTitle(R.string.edit_workout_title);
-            formType = Type.EDIT;
-            workout = getIntent().getParcelableExtra(EXTRA_WORKOUT);
-            return EditWorkoutFragment.newInstance(workout);
-        } else {
-            setTitle(R.string.create_workout_title);
-            formType = Type.CREATE;
-            return EditWorkoutFragment.newInstance(null);
-        }
+    protected AbstractBaseModelFragment getCreateModelInstance() {
+        setTitle(R.string.create_workout_title);
+        return EditWorkoutFragment.newInstance(null);
+    }
+
+    @Override
+    protected AbstractBaseModelFragment getEditModelInstance(@NonNull BaseModel model) {
+        setTitle(R.string.edit_workout_title);
+        workout = (Workout) model;
+        return EditWorkoutFragment.newInstance(workout);
     }
 
     @Override
