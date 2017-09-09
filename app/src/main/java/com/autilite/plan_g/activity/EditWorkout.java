@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 import com.autilite.plan_g.fragment.EditWorkoutFragment;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Workout;
@@ -32,7 +32,7 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
     }
 
     @Override
-    protected Fragment createContentFragment() {
+    protected AbstractBaseModelFragment createContentFragment() {
         if (getIntent().getExtras() != null) {
             setTitle(R.string.edit_workout_title);
             formType = Type.EDIT;
@@ -67,14 +67,6 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
             result.putExtra(EXTRA_RESULT_WORKOUT, workout);
             setResult(Activity.RESULT_OK, result);
         }
-        return saveSuccessful;
-    }
-
-    @Override
-    protected boolean saveForm() {
-        // Get data from fragment
-        EditWorkoutFragment f = (EditWorkoutFragment) contentFragment;
-        f.passData();
         return saveSuccessful;
     }
 

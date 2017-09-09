@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.activity.ChooseWorkouts;
-import com.autilite.plan_g.database.WorkoutDatabase;
 import com.autilite.plan_g.program.Program;
 import com.autilite.plan_g.program.Workout;
 
@@ -43,7 +42,7 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
         // Required empty public constructor
     }
 
-    public static Fragment newInstance(Program program) {
+    public static EditProgramFragment newInstance(Program program) {
 
         Bundle args = new Bundle();
         args.putParcelable(ARG_MODEL_OBJ, program);
@@ -127,6 +126,7 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
         mListener = null;
     }
 
+    @Override
     public void passData() {
         if (mListener != null) {
             mListener.onProgramSave(mEditName.getText().toString(), mEditDescription.getText().toString(), programDays);

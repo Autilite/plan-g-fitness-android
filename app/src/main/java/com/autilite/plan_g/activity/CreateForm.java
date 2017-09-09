@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.database.WorkoutDatabase;
+import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 
 /**
  * Created by Kelvin on Jul 21, 2017.
@@ -24,7 +24,7 @@ import com.autilite.plan_g.database.WorkoutDatabase;
 
 public abstract class CreateForm extends AppCompatActivity {
 
-    protected Fragment contentFragment;
+    protected AbstractBaseModelFragment contentFragment;
 
     protected WorkoutDatabase db;
 
@@ -81,7 +81,7 @@ public abstract class CreateForm extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.create_form:
-                if (saveForm()) {
+                if (onSavePressed()) {
                     finish();
                 }
                 return true;
@@ -98,7 +98,7 @@ public abstract class CreateForm extends AppCompatActivity {
         DrawableCompat.setTint(drawable, color);
     }
 
-    protected abstract Fragment createContentFragment();
+    protected abstract AbstractBaseModelFragment createContentFragment();
 
     protected void showDeleteFormDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -123,18 +123,23 @@ public abstract class CreateForm extends AppCompatActivity {
     }
 
     /**
+     * Request the <code>AbstractBaseModelFragment</code> to pass its form data to its observers.
+     * When this is called, any extending activity to this class should have a mechanism to save
+     * the received data.
+     *
+     * @return  true if the save was successful.
+     *          false otherwise
+     */
+    protected boolean onSavePressed() {
+        contentFragment.passData();
+        return saveSuccessful;
+    }
+
+    /**
      * The function called to for deleting the entry for the form
      *
      * @return  true if the entry content is deleted successfully
      *          false otherwise
      */
     protected abstract boolean onDeleteEntryCallback();
-
-    /**
-     * Save the form
-     *
-     * @return  true if the save was successful.
-     *          false otherwise
-     */
-    protected abstract boolean saveForm();
 }

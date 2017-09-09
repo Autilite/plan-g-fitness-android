@@ -139,6 +139,7 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
         mListener = null;
     }
 
+    @Override
     public void passData() {
         if (mListener != null) {
             String sets = mEditSets.getText().toString();

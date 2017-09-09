@@ -13,11 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.activity.EditExerciseStat;
-import com.autilite.plan_g.program.BaseModel;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.program.Workout;
 
@@ -135,6 +133,7 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
         mListener = null;
     }
 
+    @Override
     public void passData() {
         if (mListener != null) {
             mListener.onWorkoutSave(mEditName.getText().toString(), mEditDescription.getText().toString(), exercises);

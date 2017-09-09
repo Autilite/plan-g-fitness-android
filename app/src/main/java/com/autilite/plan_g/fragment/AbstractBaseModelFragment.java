@@ -37,5 +37,10 @@ public abstract class AbstractBaseModelFragment extends Fragment {
         super.onDestroy();
         db.close();
     }
+
+    /**
+     * This method is called to send the model data to any observers
+     */
+    public abstract void passData();
 }
 

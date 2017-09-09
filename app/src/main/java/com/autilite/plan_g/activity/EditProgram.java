@@ -2,10 +2,10 @@ package com.autilite.plan_g.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 import com.autilite.plan_g.fragment.EditProgramFragment;
 import com.autilite.plan_g.program.Program;
 import com.autilite.plan_g.program.Workout;
@@ -25,7 +25,7 @@ public class EditProgram extends CreateForm implements EditProgramFragment.OnFra
     private Program program;
 
     @Override
-    protected Fragment createContentFragment() {
+    protected AbstractBaseModelFragment createContentFragment() {
         if (getIntent().getExtras() != null) {
             setTitle(R.string.edit_program);
             formType = Type.EDIT;
@@ -41,13 +41,6 @@ public class EditProgram extends CreateForm implements EditProgramFragment.OnFra
     @Override
     protected boolean onDeleteEntryCallback() {
         return false;
-    }
-
-    @Override
-    protected boolean saveForm() {
-        EditProgramFragment f = (EditProgramFragment) contentFragment;
-        f.passData();
-        return saveSuccessful;
     }
 
     @Override
