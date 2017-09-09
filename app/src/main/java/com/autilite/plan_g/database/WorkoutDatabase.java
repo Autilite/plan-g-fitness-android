@@ -119,6 +119,10 @@ public class WorkoutDatabase {
         return db.update(ExerciseEntry.TABLE_NAME, cv, whereClause, null);
     }
 
+    public boolean deleteExercise(long id) {
+        return db.delete(ExerciseEntry.TABLE_NAME, ExerciseEntry._ID + "=" + id, null) > 0;
+    }
+
     public long addExerciseToWorkout(long workoutId, long exerciseId) {
         ContentValues cv = new ContentValues();
         cv.put(WorkoutListEntry.COLUMN_WORKOUT_ID, workoutId);

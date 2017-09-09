@@ -113,7 +113,23 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
                     }
                 }
             } else if (resultCode == CreateForm.RESULT_DELETED) {
-                // TODO
+                long deletedId = data.getLongExtra(CreateForm.EXTRA_RESULT_DELETED_ID, -1);
+                if (deletedId != -1) {
+                    for (int i = 0; i < exercises.size(); i++) {
+                        Exercise exercise = exercises.get(i);
+                        if (exercise.getId() == deletedId) {
+                            exercises.remove(i);
+                            mAdapter.notifyExerciseDeleted(i);
+                            // TODO At this point, we have removed the exercise from the database
+                            // but we can still exit the fragment by pressing back/cancel.
+                            // This will not save the workout form BUT the exercise will be removed
+                            // (i.e., exercises are added/removed from the database regardless of
+                            // whether the form gets saved)
+                            // As such, we will need to set the result to include the removed exercises
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -207,6 +223,11 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
          */
         public void notifyExerciseChanged(int position) {
             notifyItemChanged(HEADER_SIZE + position);
+        }
+
+        public void notifyExerciseDeleted(int position) {
+            notifyItemRemoved(HEADER_SIZE + position);
+            notifyItemRangeChanged(HEADER_SIZE + position, getItemCount());
         }
 
         public class TitleViewHolder extends RecyclerView.ViewHolder {

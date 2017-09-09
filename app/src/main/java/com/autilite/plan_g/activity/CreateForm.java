@@ -34,6 +34,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
 
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.CreateForm.RESULT_ACTION";
     public static final String EXTRA_RESULT_MODEL = "EXTRA_RESULT_MODEL";
+    public static final String EXTRA_RESULT_DELETED_ID = "EXTRA_RESULT_DELETED_ID";
 
     public static final int RESULT_DELETED = -2;
 
@@ -183,7 +184,7 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
 
                 boolean deleteSuccess = onDeleteEntry(model);
                 if (deleteSuccess) {
-                    setDeletedResult();
+                    setDeletedResult(model.getId());
                 }
                 return deleteSuccess;
             } else {
@@ -197,8 +198,9 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
         }
     }
 
-    private void setDeletedResult() {
+    private void setDeletedResult(long id) {
         Intent result = new Intent(RESULT_ACTION);
+        result.putExtra(EXTRA_RESULT_DELETED_ID, id);
         setResult(RESULT_DELETED, result);
     }
 
