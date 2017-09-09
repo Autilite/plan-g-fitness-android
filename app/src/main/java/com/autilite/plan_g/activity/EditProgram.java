@@ -40,25 +40,16 @@ public class EditProgram extends CreateForm {
     }
 
     @Override
-    public BaseModel onSave(Bundle fields) {
+    protected BaseModel insertNewEntry(Bundle fields) {
         String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
         String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
         List<Program.Day> programDays = fields.getParcelableArrayList(EditProgramFragment.FIELD_KEY_PROGRAM_DAYS);
 
-        if (formType == Type.CREATE) {
-            program = insertNewEntry(name, description, programDays);
-        } else {
-            program = editEntry(program.getId(), name, description, programDays);
-        }
-        return program;
-    }
-
-    protected Program insertNewEntry(String name, String description, List<Program.Day> programDays) {
-        int numDays = programDays.size();
-
-        if (name.equals("")) {
+        if (name == null || name.equals("") || programDays == null) {
             return null;
         }
+
+        int numDays = programDays.size();
 
         long programId = db.createProgram(name, description, numDays);
         if (programId == -1)
@@ -81,15 +72,21 @@ public class EditProgram extends CreateForm {
         return program;
     }
 
-    protected Program editEntry(long id, String name, String description, List<Program.Day> programDays) {
-        if (name.equals("")) {
+    @Override
+    protected BaseModel editEntry(Bundle fields) {
+        String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
+        String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
+        List<Program.Day> programDays = fields.getParcelableArrayList(EditProgramFragment.FIELD_KEY_PROGRAM_DAYS);
+
+        if (name == null || name.equals("") || programDays == null) {
             return null;
         }
 
-        if (db.updateProgram(id, name, description, programDays)) {
-            Program p = new Program(id, name, description, programDays.size());
-            p.setDays(programDays);
-            return p;
+        if (db.updateProgram(program.getId(), name, description, programDays)) {
+            program.setName(name);
+            program.setDescription(description);
+            program.setDays(programDays);
+            return program;
         } else {
             return null;
         }

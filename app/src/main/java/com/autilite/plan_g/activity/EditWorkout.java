@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Kelvin on Jul 25, 2017.
  */
 
-public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFragmentInteractionListener {
+public class EditWorkout extends CreateForm {
     public static final String EXTRA_WORKOUT = "EXTRA_WORKOUT";
 
     private Workout workout;
@@ -47,21 +47,12 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
     }
 
     @Override
-    public BaseModel onSave(Bundle fields) {
+    protected BaseModel insertNewEntry(Bundle fields) {
         String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
         String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
         List<Exercise> exercises = fields.getParcelableArrayList(EditWorkoutFragment.FIELD_KEY_EXERCISES);
 
-        if (formType == Type.CREATE) {
-            workout = insertNewEntry(name, description, exercises);
-        } else {
-            workout = editEntry(workout.getId(), name, description, exercises);
-        }
-        return workout;
-    }
-
-    private Workout insertNewEntry(String name, String description, List<Exercise> exercises) {
-        if (name.equals("")) {
+        if (name == null || name.equals("") || exercises == null) {
             return null;
         }
         long id = db.createWorkout(name, description);
@@ -83,13 +74,19 @@ public class EditWorkout extends CreateForm implements EditWorkoutFragment.OnFra
         return workout;
     }
 
-    private Workout editEntry(long id, String name, String description, List<Exercise> exercises) {
-        if (name.equals("")) {
+    @Override
+    protected BaseModel editEntry(Bundle fields) {
+        String name = fields.getString(AbstractBaseModelFragment.FIELD_KEY_NAME);
+        String description = fields.getString(AbstractBaseModelFragment.FIELD_KEY_DESCRIPTION);
+        List<Exercise> exercises = fields.getParcelableArrayList(EditWorkoutFragment.FIELD_KEY_EXERCISES);
+
+        if (name == null || name.equals("")) {
             return null;
         }
 
-        if (db.updateWorkout(id, name, description, exercises)) {
-            Workout workout = new Workout(id, name, description);
+        if (db.updateWorkout(workout.getId(), name, description, exercises)) {
+            workout.setName(name);
+            workout.setDescription(description);
             workout.setExercises(exercises);
             return workout;
         } else {

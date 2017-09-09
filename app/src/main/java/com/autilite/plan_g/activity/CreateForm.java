@@ -12,6 +12,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.autilite.plan_g.program.BaseModel;
  */
 
 public abstract class CreateForm extends AppCompatActivity implements AbstractBaseModelFragment.OnFragmentInteractionListener {
+    private static final String TAG = CreateForm.class.getName();
 
     public static final String RESULT_ACTION = "com.autilite.plan_g.activity.CreateForm.RESULT_ACTION";
     public static final String EXTRA_RESULT_MODEL = "EXTRA_RESULT_MODEL";
@@ -148,6 +150,22 @@ public abstract class CreateForm extends AppCompatActivity implements AbstractBa
         }
         return saveSuccessful;
     }
+
+    @Override
+    public BaseModel onSave(Bundle fields) {
+        if (formType == Type.CREATE) {
+            return insertNewEntry(fields);
+        } else if (formType == Type.EDIT) {
+            return editEntry(fields);
+        } else {
+            Log.w(TAG, "Unknown form type");
+            return null;
+        }
+    }
+
+    protected abstract BaseModel insertNewEntry(Bundle fields);
+
+    protected abstract BaseModel editEntry(Bundle fields);
 
     /**
      * The function called to for deleting the entry for the form
