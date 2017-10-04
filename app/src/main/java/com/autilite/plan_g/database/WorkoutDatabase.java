@@ -140,6 +140,10 @@ public class WorkoutDatabase {
         return db.insert(ProgramWorkoutEntry.TABLE_NAME, null, cv) != -1;
     }
 
+    public boolean deleteWorkout(long id) {
+        return db.delete(WorkoutEntry.TABLE_NAME, WorkoutEntry._ID + "=" + id, null) > 0;
+    }
+
     private int deleteAllWorkoutExercises(long workoutId) {
         return db.delete(WorkoutListEntry.TABLE_NAME, WorkoutListEntry.COLUMN_WORKOUT_ID + "=" + workoutId, null);
     }

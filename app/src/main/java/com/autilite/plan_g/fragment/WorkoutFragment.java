@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkoutViewHolderClick {
+    private static final String TAG = WorkoutFragment.class.getName();
+
     private static final int CREATE_WORKOUT = 1;
     private static final int EDIT_WORKOUT = 2;
 
@@ -82,7 +85,19 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.IWorkout
 
                 updateWorkout(resultWorkout);
             } else if (resultCode == CreateForm.RESULT_DELETED) {
-                // TODO
+                long deletedId = data.getLongExtra(CreateForm.EXTRA_RESULT_DELETED_ID, -1);
+                if (deletedId == -1) {
+                    Log.w(TAG, "The model id was not found in the Intent data.");
+                    return;
+                }
+                for (int i = 0; i < workouts.size(); i++) {
+                    Workout w = workouts.get(i);
+                    if (w.getId() == deletedId) {
+                        workouts.remove(i);
+                        mAdapter.notifyItemRemoved(i);
+                        mAdapter.notifyItemRangeChanged(i, mAdapter.getItemCount());
+                    }
+                }
             }
         }
     }

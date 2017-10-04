@@ -41,7 +41,7 @@ public class EditWorkout extends CreateForm {
 
     @Override
     protected boolean onDeleteEntry(@NonNull BaseModel model) {
-        return false;
+        return db.deleteWorkout(model.getId());
     }
 
     @Override
