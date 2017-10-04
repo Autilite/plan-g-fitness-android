@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class EditWorkoutFragment extends AbstractBaseModelFragment {
+    private static final String TAG = EditWorkoutFragment.class.getName();
+
     public static final String FIELD_KEY_EXERCISES = "FIELD_KEY_EXERCISES";
 
     private static final int CREATE_EXERCISE = 1;
@@ -114,20 +117,22 @@ public class EditWorkoutFragment extends AbstractBaseModelFragment {
                 }
             } else if (resultCode == CreateForm.RESULT_DELETED) {
                 long deletedId = data.getLongExtra(CreateForm.EXTRA_RESULT_DELETED_ID, -1);
-                if (deletedId != -1) {
-                    for (int i = 0; i < exercises.size(); i++) {
-                        Exercise exercise = exercises.get(i);
-                        if (exercise.getId() == deletedId) {
-                            exercises.remove(i);
-                            mAdapter.notifyExerciseDeleted(i);
-                            // TODO At this point, we have removed the exercise from the database
-                            // but we can still exit the fragment by pressing back/cancel.
-                            // This will not save the workout form BUT the exercise will be removed
-                            // (i.e., exercises are added/removed from the database regardless of
-                            // whether the form gets saved)
-                            // As such, we will need to set the result to include the removed exercises
-                            break;
-                        }
+                if (deletedId == -1) {
+                    Log.w(TAG, "The model id was not found in the Intent data.");
+                    return;
+                }
+                for (int i = 0; i < exercises.size(); i++) {
+                    Exercise exercise = exercises.get(i);
+                    if (exercise.getId() == deletedId) {
+                        exercises.remove(i);
+                        mAdapter.notifyExerciseDeleted(i);
+                        // TODO At this point, we have removed the exercise from the database
+                        // but we can still exit the fragment by pressing back/cancel.
+                        // This will not save the workout form BUT the exercise will be removed
+                        // (i.e., exercises are added/removed from the database regardless of
+                        // whether the form gets saved)
+                        // As such, we will need to set the result to include the removed exercises
+                        break;
                     }
                 }
             }
