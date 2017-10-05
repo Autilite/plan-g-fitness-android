@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class ProgramFragment extends Fragment implements ProgramAdapter.IProgramViewHolderClick {
+    private static final String TAG = ProgramFragment.class.getName();
 
     private static final int CREATE_PROGRAM = 1;
     private static final int EDIT_PROGRAM = 2;
@@ -91,7 +93,19 @@ public class ProgramFragment extends Fragment implements ProgramAdapter.IProgram
                     }
                 }
             } else if (resultCode == CreateForm.RESULT_DELETED) {
-                // TODO
+                long deletedId = data.getLongExtra(CreateForm.EXTRA_RESULT_DELETED_ID, -1);
+                if (deletedId == -1) {
+                    Log.w(TAG, "The model id was not found in the Intent data.");
+                    return;
+                }
+                for (int i = 0; i < programs.size(); i++) {
+                    Program p = programs.get(i);
+                    if (p.getId() == deletedId) {
+                        programs.remove(i);
+                        mAdapter.notifyItemRemoved(i);
+                        mAdapter.notifyItemRangeChanged(i, mAdapter.getItemCount());
+                    }
+                }
             }
         }
     }

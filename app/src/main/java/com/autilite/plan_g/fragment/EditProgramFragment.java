@@ -95,8 +95,6 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
                 // At the moment, the adapter does not use the list of IDs for drawing the View
                 // Because of this, we don't need to notify the adapter that the data has changed
 //                mAdapter.notifyDayChanged(day);
-            } else if (resultCode == CreateForm.RESULT_DELETED) {
-                // TODO
             }
         }
     }

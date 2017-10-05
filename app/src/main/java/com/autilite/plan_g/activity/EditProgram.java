@@ -34,7 +34,7 @@ public class EditProgram extends CreateForm {
 
     @Override
     protected boolean onDeleteEntry(@NonNull BaseModel model) {
-        return false;
+        return db.deleteProgram(model.getId());
     }
 
     @Override

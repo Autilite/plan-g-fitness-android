@@ -217,6 +217,10 @@ public class WorkoutDatabase {
         return true;
     }
 
+    public boolean deleteProgram(long id) {
+        return db.delete(ProgramEntry.TABLE_NAME, ProgramEntry._ID + "=" + id, null) > 0;
+    }
+
     public boolean addSession(long progId, int progDay, long timeStart, long timeEnd, Map<Workout, ArrayList<? extends ExerciseSession>> session) {
         try {
             db.beginTransaction();
