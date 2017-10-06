@@ -61,7 +61,7 @@ public class ChooseWorkouts extends AppCompatActivity {
             // Since the program may not have been created let, we let the parent activity
             // handle the passing the default selected workout IDs
             day = getIntent().getIntExtra(EXTRA_DAY, -1);
-            Long[] selectedIds = (Long[]) getIntent().getSerializableExtra(EXTRA_SELECTED_IDS);
+            long[] selectedIds = getIntent().getLongArrayExtra(EXTRA_SELECTED_IDS);
 
             fragment = (ChooseWorkoutsFragment) ChooseWorkoutsFragment.newInstance(selectedIds);
 
@@ -121,8 +121,17 @@ public class ChooseWorkouts extends AppCompatActivity {
 
             db = new WorkoutDatabase(getActivity());
             if (getArguments() != null) {
-                Long[] ids = (Long[]) getArguments().getSerializable(ARG_SELECTED_IDS);
-                selectedWorkouts = new HashSet<>(Arrays.asList(ids != null ? ids : new Long[0]));
+                long[] ids = getArguments().getLongArray(ARG_SELECTED_IDS);
+                selectedWorkouts = new HashSet<>();
+                if (ids != null) {
+                    // The ID that is about to be looped is the currently selected Workouts.
+                    // We do not expect the size of this list to be very big so even though
+                    // we loop through this array a couple of times, we do not expect there
+                    // to be any performance issues
+                    for (long id : ids) {
+                        selectedWorkouts.add(id);
+                    }
+                }
             }
         }
 
@@ -132,9 +141,9 @@ public class ChooseWorkouts extends AppCompatActivity {
             db.close();
         }
 
-        public static Fragment newInstance(Long[] selectedIds) {
+        public static Fragment newInstance(long[] selectedIds) {
             Bundle args = new Bundle();
-            args.putSerializable(ARG_SELECTED_IDS, selectedIds);
+            args.putLongArray(ARG_SELECTED_IDS, selectedIds);
 
             Fragment frag = new ChooseWorkoutsFragment();
             frag.setArguments(args);
@@ -165,8 +174,13 @@ public class ChooseWorkouts extends AppCompatActivity {
             return view;
         }
 
-        public Long[] getSelectedWorkouts() {
-            return selectedWorkouts.toArray(new Long[selectedWorkouts.size()]);
+        public long[] getSelectedWorkouts() {
+            Long[] ids = selectedWorkouts.toArray(new Long[selectedWorkouts.size()]);
+            long[] primitiveArray = new long[selectedWorkouts.size()];
+            for (int i = 0; i < selectedWorkouts.size(); i++) {
+                primitiveArray[i] = ids[i];
+            }
+            return primitiveArray;
         }
 
         private class WorkoutSelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

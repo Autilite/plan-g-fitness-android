@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.activity.ChooseWorkouts;
-import com.autilite.plan_g.activity.CreateForm;
 import com.autilite.plan_g.program.Program;
 import com.autilite.plan_g.program.Workout;
 
@@ -87,10 +86,10 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_WORKOUT) {
             if (resultCode == Activity.RESULT_OK) {
-                Long[] ids = (Long[]) data.getSerializableExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
+                long[] ids = data.getLongArrayExtra(ChooseWorkouts.EXTRA_RESULT_CHOSEN_WORKOUTS);
                 int day = data.getIntExtra(ChooseWorkouts.EXTRA_RESULT_DAY, -1);
                 int index = day - 1;
-                programDays.set(index, dayFromWorkoutIds(ids));
+                programDays.set(index, newDayInstance(ids));
 
                 // At the moment, the adapter does not use the list of IDs for drawing the View
                 // Because of this, we don't need to notify the adapter that the data has changed
@@ -239,7 +238,7 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
                             notifyDayInserted(days.size() - 1);
                         } else {
                             Program.Day programDay = getProgramDay(day);
-                            Long[] ids = workoutIdsFromDay(programDay);
+                            long[] ids = getWorkoutIds(programDay);
 
                             Intent intent = new Intent(getActivity(), ChooseWorkouts.class);
                             intent.putExtra(ChooseWorkouts.EXTRA_DAY, day);
@@ -260,18 +259,18 @@ public class EditProgramFragment extends AbstractBaseModelFragment {
         }
     }
 
-    private Program.Day dayFromWorkoutIds(Long[] ids) {
+    private Program.Day newDayInstance(long[] ids) {
         Program.Day day = new Program.Day();
-        for (Long wId : ids) {
+        for (long wId : ids) {
             Workout w = db.getWorkout(wId);
             day.addWorkout(w);
         }
         return day;
     }
 
-    private Long[] workoutIdsFromDay(Program.Day day) {
+    private long[] getWorkoutIds(Program.Day day) {
         List<Workout> workouts = day.getWorkouts();
-        Long[] ids = new Long[workouts.size()];
+        long[] ids = new long[workouts.size()];
         for (int i = 0; i < workouts.size(); i++) {
             ids[i] = workouts.get(i).getId();
         }
