@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -28,6 +29,10 @@ import com.autilite.plan_g.program.BaseModel;
  */
 
 public abstract class CreateForm extends AppCompatActivity implements AbstractBaseModelFragment.OnFragmentInteractionListener {
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     private static final String TAG = CreateForm.class.getName();
 
     public static final String EXTRA_BASE_MODEL = "EXTRA_BASE_MODEL";
