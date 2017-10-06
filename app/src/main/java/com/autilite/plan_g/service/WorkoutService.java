@@ -108,6 +108,7 @@ public class WorkoutService extends Service {
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_ID, programId);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_NAME, programName);
         activityIntent.putExtra(WorkoutSessionActivity.EXTRA_PROGRAM_DAY, programDay);
+        activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         wnm = new WorkoutNotificationManager(this, SESSION_NOTIFY_ID, activityIntent);
 

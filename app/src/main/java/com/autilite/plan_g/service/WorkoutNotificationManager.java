@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.autilite.plan_g.R;
@@ -76,13 +77,19 @@ public class WorkoutNotificationManager {
         initNotificationBuilder();
 
         NotificationCompat.Action completeAction = new NotificationCompat.Action.Builder(
-                R.drawable.ic_check_black_24dp,
+                // Vector drawables are not available on devices prior to lolipop
+                // The support library lets us use vector drawables in the app but the Notification
+                // is part of the android OS system and doesn't have the same workaround
+                // As such, we just disable the action icon
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                        R.drawable.ic_check_black_24dp : 0,
                 context.getString(R.string.notification_complete_set),
                 complete)
                 .build();
 
         NotificationCompat.Action failAction = new NotificationCompat.Action.Builder(
-                R.drawable.ic_fail_black_24dp,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                        R.drawable.ic_fail_black_24dp : 0,
                 context.getString(R.string.notification_fail_set),
                 fail)
                 .build();
