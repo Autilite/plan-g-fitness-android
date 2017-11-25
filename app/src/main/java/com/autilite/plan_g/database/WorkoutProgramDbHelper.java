@@ -177,12 +177,16 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
 
     private void insertDefaultExercises(SQLiteDatabase db){
         ContentValues cv = new ContentValues();
-        cv.put(BaseExerciseEntry.COLUMN_NAME, "Squats");
-        db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
-        cv.put(BaseExerciseEntry.COLUMN_NAME, "Deadlift");
-        db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
-        cv.put(BaseExerciseEntry.COLUMN_NAME, "Overhead Press");
-        db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
+        String[] exercises = { "Squats", "Deadlift", "Overhead Press", "Barbell Bench Press",
+                "Incline Dumbbell Bench Press", "Bent Over Row", "Lat Pull Down", "Barbell Curl",
+                "Skull Crusher", "Leg Press", "Leg Curl", "Calf Exercise", "Incline Barbell Bench Press",
+                "Flat Bench Dumbbell Flye", "Seated Cable Row", "One Arm Dumbbell Row", "Dumbbell Lateral Raise",
+                "Seated Incline Dumbbell Curl", "Cable Tricep Extension", "Front Squat", "Barbell Lunge",
+                "Seated Calf Raise", "Calf Press"};
+        for (String exercise : exercises) {
+            cv.put(BaseExerciseEntry.COLUMN_NAME, exercise);
+            db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
+        }
     }
 
 }
