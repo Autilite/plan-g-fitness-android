@@ -176,9 +176,58 @@ public class WorkoutService extends Service {
         long timeEnd = System.currentTimeMillis();
         workoutDb.addSession(programId, programDay, startTime, timeEnd, sessions);
         workoutDb.setPreviousProgDay(this, programId, programDay);
-        // TODO update exercise with any changes from this session
-        // e.g., exercise auto increment if the exercise session was successful
+        progressiveOverload();
     }
+
+    private void progressiveOverload() {
+        for (Map.Entry<Workout, ArrayList<? extends ExerciseSession>> entry : sessions.entrySet()) {
+            ArrayList<? extends  ExerciseSession> esList = entry.getValue();
+
+            // Check success for each exercise
+            for (ExerciseSession es: esList){
+                if (es.isSessionSuccessful()) {
+                    progressiveOverloadHelper(es.getExercise());
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Helper function for increasing the Exercise's volume and weight based off its given increment
+     * values
+     *
+     * @param exercise
+     */
+    private void progressiveOverloadHelper(Exercise exercise) {
+        // For progressive overload, we follow the algorithm:
+        // 1) Volume:
+        // If the current rep is at its max, then lower volume to the min and increment the weight
+        // Otherwise, increase the volume (reps). If this increase causes the rep to go over the max,
+        // then we set the volume to the max.
+        // 2) If the user did not set volume for progressive over, then just increment the weight
+        int repIncrement = exercise.getRepsIncrement();
+        int repCurrent = exercise.getReps();
+        if (repIncrement > 0) {
+            if (repCurrent == exercise.getRepsMax()) {
+                exercise.setReps(exercise.getRepsMin());
+                exercise.setWeight(exercise.getWeight() + exercise.getWeightIncrement());
+            } else {
+                int newRepCount = repCurrent + repIncrement;
+                if (newRepCount >= exercise.getRepsMax()) {
+                    exercise.setReps(exercise.getRepsMax());
+                } else {
+                    exercise.setReps(newRepCount);
+                }
+            }
+        } else if (exercise.getWeightIncrement() > 0){
+            exercise.setWeight(exercise.getWeight() + exercise.getWeightIncrement());
+        } else {
+            return;
+        }
+        workoutDb.updateExercise(exercise.getId(), exercise.getReps(), exercise.getWeight());
+    }
+
 
     @Override
     public void onCreate() {

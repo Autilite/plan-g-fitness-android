@@ -104,6 +104,16 @@ public class WorkoutDatabase {
         return db.update(ExerciseEntry.TABLE_NAME, cv, whereClause, null);
     }
 
+    public int updateExercise(long id, int reps, double weight) {
+        ContentValues cv = new ContentValues();
+        cv.put(ExerciseEntry._ID, id);
+        cv.put(ExerciseEntry.COLUMN_REPS, reps);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
+        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
+        String whereClause = ExerciseEntry._ID + "=" + id;
+        return db.update(ExerciseEntry.TABLE_NAME, cv, whereClause, null);
+    }
+
     public boolean deleteExercise(long id) {
         return db.delete(ExerciseEntry.TABLE_NAME, ExerciseEntry._ID + "=" + id, null) > 0;
     }

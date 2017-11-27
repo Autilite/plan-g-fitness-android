@@ -197,11 +197,20 @@ public class ExerciseSession implements Parcelable {
     public boolean isSetSuccessful(int setNumber) {
         int index = setNumber - 1;
         SetSession set = setSessions.get(index);
-        return isSetSuccesful(set.getReps());
+        return checkRepsSuccess(set.getReps());
     }
 
-    private boolean isSetSuccesful(int reps) {
+    private boolean checkRepsSuccess(int reps) {
         return reps >= exercise.getReps();
+    }
+
+    public boolean isSessionSuccessful() {
+        for (SetSession ss : setSessions) {
+            if (!checkRepsSuccess(ss.getReps())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
