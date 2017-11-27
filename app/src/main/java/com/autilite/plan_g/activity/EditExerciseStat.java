@@ -1,7 +1,9 @@
 package com.autilite.plan_g.activity;
 
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.autilite.plan_g.R;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
@@ -15,6 +17,7 @@ import com.autilite.plan_g.program.Exercise;
  */
 
 public class EditExerciseStat extends CreateForm {
+    private static final String TAG = EditExerciseStat.class.getName();
     private Exercise exercise;
 
     public EditExerciseStat() {
@@ -45,17 +48,20 @@ public class EditExerciseStat extends CreateForm {
         String note = fields.getString(EditExerciseStatFragment.FIELD_KEY_DESCRIPTION);
         int sets = fields.getInt(EditExerciseStatFragment.FIELD_KEY_SETS);
         int reps = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS);
+        int repsMin = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS_MIN);
+        int repsMax = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS_MAX);
+        int repsIncr = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS_INCR);
         double weight = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_WEIGHT);
-        double autoIncr = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_AUTO_INCR);
+        double weightIncr = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_WEIGHT_INCR);
         int restTime = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REST_TIMER);
 
         if (baseExercise == null) {
             return null;
         }
 
-        long id = db.createExercise(baseExercise.getId(), sets, reps, weight, autoIncr, restTime);
+        long id = db.createExercise(baseExercise.getId(), sets, reps, repsMin, repsMax, repsIncr, weight, weightIncr, restTime);
         if (id != -1) {
-            return new Exercise(id, name, note, baseExercise.getId(), sets, reps, weight, autoIncr, restTime);
+            return new Exercise(id, name, note, baseExercise.getId(), sets, reps, repsMin, repsMax, repsIncr, weight, weightIncr, restTime);
         }
         return null;
     }
@@ -67,26 +73,38 @@ public class EditExerciseStat extends CreateForm {
         String note = fields.getString(EditExerciseStatFragment.FIELD_KEY_DESCRIPTION);
         int sets = fields.getInt(EditExerciseStatFragment.FIELD_KEY_SETS);
         int reps = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS);
+        int repsMin = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS_MIN);
+        int repsMax = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS_MAX);
+        int repsIncr = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REPS_INCR);
         double weight = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_WEIGHT);
-        double autoIncr = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_AUTO_INCR);
+        double weightIncr = fields.getDouble(EditExerciseStatFragment.FIELD_KEY_WEIGHT_INCR);
         int restTime = fields.getInt(EditExerciseStatFragment.FIELD_KEY_REST_TIMER);
 
         if (baseExercise == null) {
             return null;
         }
 
-        int numRowsUpdate = db.updateExercise(
-                exercise.getId(), baseExercise.getId(), sets, reps, weight, autoIncr, restTime);
-        if (numRowsUpdate == 1) {
-            exercise.setBaseExerciseId(baseExercise.getId());
-            exercise.setName(name);
-            exercise.setDescription(note);
-            exercise.setSets(sets);
-            exercise.setReps(reps);
-            exercise.setWeight(weight);
-            exercise.setWeightIncrement(autoIncr);
-            exercise.setRestTime(restTime);
-            return exercise;
+        try {
+            int numRowsUpdate = db.updateExercise(
+                    exercise.getId(), baseExercise.getId(), sets, reps, repsMin, repsMax, repsIncr, weight, weightIncr, restTime);
+            if (numRowsUpdate == 1) {
+                exercise.setBaseExerciseId(baseExercise.getId());
+                exercise.setName(name);
+                exercise.setDescription(note);
+                exercise.setSets(sets);
+                exercise.setRepRange(reps, repsMin, repsMax);
+                exercise.setRepsIncrement(repsIncr);
+                exercise.setWeight(weight);
+                exercise.setWeightIncrement(weightIncr);
+                exercise.setRestTime(restTime);
+                return exercise;
+            }
+        } catch (SQLiteConstraintException e) {
+            Log.d(TAG, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            // The database was successfully able to update the exercise but updating the model was
+            // unsuccessful. This is likely due to an inconsistency of constraints.
+            Log.e(TAG, e.getMessage());
         }
         return null;
     }

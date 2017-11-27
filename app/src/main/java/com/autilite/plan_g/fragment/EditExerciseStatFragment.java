@@ -25,17 +25,23 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
     public static final String FIELD_KEY_BASE_EXERCISE = "FIELD_KEY_BASE_EXERCISE";
     public static final String FIELD_KEY_SETS = "FIELD_KEY_SETS";
     public static final String FIELD_KEY_REPS = "FIELD_KEY_REPS";
+    public static final String FIELD_KEY_REPS_MIN = "FIELD_KEY_REPS_MIN";
+    public static final String FIELD_KEY_REPS_MAX = "FIELD_KEY_REPS_MAX";
+    public static final String FIELD_KEY_REPS_INCR = "FIELD_KEY_REPS_INCR";
     public static final String FIELD_KEY_WEIGHT = "FIELD_KEY_WEIGHT";
-    public static final String FIELD_KEY_AUTO_INCR = "FIELD_KEY_AUTO_INCR";
+    public static final String FIELD_KEY_WEIGHT_INCR = "FIELD_KEY_WEIGHT_INCR";
     public static final String FIELD_KEY_REST_TIMER = "FIELD_KEY_REST_TIMER";
 
     private TextView mEditName;
     private EditText mEditNote;
     private EditText mEditSets;
     private EditText mEditReps;
+    private EditText mEditRepsMin;
+    private EditText mEditRepsMax;
+    private EditText mEditRepsIncr;
     private EditText mEditRestTime;
     private EditText mEditWeight;
-    private EditText mEditAutoIncrement;
+    private EditText mEditWeightIncr;
 
     private BaseExercise baseExercise;
 
@@ -70,9 +76,12 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
         mEditNote = (EditText) view.findViewById(R.id.add_note);
         mEditSets = (EditText) view.findViewById(R.id.input_sets);
         mEditReps = (EditText) view.findViewById(R.id.input_reps);
+        mEditRepsMin = (EditText) view.findViewById(R.id.input_reps_min);
+        mEditRepsMax = (EditText) view.findViewById(R.id.input_reps_max);
+        mEditRepsIncr = (EditText) view.findViewById(R.id.input_reps_increment);
         mEditRestTime = (EditText) view.findViewById(R.id.input_rest_time);
         mEditWeight = (EditText) view.findViewById(R.id.input_weight);
-        mEditAutoIncrement = (EditText) view.findViewById(R.id.input_auto_increment);
+        mEditWeightIncr = (EditText) view.findViewById(R.id.input_weight_increment);
 
         setViewDefault();
 
@@ -111,6 +120,9 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
             Exercise exercise = (Exercise) model;
             int sets = exercise.getSets();
             int reps = exercise.getReps();
+            int repsMin = exercise.getRepsMin();
+            int repsMax = exercise.getRepsMax();
+            int repsIncr = exercise.getRepsIncrement();
             int restTime = exercise.getRestTime();
             double weight = exercise.getWeight();
             double weightIncrement = exercise.getWeightIncrement();
@@ -118,9 +130,12 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
             mEditName.setText(exercise.getName());
             mEditSets.setText(sets >= 0 ? String.valueOf(sets) : "");
             mEditReps.setText(reps >= 0 ? String.valueOf(reps) : "");
+            mEditRepsMin.setText(repsMin >= 0 ? String.valueOf(repsMin) : "");
+            mEditRepsMax.setText(repsMax >= 0 ? String.valueOf(repsMax) : "");
+            mEditRepsIncr.setText(repsIncr >= 0 ? String.valueOf(repsIncr) : "");
             mEditRestTime.setText(restTime >= 0 ? String.valueOf(restTime) : "");
             mEditWeight.setText(weight >= 0 ? String.valueOf(weight) : "");
-            mEditAutoIncrement.setText(weightIncrement >= 0 ? String.valueOf(weightIncrement) : "");
+            mEditWeightIncr.setText(weightIncrement >= 0 ? String.valueOf(weightIncrement) : "");
         } else {
             mEditName.setText(R.string.choose_exercise);
         }
@@ -135,17 +150,24 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
 
         String sSets = mEditSets.getText().toString();
         String sReps = mEditReps.getText().toString();
+        String sRepsMin = mEditRepsMin.getText().toString();
+        String sRepsMax = mEditRepsMax.getText().toString();
+        String sRepsIncr = mEditRepsIncr.getText().toString();
         String sWeight = mEditWeight.getText().toString();
-        String sAutoIncr = mEditAutoIncrement.getText().toString();
+        String sWeightIncr = mEditWeightIncr.getText().toString();
         String sRestTime = mEditRestTime.getText().toString();
         // TODO place EditText watcher on form views
         // For now, assume UI correctly sanitizes the input
 
-        // TODO get default values
+        // TODO get default values from config settings
         int sets = NumberFormat.parseInt(sSets, 5);
-        int reps = NumberFormat.parseInt(sReps, 5);
+        int repsMin = NumberFormat.parseInt(sRepsMin, 0);
+        int repsMax = NumberFormat.parseInt(sRepsMax, 0);
+        int repsIncr = NumberFormat.parseInt(sRepsIncr, 0);
+        // Default reps to be the lowest value in the range
+        int reps = NumberFormat.parseInt(sReps, repsMin);
         double weight = NumberFormat.parseDouble(sWeight, 0);
-        double autoIncr = NumberFormat.parseDouble(sAutoIncr, 0);
+        double weightIncr = NumberFormat.parseDouble(sWeightIncr, 0);
         int restTime = NumberFormat.parseInt(sRestTime, 90);
 
         Bundle bundle = new Bundle();
@@ -154,8 +176,11 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
         bundle.putString(FIELD_KEY_DESCRIPTION, note);
         bundle.putInt(FIELD_KEY_SETS, sets);
         bundle.putInt(FIELD_KEY_REPS, reps);
+        bundle.putInt(FIELD_KEY_REPS_MIN, repsMin);
+        bundle.putInt(FIELD_KEY_REPS_MAX, repsMax);
+        bundle.putInt(FIELD_KEY_REPS_INCR, repsIncr);
         bundle.putDouble(FIELD_KEY_WEIGHT, weight);
-        bundle.putDouble(FIELD_KEY_AUTO_INCR, autoIncr);
+        bundle.putDouble(FIELD_KEY_WEIGHT_INCR, weightIncr);
         bundle.putInt(FIELD_KEY_REST_TIMER, restTime);
         return bundle;
     }

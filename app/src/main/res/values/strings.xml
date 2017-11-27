@@ -20,6 +20,8 @@
     <string name="set">Set</string>
     <string name="sets">Sets</string>
     <string name="reps">Reps</string>
+    <string name="reps_min">Min</string>
+    <string name="reps_max">Max</string>
     <string name="weight">Weight</string>
     <string name="workout_name">Workout Name</string>
 
@@ -60,7 +62,7 @@
 
     <string name="add_note">Add note</string>
     <string name="note">Note</string>
-    <string name="autoincrement">Auto Increment</string>
+    <string name="increment">Increment</string>
     <string name="edit_exercise">Edit Exercise</string>
     <string name="create_exercise">Create Exercise</string>
 

@@ -20,7 +20,7 @@ import static com.autilite.plan_g.database.WorkoutListContract.WorkoutListEntry;
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
     private static final String SQL_CREATE_TABLE_BASE_EXERCISE =
@@ -37,11 +37,19 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                     ExerciseEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     ExerciseEntry.COLUMN_BASE_EXERCISE_ID + " INTEGER NOT NULL," +
                     ExerciseEntry.COLUMN_SET + " INTEGER," +
-                    ExerciseEntry.COLUMN_REP + " INTEGER," +
+                    ExerciseEntry.COLUMN_REPS + " INTEGER," +
+                    ExerciseEntry.COLUMN_REPS_MIN + " INTEGER," +
+                    ExerciseEntry.COLUMN_REPS_MAX + " INTEGER," +
+                    ExerciseEntry.COLUMN_REPS_INCR + " INTEGER," +
                     ExerciseEntry.COLUMN_WEIGHT + " REAL," +
-                    ExerciseEntry.COLUMN_AUTOINC + " REAL," +
+                    ExerciseEntry.COLUMN_WEIGHT_INCR + " REAL," +
                     ExerciseEntry.COLUMN_REST_TIME + " INTEGER," +
                     ExerciseEntry.COLUMN_CREATION + " INTEGER," +
+                    "CHECK ("+ ExerciseEntry.COLUMN_REPS_MIN + ">" + 0 + ")"  +
+                    "CHECK ("+ ExerciseEntry.COLUMN_REPS_MIN + "<=" + ExerciseEntry.COLUMN_REPS_MAX +
+                    " OR " + ExerciseEntry.COLUMN_REPS_MAX + " IS NULL)," +
+                    "CHECK ("+ ExerciseEntry.COLUMN_REPS_MIN + " <= " + ExerciseEntry.COLUMN_REPS+"),"+
+                    "CHECK ("+ ExerciseEntry.COLUMN_REPS + " <= " + ExerciseEntry.COLUMN_REPS_MAX+"),"+
                     "FOREIGN KEY (" + ExerciseEntry.COLUMN_BASE_EXERCISE_ID + ") " +
                     "REFERENCES " + BaseExerciseEntry.TABLE_NAME + " (" + BaseExerciseEntry._ID + ") " +
                     "ON DELETE RESTRICT ON UPDATE CASCADE)";

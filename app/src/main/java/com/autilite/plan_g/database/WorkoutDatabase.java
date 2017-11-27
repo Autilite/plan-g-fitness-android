@@ -72,47 +72,32 @@ public class WorkoutDatabase {
         return db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExercise(long baseExerciseId, int sets, int reps, double weight, double autoInc, int restTime) {
+    public long createExercise(long baseExerciseId, int sets, int reps, int repsMin, int repsMax, int repsIncr, double weight, double weightIncr, int restTime) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
         cv.put(ExerciseEntry.COLUMN_SET, sets);
-        cv.put(ExerciseEntry.COLUMN_REP, reps);
+        cv.put(ExerciseEntry.COLUMN_REPS, reps);
+        cv.put(ExerciseEntry.COLUMN_REPS_MIN, repsMin);
+        cv.put(ExerciseEntry.COLUMN_REPS_MAX, repsMax);
+        cv.put(ExerciseEntry.COLUMN_REPS_INCR, repsIncr);
         cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT_INCR, weightIncr);
         cv.put(ExerciseEntry.COLUMN_REST_TIME, restTime);
         cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
         return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
     }
 
-    public long createExercise(long baseExerciseId, int sets, int reps, double weight, double autoInc) {
-        ContentValues cv = new ContentValues();
-        cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
-        cv.put(ExerciseEntry.COLUMN_SET, sets);
-        cv.put(ExerciseEntry.COLUMN_REP, reps);
-        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
-        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
-        return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
-    }
-
-    public long createExercise(long baseExerciseId, int sets, int reps, double weight) {
-        ContentValues cv = new ContentValues();
-        cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
-        cv.put(ExerciseEntry.COLUMN_SET, sets);
-        cv.put(ExerciseEntry.COLUMN_REP, reps);
-        cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
-        return db.insert(ExerciseEntry.TABLE_NAME, null, cv);
-    }
-
-    public int updateExercise(long id, long baseExerciseId, int sets, int reps, double weight, double autoInc, int restTime) {
+    public int updateExercise(long id, long baseExerciseId, int sets, int reps, int repsMin, int repsMax, int repsIncr, double weight, double weightIncr, int restTime) {
         ContentValues cv = new ContentValues();
         cv.put(ExerciseEntry._ID, id);
         cv.put(ExerciseEntry.COLUMN_BASE_EXERCISE_ID, baseExerciseId);
         cv.put(ExerciseEntry.COLUMN_SET, sets);
-        cv.put(ExerciseEntry.COLUMN_REP, reps);
+        cv.put(ExerciseEntry.COLUMN_REPS, reps);
+        cv.put(ExerciseEntry.COLUMN_REPS_MIN, repsMin);
+        cv.put(ExerciseEntry.COLUMN_REPS_MAX, repsMax);
+        cv.put(ExerciseEntry.COLUMN_REPS_INCR, repsIncr);
         cv.put(ExerciseEntry.COLUMN_WEIGHT, weight);
-        cv.put(ExerciseEntry.COLUMN_AUTOINC, autoInc);
+        cv.put(ExerciseEntry.COLUMN_WEIGHT_INCR, weightIncr);
         cv.put(ExerciseEntry.COLUMN_REST_TIME, restTime);
         cv.put(ExerciseEntry.COLUMN_CREATION, System.currentTimeMillis());
         String whereClause = ExerciseEntry._ID + "=" + id;
@@ -327,9 +312,12 @@ public class WorkoutDatabase {
                 BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry._ID + ", " +
                 BaseExerciseEntry.TABLE_NAME + "." + BaseExerciseEntry.COLUMN_NAME + ", " +
                 ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_SET + ", " +
-                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REP + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REPS + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REPS_MIN + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REPS_MAX + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REPS_INCR + ", " +
                 ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_WEIGHT + ", " +
-                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_AUTOINC + ", " +
+                ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_WEIGHT_INCR + ", " +
                 ExerciseEntry.TABLE_NAME + "." + ExerciseEntry.COLUMN_REST_TIME + ", " +
                 WorkoutEntry.TABLE_NAME + "." + WorkoutEntry._ID + " " +
                 "FROM " + WorkoutEntry.TABLE_NAME + " " +
@@ -499,11 +487,14 @@ public class WorkoutDatabase {
             long baseExerciseId = eStat.getLong(1);
             String exerciseName = eStat.getString(2);
             int set = eStat.getInt(3);
-            int rep = eStat.getInt(4);
-            double weight = eStat.getDouble(5);
-            double autoIncr = eStat.getDouble(6);
-            int restTime = eStat.getInt(7);
-            Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, rep, weight, autoIncr, restTime);
+            int reps = eStat.getInt(4);
+            int repMin = eStat.getInt(5);
+            int repMax = eStat.getInt(6);
+            int repIncr = eStat.getInt(7);
+            double weight = eStat.getDouble(8);
+            double weightIncr = eStat.getDouble(9);
+            int restTime = eStat.getInt(10);
+            Exercise e = new Exercise(id, exerciseName, "", baseExerciseId, set, reps, repMin, repMax, repIncr, weight, weightIncr, restTime);
             list.add(e);
         }
         eStat.close();
