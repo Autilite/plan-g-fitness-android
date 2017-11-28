@@ -1,11 +1,15 @@
 package com.autilite.plan_g.activity;
 
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.autilite.plan_g.R;
+import com.autilite.plan_g.database.ExerciseContract;
 import com.autilite.plan_g.fragment.AbstractBaseModelFragment;
 import com.autilite.plan_g.fragment.EditExerciseStatFragment;
 import com.autilite.plan_g.program.BaseExercise;
@@ -16,7 +20,7 @@ import com.autilite.plan_g.program.Exercise;
  * Created by Kelvin on Jul 25, 2017.
  */
 
-public class EditExerciseStat extends CreateForm {
+public class EditExerciseStat extends CreateForm implements EditExerciseStatFragment.OnEditExerciseFragmentInteractionListener {
     private static final String TAG = EditExerciseStat.class.getName();
     private Exercise exercise;
 
@@ -38,6 +42,7 @@ public class EditExerciseStat extends CreateForm {
 
     @Override
     protected boolean onDeleteEntry(@NonNull BaseModel model) {
+        // TODO only delete exercise from the workout list
         return db.deleteExercise(model.getId());
     }
 
@@ -109,4 +114,33 @@ public class EditExerciseStat extends CreateForm {
         return null;
     }
 
+    @Override
+    public void onChooseExercise() {
+        selectBaseExercise();
+    }
+
+    private void selectBaseExercise() {
+        final Cursor cursor = db.getBaseExerciseTable();
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setCursor(cursor, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        cursor.moveToPosition(i);
+                        long baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry._ID));
+                        String name = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_NAME));
+                        String description = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_DESCRIPTION));
+                        cursor.close();
+
+                        BaseExercise baseExercise = new BaseExercise(baseExerciseId, name, description);
+
+                        EditExerciseStatFragment exerciseStatFragment = (EditExerciseStatFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+                        if (exerciseStatFragment != null) {
+                            exerciseStatFragment.updateExerciseView(baseExercise);
+                        } else {
+                            Log.w(TAG, EditExerciseStatFragment.class.getName() + " could not be found.");
+                        }
+                    }
+                }, ExerciseContract.BaseExerciseEntry.COLUMN_NAME).create();
+        dialog.show();
+    }
 }

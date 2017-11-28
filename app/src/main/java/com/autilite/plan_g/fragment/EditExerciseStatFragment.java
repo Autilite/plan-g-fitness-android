@@ -1,10 +1,8 @@
 package com.autilite.plan_g.fragment;
 
-import android.content.DialogInterface;
-import android.database.Cursor;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.autilite.plan_g.R;
-import com.autilite.plan_g.database.ExerciseContract;
 import com.autilite.plan_g.program.BaseExercise;
 import com.autilite.plan_g.program.Exercise;
 import com.autilite.plan_g.util.NumberFormat;
@@ -32,6 +29,8 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
     public static final String FIELD_KEY_WEIGHT_INCR = "FIELD_KEY_WEIGHT_INCR";
     public static final String FIELD_KEY_REST_TIMER = "FIELD_KEY_REST_TIMER";
 
+    private OnEditExerciseFragmentInteractionListener mListener;
+
     private TextView mEditName;
     private EditText mEditNote;
     private EditText mEditSets;
@@ -46,6 +45,17 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
     private BaseExercise baseExercise;
 
     public EditExerciseStatFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnEditExerciseFragmentInteractionListener) {
+            mListener = (OnEditExerciseFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnEditExerciseFragmentInteractionListener");
+        }
     }
 
     public static EditExerciseStatFragment newInstance(Exercise exercise) {
@@ -88,31 +98,16 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
         mEditName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectExercise();
+                mListener.onChooseExercise();
             }
         });
 
         return view;
     }
 
-    private void selectExercise() {
-        final Cursor cursor = db.getBaseExerciseTable();
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setCursor(cursor, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        cursor.moveToPosition(i);
-                        long baseExerciseId = cursor.getLong(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry._ID));
-                        String name = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_NAME));
-                        String description = cursor.getString(cursor.getColumnIndex(ExerciseContract.BaseExerciseEntry.COLUMN_DESCRIPTION));
-                        cursor.close();
-
-                        baseExercise = new BaseExercise(baseExerciseId, name, description);
-
-                        mEditName.setText(name);
-                    }
-                }, ExerciseContract.BaseExerciseEntry.COLUMN_NAME).create();
-        dialog.show();
+    public void updateExerciseView(BaseExercise baseExercise) {
+        this.baseExercise = baseExercise;
+        mEditName.setText(baseExercise.getName());
     }
 
     private void setViewDefault() {
@@ -183,5 +178,9 @@ public class EditExerciseStatFragment extends AbstractBaseModelFragment {
         bundle.putDouble(FIELD_KEY_WEIGHT_INCR, weightIncr);
         bundle.putInt(FIELD_KEY_REST_TIMER, restTime);
         return bundle;
+    }
+
+    public interface OnEditExerciseFragmentInteractionListener {
+        void onChooseExercise();
     }
 }
