@@ -66,6 +66,10 @@
     <string name="edit_exercise">Edit Exercise</string>
     <string name="create_exercise">Create Exercise</string>
 
+    <string name="select_exercise">Select Exercise</string>
+    <string name="select_exercise_new">Create a new exercise</string>
+    <string name="select_exercise_link">Choose an exercise from another Workout</string>
+
     <string name="program_preference_file_key">
         <xliff:g id="preference_key">com.autilite.plan_g.PROGRAM_PREFERENCE_FILE_KEY</xliff:g>
     </string>
