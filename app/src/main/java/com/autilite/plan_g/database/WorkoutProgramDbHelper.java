@@ -20,14 +20,14 @@ import static com.autilite.plan_g.database.WorkoutListContract.WorkoutListEntry;
 
 public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
     public static final String DATABASE_NAME = "WorkoutProgram.db";
 
     private static final String SQL_CREATE_TABLE_BASE_EXERCISE =
             "CREATE TABLE " + BaseExerciseEntry.TABLE_NAME + " (" +
                     BaseExerciseEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     BaseExerciseEntry.COLUMN_NAME + " TEXT NOT NULL," +
-                    BaseExerciseEntry.COLUMN_DESCRIPTION + " TEXT)";
+                    BaseExerciseEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL)";
 
     private static final String SQL_DELETE_TABLE_BASE_EXERCISE =
             "DROP TABLE IF EXISTS " + BaseExerciseEntry.TABLE_NAME;
@@ -61,7 +61,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + WorkoutEntry.TABLE_NAME + " (" +
                     WorkoutEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     WorkoutEntry.COLUMN_NAME + " TEXT NOT NULL," +
-                    WorkoutEntry.COLUMN_DESCRIPTION + " TEXT," +
+                    WorkoutEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL," +
                     WorkoutEntry.COLUMN_CREATION + " INTEGER)";
 
     private static final String SQL_DELETE_TABLE_WORKOUT =
@@ -86,7 +86,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + ProgramEntry.TABLE_NAME + " (" +
                     ProgramEntry._ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     ProgramEntry.COLUMN_NAME + " TEXT NOT NULL," +
-                    ProgramEntry.COLUMN_DESCRIPTION + " TEXT," +
+                    ProgramEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL," +
                     ProgramEntry.COLUMN_NUM_DAYS + " INTEGER NOT NULL," +
                     ProgramEntry.COLUMN_CREATION + " INTEGER )";
 
@@ -193,6 +193,7 @@ public class WorkoutProgramDbHelper extends SQLiteOpenHelper {
                 "Seated Calf Raise", "Calf Press"};
         for (String exercise : exercises) {
             cv.put(BaseExerciseEntry.COLUMN_NAME, exercise);
+            cv.put(BaseExerciseEntry.COLUMN_DESCRIPTION, "");
             db.insert(BaseExerciseEntry.TABLE_NAME, null, cv);
         }
     }
